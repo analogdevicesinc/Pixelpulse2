@@ -6,9 +6,10 @@ TARGET = Plot
 
 HEADERS += \
 	plugin.h \
-    plot.h \
+    PhosphorRender.h \
 
-SOURCES += plot.cpp
+SOURCES += \
+	PhosphorRender.cpp
 
 qmldir.files=$$PWD/qmldir
 qmldir.path=$$DESTDIR

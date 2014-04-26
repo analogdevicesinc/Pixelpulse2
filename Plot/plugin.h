@@ -1,6 +1,6 @@
 #include <QQmlExtensionPlugin>
 
-#include "plot.h"
+#include "PhosphorRender.h"
 
 class PlotPlugin : public QQmlExtensionPlugin
 {

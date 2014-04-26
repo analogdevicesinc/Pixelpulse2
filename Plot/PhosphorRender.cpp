@@ -1,4 +1,4 @@
-#include "plot.h"
+#include "PhosphorRender.h"
 #include <cmath>
 
 #include <QtQuick/qsgnode.h>
