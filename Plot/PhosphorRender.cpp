@@ -57,6 +57,7 @@ public:
     QSGMaterial::Flags  flags() const { return QSGMaterial::Blending; }
 
     QMatrix4x4 transformation;
+    float pointSize;
 };
 
 void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSGMaterial *oldMaterial)
@@ -73,6 +74,7 @@ void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSG
     glBlendFunc(GL_ONE, GL_ONE);
     //glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
     glPointSize(1.8);
+    glPointSize(m->pointSize);
 }
 
 PhosphorRender::PhosphorRender(QQuickItem *parent)
@@ -120,6 +122,8 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     material->transformation.setToIdentity();
     material->transformation.scale(bounds.width()/(m_xmax - m_xmin), bounds.height()/(m_ymin - m_ymax));
     material->transformation.translate(-m_xmin, m_ymin);
+
+    material->pointSize = m_pointSize;
     
     m_buffer->to_vertex_data(m_xmin, m_xmax, geometry->vertexDataAsPoint2D(), n_points);
     node->markDirty(QSGNode::DirtyGeometry);
