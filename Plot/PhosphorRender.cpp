@@ -3,6 +3,7 @@
 
 #include <QtQuick/qsgnode.h>
 #include <QtQuick/qsgflatcolormaterial.h>
+#include <iostream>
 
 class Shader : public QSGMaterialShader
 {
@@ -37,18 +38,7 @@ public:
         m_id_opacity = program()->uniformLocation("opacity");
     }
 
-    void updateState(const RenderState &state, QSGMaterial *newMaterial, QSGMaterial *oldMaterial)
-    {
-        Q_ASSERT(program()->isLinked());
-        if (state.isMatrixDirty())
-            program()->setUniformValue(m_id_matrix, state.combinedMatrix());
-        if (state.isOpacityDirty())
-            program()->setUniformValue(m_id_opacity, state.opacity());
-        //glEnable( GL_POINT_SMOOTH );
-        glBlendFunc(GL_ONE, GL_ONE);
-        //glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-        glPointSize(1.8);
-    }
+    void updateState(const RenderState &state, QSGMaterial *newMaterial, QSGMaterial *oldMaterial);
 
     void deactivate() {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -65,12 +55,28 @@ public:
     QSGMaterialType *type() const { static QSGMaterialType type; return &type; }
     QSGMaterialShader *createShader() const { return new Shader; }
     QSGMaterial::Flags  flags() const { return QSGMaterial::Blending; }
+
+    QMatrix4x4 transformation;
 };
+
+void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSGMaterial *oldMaterial)
+{
+    Q_ASSERT(program()->isLinked());
+    
+    Material* m = static_cast<Material*>(newMaterial);
+    program()->setUniformValue(m_id_matrix, state.combinedMatrix()*m->transformation);
+    
+    if (state.isOpacityDirty()) {
+        program()->setUniformValue(m_id_opacity, state.opacity());
+    }
+
+    glBlendFunc(GL_ONE, GL_ONE);
+    //glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+    glPointSize(1.8);
+}
 
 PhosphorRender::PhosphorRender(QQuickItem *parent)
     : QQuickItem(parent)
-    , m_p(0)
-    , m_segmentCount(100000)
 {
     setFlag(ItemHasContents, true);
 }
@@ -79,70 +85,45 @@ PhosphorRender::~PhosphorRender()
 {
 }
 
-void PhosphorRender::setP(qreal p)
-{
-    if (p == m_p)
-        return;
-
-    m_p = p;
-    emit pChanged(p);
-    update();
-}
-
-void PhosphorRender::setSegmentCount(int count)
-{
-    if (m_segmentCount == count)
-        return;
-
-    m_segmentCount = count;
-    emit segmentCountChanged(count);
-    update();
-}
-
 QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
+    if (!m_buffer) {
+        return 0;
+    }
+
     QSGGeometryNode *node = 0;
     QSGGeometry *geometry = 0;
+    Material *material = 0;
+
+    unsigned n_points = m_buffer->count_points_between(m_xmin, m_xmax);
 
     if (!oldNode) {
         node = new QSGGeometryNode;
-        geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), m_segmentCount);
+        geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), n_points);
         geometry->setLineWidth(2);
         geometry->setDrawingMode(GL_POINTS);
         node->setGeometry(geometry);
         node->setFlag(QSGNode::OwnsGeometry);
-        Material *material = new Material;
+        material = new Material;
         material->setFlag(QSGMaterial::Blending);
-        //material->setColor(QColor(255, 0, 0));
         node->setMaterial(material);
         node->setFlag(QSGNode::OwnsMaterial);
     } else {
         node = static_cast<QSGGeometryNode *>(oldNode);
         geometry = node->geometry();
-        geometry->allocate(m_segmentCount);
+        geometry->allocate(n_points);
+        material = static_cast<Material*>(node->material());
     }
 
     QRectF bounds = boundingRect();
-    QSGGeometry::Point2D *vertices = geometry->vertexDataAsPoint2D();
-    for (int i = 0; i < m_segmentCount; ++i) {
-        qreal t = i / qreal(m_segmentCount - 1);
 
-        float x = bounds.x() + t * bounds.width() + rand()/(float)RAND_MAX * 3 - 1;
-        float y;
-
-        if (t < 0.3) {
-            y = sinf(t*5000.0*(p()+0.01));
-        } else if (t < 0.7) {
-            y = fmod(t*2000.0*(p()+0.01), 2) - 1.0;
-        } else {
-            y = (fmod(t*2000.0*(p()+0.01), 2) >= 1) * 2 - 1.0;
-        }
-
-        y = bounds.y() + 20 + (y + 1)/2*(bounds.height()-20)+ rand()/(float)RAND_MAX - 1;
-
-        vertices[i].set(x, y);
-    }
+    material->transformation.setToIdentity();
+    material->transformation.scale(bounds.width()/(m_xmax - m_xmin), bounds.height()/(m_ymin - m_ymax));
+    material->transformation.translate(-m_xmin, m_ymin);
+    
+    m_buffer->to_vertex_data(m_xmin, m_xmax, geometry->vertexDataAsPoint2D(), n_points);
     node->markDirty(QSGNode::DirtyGeometry);
 
     return node;
 }
+
