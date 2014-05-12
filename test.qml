@@ -36,11 +36,36 @@ Window {
 
             pointSize: sizeSlider.value
 
-            xmin: 0
-            xmax: 1
+            xmin: timeline_flickable.xwin_min
+            xmax: timeline_flickable.xwin_max
             ymin: -1
             ymax: 1
         }
+
+         MouseArea {
+            anchors.fill: parent
+            anchors.margins: 20
+
+            onWheel: {
+                var s = Math.pow(1.15, wheel.angleDelta.y/120)
+                timeline_flickable.xscale *= s
+                timeline_flickable.contentX = s * (timeline_flickable.contentX + wheel.x) - wheel.x
+            }
+
+            Flickable {
+                id: timeline_flickable
+
+                flickableDirection: Flickable.HorizontalFlick
+                contentWidth: xscale
+
+                property real xscale: 10 * 640
+                property real xwin_min: contentX / xscale
+                property real xwin_max: (contentX + width) / xscale
+
+                anchors.fill: parent
+            }
+        }
+
 	}
 
      Slider {
@@ -48,11 +73,15 @@ Window {
 
         Layout.fillWidth: true
 
-        maximumValue: 10
+        maximumValue: 100
         minimumValue: 0
-        value: 1.8
+        value: 2
     }
 
+    RowLayout {
+        Text { text: timeline_flickable.xwin_min }
+        Text { text: timeline_flickable.xwin_max }
+    }
 }
 
     /*FastBlur {
