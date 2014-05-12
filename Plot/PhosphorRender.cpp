@@ -19,9 +19,13 @@ public:
 
     const char *fragmentShader() const {
         return
-        "uniform lowp float opacity;                            \n"
-        "void main() {                                          \n"
-        "    gl_FragColor = vec4(0.03, 0.3, 0.03, 1) * opacity; \n"
+        "#version 120 \n"
+        "uniform lowp float opacity;"
+        "void main() {"
+        "    float dist = length(gl_PointCoord - vec2(0.5))*2;"
+        "    gl_FragColor = vec4(0.03, 0.3, 0.03, 1) * opacity * (1-dist);"
+       //"    if(dist > 1)"
+       //"        discard;"
         "}";
     }
 
@@ -72,8 +76,6 @@ void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSG
     }
 
     glBlendFunc(GL_ONE, GL_ONE);
-    //glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-    glPointSize(1.8);
     glPointSize(m->pointSize);
 }
 
