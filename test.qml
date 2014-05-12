@@ -28,10 +28,14 @@ Window {
             anchors.fill: parent
             anchors.margins: 20
 
+
             buffer: FloatBuffer{}
 
             Component.onCompleted: {
-                this.buffer.fill_sine(0.0001, 5, 1);
+                this.buffer.fill_sine(1/533/1000, 533, 1);
+                for (var i=0; i<0; i++) {
+                    this.buffer.jitter(0.01);
+                }
             }
 
             pointSize: sizeSlider.value
