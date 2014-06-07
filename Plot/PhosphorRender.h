@@ -28,7 +28,14 @@ public:
     update();
 
     FloatBuffer* buffer() const { return m_buffer; }
-    void setBuffer(FloatBuffer* buffer) { SETTER(buffer) }
+    void setBuffer(FloatBuffer* buffer) {
+        if (m_buffer && buffer != m_buffer) {
+            QObject::disconnect(m_buffer, &FloatBuffer::dataChanged, this, 0);
+        }
+        SETTER(buffer)
+        QObject::connect(m_buffer, &FloatBuffer::dataChanged, this, &PhosphorRender::update);
+
+    }
 
     double xmin() const { return m_xmin; }
     void setXmin(double xmin) { SETTER(xmin) }

@@ -16,6 +16,7 @@ void FloatBuffer::fill_sine(float t, float freq, float len) {
 	for (unsigned i=0; i<samples; i++) {
 		data[i] = sinf(M_PI * freq * secondsPerSample * i);
 	}
+	Q_EMIT dataChanged();
 }
 
 void FloatBuffer::fill_square(float t, float freq, float len) {
@@ -25,6 +26,7 @@ void FloatBuffer::fill_square(float t, float freq, float len) {
 	for (unsigned i=0; i<samples; i++) {
 		data[i] = (fmod(i*secondsPerSample*freq*2, 2) >= 1)*2.0 - 1.0;
 	}
+	Q_EMIT dataChanged();
 }
 
 void FloatBuffer::fill_sawtooth(float t, float freq, float len) {
@@ -34,10 +36,12 @@ void FloatBuffer::fill_sawtooth(float t, float freq, float len) {
 	for (unsigned i=0; i<samples; i++) {
 		data[i] = fmod(i*secondsPerSample*freq*2, 2) - 1.0;
 	}
+	Q_EMIT dataChanged();
 }
 
 void FloatBuffer::jitter(float amount) {
 	for (unsigned i=0; i<data.size(); i++) {
 		data[i] += (rand()/(float)RAND_MAX - 0.5) * amount;
 	}
+	Q_EMIT dataChanged();
 }

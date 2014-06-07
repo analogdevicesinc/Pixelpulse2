@@ -34,6 +34,7 @@ public:
 
 signals:
 	void durationChanged(qreal duration);
+	void dataChanged();
 
 public slots:
     QObject * getObject() {

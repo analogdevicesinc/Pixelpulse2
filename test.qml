@@ -85,6 +85,11 @@ Window {
     RowLayout {
         Text { text: timeline_flickable.xwin_min }
         Text { text: timeline_flickable.xwin_max }
+        Button {
+            Layout.alignment: Qt.AlignRight
+            text: "Jitter"
+            onClicked: line.buffer.jitter(0.1)
+        }
     }
 }
 
