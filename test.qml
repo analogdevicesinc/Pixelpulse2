@@ -32,7 +32,7 @@ Window {
             buffer: FloatBuffer{}
 
             Component.onCompleted: {
-                this.buffer.fill_sine(1/533/1000, 533, 1);
+                this.buffer.fillSine(1/533/1000, 533, 1);
                 for (var i=0; i<0; i++) {
                     this.buffer.jitter(0.01);
                 }

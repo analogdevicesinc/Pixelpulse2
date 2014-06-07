@@ -12,24 +12,26 @@ class FloatBuffer : public QObject
 public:
     FloatBuffer(QObject *parent = 0);
 
-	unsigned count_points_between(double start, double end) {
-		return time_to_index(end) - time_to_index(start);
+	unsigned countPointsBetween(double start, double end) {
+		return timeToIndex(end) - timeToIndex(start);
 	}
 
-	void to_vertex_data(double start, double end, QSGGeometry::Point2D *vertices, unsigned n_verticies) {
-		unsigned i_min = time_to_index(start);
-		unsigned i_max = time_to_index(end);
+	void toVertexData(double start, double end, QSGGeometry::Point2D *vertices, unsigned n_verticies) {
+		unsigned i_min = timeToIndex(start);
+		unsigned i_max = timeToIndex(end);
 
 		for (unsigned i=i_min, j=0; i<i_max && j<n_verticies; i++, j++) {
-			vertices[j].set(index_to_time(i), data[i]);
+			vertices[j].set(indexToTime(i), m_data[i]);
 		}
 	}
 
-	qreal duration();
+	qreal duration() {
+		return m_data.size() * m_secondsPerSample;
+	}
 
-	Q_INVOKABLE void fill_sine(float t, float freq, float len);
-	Q_INVOKABLE void fill_square(float t, float freq, float len);
-	Q_INVOKABLE void fill_sawtooth(float t, float freq, float len);
+	Q_INVOKABLE void fillSine(float t, float freq, float len);
+	Q_INVOKABLE void fillSquare(float t, float freq, float len);
+	Q_INVOKABLE void fillSawtooth(float t, float freq, float len);
 	Q_INVOKABLE void jitter(float amount);
 
 signals:
@@ -42,17 +44,17 @@ public slots:
     }
 
 private:
-	float secondsPerSample;
-	std::vector<float> data;
+	float m_secondsPerSample;
+	std::vector<float> m_data;
 
-	unsigned time_to_index(double time) {
+	unsigned timeToIndex(double time) {
 		if (time < 0) time = 0;
-		unsigned t = time / secondsPerSample;
-		if (t > data.size()) return data.size();
+		unsigned t = time / m_secondsPerSample;
+		if (t > m_data.size()) return m_data.size();
 		return t;
 	}
 
-	double index_to_time(unsigned index) {
-		return index*secondsPerSample;
+	double indexToTime(unsigned index) {
+		return index * m_secondsPerSample;
 	}
 };

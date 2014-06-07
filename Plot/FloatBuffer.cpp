@@ -2,46 +2,42 @@
 
 FloatBuffer::FloatBuffer(QObject *parent):
 	QObject(parent),
-	secondsPerSample(0.00001)
+	m_secondsPerSample(0.00001)
 	{}
 
-qreal FloatBuffer::duration() {
-	return data.size() * secondsPerSample;
-}
-
-void FloatBuffer::fill_sine(float t, float freq, float len) {
-	secondsPerSample = t;
-	unsigned samples = round(len/secondsPerSample);
-	data.resize(samples);
+void FloatBuffer::fillSine(float t, float freq, float len) {
+	m_secondsPerSample = t;
+	unsigned samples = round(len/m_secondsPerSample);
+	m_data.resize(samples);
 	for (unsigned i=0; i<samples; i++) {
-		data[i] = sinf(M_PI * freq * secondsPerSample * i);
+		m_data[i] = sinf(M_PI * freq * m_secondsPerSample * i);
 	}
 	Q_EMIT dataChanged();
 }
 
-void FloatBuffer::fill_square(float t, float freq, float len) {
-	secondsPerSample = t;
-	unsigned samples = round(len/secondsPerSample);
-	data.resize(samples);
+void FloatBuffer::fillSquare(float t, float freq, float len) {
+	m_secondsPerSample = t;
+	unsigned samples = round(len/m_secondsPerSample);
+	m_data.resize(samples);
 	for (unsigned i=0; i<samples; i++) {
-		data[i] = (fmod(i*secondsPerSample*freq*2, 2) >= 1)*2.0 - 1.0;
+		m_data[i] = (fmod(i*m_secondsPerSample*freq*2, 2) >= 1)*2.0 - 1.0;
 	}
 	Q_EMIT dataChanged();
 }
 
-void FloatBuffer::fill_sawtooth(float t, float freq, float len) {
-	secondsPerSample = t;
-	unsigned samples = round(len/secondsPerSample);
-	data.resize(samples);
+void FloatBuffer::fillSawtooth(float t, float freq, float len) {
+	m_secondsPerSample = t;
+	unsigned samples = round(len/m_secondsPerSample);
+	m_data.resize(samples);
 	for (unsigned i=0; i<samples; i++) {
-		data[i] = fmod(i*secondsPerSample*freq*2, 2) - 1.0;
+		m_data[i] = fmod(i*m_secondsPerSample*freq*2, 2) - 1.0;
 	}
 	Q_EMIT dataChanged();
 }
 
 void FloatBuffer::jitter(float amount) {
-	for (unsigned i=0; i<data.size(); i++) {
-		data[i] += (rand()/(float)RAND_MAX - 0.5) * amount;
+	for (unsigned i=0; i<m_data.size(); i++) {
+		m_data[i] += (rand()/(float)RAND_MAX - 0.5) * amount;
 	}
 	Q_EMIT dataChanged();
 }

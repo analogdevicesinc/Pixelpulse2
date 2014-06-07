@@ -99,7 +99,7 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     QSGGeometry *geometry = 0;
     Material *material = 0;
 
-    unsigned n_points = m_buffer->count_points_between(m_xmin, m_xmax);
+    unsigned n_points = m_buffer->countPointsBetween(m_xmin, m_xmax);
 
     if (!oldNode) {
         node = new QSGGeometryNode;
@@ -127,7 +127,7 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
 
     material->pointSize = m_pointSize;
     
-    m_buffer->to_vertex_data(m_xmin, m_xmax, geometry->vertexDataAsPoint2D(), n_points);
+    m_buffer->toVertexData(m_xmin, m_xmax, geometry->vertexDataAsPoint2D(), n_points);
     node->markDirty(QSGNode::DirtyGeometry);
 
     return node;
