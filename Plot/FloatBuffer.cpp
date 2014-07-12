@@ -2,11 +2,13 @@
 
 FloatBuffer::FloatBuffer(QObject *parent):
 	QObject(parent),
-	m_secondsPerSample(0.00001)
+	m_secondsPerSample(0.00001),
+	m_split(0)
 	{}
 
 void FloatBuffer::fillSine(float t, float freq, float len) {
 	m_secondsPerSample = t;
+	m_split = 0;
 	unsigned samples = round(len/m_secondsPerSample);
 	m_data.resize(samples);
 	for (unsigned i=0; i<samples; i++) {
@@ -17,6 +19,7 @@ void FloatBuffer::fillSine(float t, float freq, float len) {
 
 void FloatBuffer::fillSquare(float t, float freq, float len) {
 	m_secondsPerSample = t;
+	m_split = 0;
 	unsigned samples = round(len/m_secondsPerSample);
 	m_data.resize(samples);
 	for (unsigned i=0; i<samples; i++) {
@@ -27,6 +30,7 @@ void FloatBuffer::fillSquare(float t, float freq, float len) {
 
 void FloatBuffer::fillSawtooth(float t, float freq, float len) {
 	m_secondsPerSample = t;
+	m_split = 0;
 	unsigned samples = round(len/m_secondsPerSample);
 	m_data.resize(samples);
 	for (unsigned i=0; i<samples; i++) {

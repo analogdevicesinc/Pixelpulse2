@@ -21,7 +21,7 @@ public:
 		unsigned i_max = timeToIndex(end);
 
 		for (unsigned i=i_min, j=0; i<i_max && j<n_verticies; i++, j++) {
-			vertices[j].set(indexToTime(i), m_data[i]);
+			vertices[j].set(indexToTime(i), m_data[wrapIndex(i)]);
 		}
 	}
 
@@ -33,6 +33,11 @@ public:
 	Q_INVOKABLE void fillSquare(float t, float freq, float len);
 	Q_INVOKABLE void fillSawtooth(float t, float freq, float len);
 	Q_INVOKABLE void jitter(float amount);
+
+	Q_INVOKABLE void rotate(unsigned samples) {
+		m_split = (m_split + samples) % m_data.size();
+		dataChanged();
+	}
 
 signals:
 	void durationChanged(qreal duration);
@@ -46,6 +51,19 @@ public slots:
 private:
 	float m_secondsPerSample;
 	std::vector<float> m_data;
+	unsigned m_split;
+
+	unsigned unwrapIndex(unsigned index) {
+		if (index >= m_split) {
+			return (index - m_split);
+		} else {
+			return (index + (m_data.size() - m_split));
+		}
+	}
+
+	unsigned wrapIndex(unsigned index) {
+		return (index + m_split) % m_data.size();
+	}
 
 	unsigned timeToIndex(double time) {
 		if (time < 0) time = 0;

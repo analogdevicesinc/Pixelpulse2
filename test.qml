@@ -38,12 +38,17 @@ Window {
                 }
             }
 
+            Timer {
+                interval: 20; running: true; repeat: true
+                onTriggered: line.buffer.rotate(50);
+            }
+
             pointSize: sizeSlider.value
 
             xmin: timeline_flickable.xwin_min
             xmax: timeline_flickable.xwin_max
-            ymin: -1
-            ymax: 1
+            ymin: -1.1
+            ymax: 1.1
         }
 
          MouseArea {
@@ -89,6 +94,11 @@ Window {
             Layout.alignment: Qt.AlignRight
             text: "Jitter"
             onClicked: line.buffer.jitter(0.1)
+        }
+        Button {
+            Layout.alignment: Qt.AlignRight
+            text: "Rotate"
+            onClicked: line.buffer.rotate(1000)
         }
     }
 }
