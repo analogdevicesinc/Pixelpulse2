@@ -7,6 +7,11 @@ ApplicationWindow {
 	width: 1024
 	height: 768
 	title: "signalspec"
+	
+	Rectangle {
+		anchors.fill: parent
+		color: '#0c0c0c'
+	}
 
 	RowLayout {
 		anchors.fill: parent
@@ -18,14 +23,28 @@ ApplicationWindow {
 			ColumnLayout {
 				anchors.fill: parent
 				id: signals_column
+				
+				spacing: 2
 
 				RowLayout {
 					Layout.fillWidth: true
+					
+					spacing: 2
 
 					Rectangle {
 						id: toolbar
 						width: 320
-						height: 48
+						height: 56
+						
+						radius: 2
+						
+						gradient: Gradient {
+							GradientStop { position: 0.0; color: '#565666' }
+							GradientStop { position: 0.15; color: '#6a6a7d' }
+							GradientStop { position: 0.5; color: '#5a5a6a' }
+							GradientStop { position: 1.0; color: '#585868' }
+						}
+						
 						ToolButton {
 							text: "Config"
 						}
@@ -38,24 +57,29 @@ ApplicationWindow {
 						id: timeline_header
 						Layout.fillWidth: true
 					}
-				}
+        }
 
 				Rectangle {
 					Layout.fillHeight: true
 					Layout.fillWidth: true
-					color: "red"
+                    color: "#232323"
 				}
 			}
 
-			Flickable {
-				id: timeline_flickable
+			TimelineFlickable {
+				id: xaxis
 				anchors.fill: parent
-				anchors.leftMargin: toolbar.width + 4
-				anchors.rightMargin: 4
-				Rectangle {
+				anchors.leftMargin: toolbar.width + 2
+				anchors.rightMargin: 2
+				/*Rectangle {
 					anchors.fill: parent
 					color: "blue"
 					opacity: 0.5
+				}*/
+				
+				Component.onCompleted: {
+					setBounds(-1, 1)
+					setVisible(-0.5, 0.5)
 				}
 			}
 		}
