@@ -57,12 +57,12 @@ ApplicationWindow {
 						id: timeline_header
 						Layout.fillWidth: true
 					}
-        }
+				}
 
 				Rectangle {
 					Layout.fillHeight: true
 					Layout.fillWidth: true
-                    color: "#232323"
+					color: "#232323"
 				}
 			}
 

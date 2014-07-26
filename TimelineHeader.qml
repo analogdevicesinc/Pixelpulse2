@@ -46,7 +46,8 @@ Rectangle {
 	property real step: majorStep / 10
 	property real start: Math.ceil(xaxis.visibleMin / step)
   
-  property real unitScale: Math.pow(10, (pow - 2) % 3 + 1)
+  property real unitPow: (pow - 2) % 3 + 1
+  property real unitScale: Math.pow(10, unitPow)
   property string unit: unitFor(pow)
   
   function unitFor(pow) {
@@ -74,7 +75,7 @@ Rectangle {
         height: isMajor ? 40 : 12
         
         Text {
-          text: isMajor ? (xval + ' s') : ('+' + relVal.toPrecision(2) + unit)
+          text: isMajor ? (xval.toFixed(Math.max(-pow, 0)) + ' s') : ('+' + relVal.toFixed((unitPow==-1)?1:0) + unit)
           color: 'white'
           anchors.left: parent.left
           anchors.leftMargin: isMajor ? 6 : -4
