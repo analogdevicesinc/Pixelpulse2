@@ -58,12 +58,25 @@ ApplicationWindow {
 						Layout.fillWidth: true
 					}
 				}
-
-				Rectangle {
+				
+				ColumnLayout {
 					Layout.fillHeight: true
 					Layout.fillWidth: true
-					color: "#232323"
-				}
+					
+					SignalRow {
+						xaxis: xaxis
+						test: 'triangle'
+						Layout.fillHeight: true
+						Layout.fillWidth: true
+					}
+					
+					SignalRow {
+						xaxis: xaxis
+						test: 'sine'
+						Layout.fillHeight: true
+						Layout.fillWidth: true
+					}
+				}	
 			}
 
 			TimelineFlickable {
