@@ -6,24 +6,18 @@ RowLayout {
   Layout.fillHeight: true
   property var xaxis
   property var test
-  
+
   Rectangle {
     width: 320
     Layout.fillHeight: true
-    
+
     color: '#444444'
   }
-  
+
   PhosphorRender {
       Layout.fillHeight: true
       Layout.fillWidth: true
-      
-      Rectangle {
-        color: 'green'
-        opacity: 0.1
-        anchors.fill: parent
-      }
-      
+
       id: line
       anchors.margins: 20
 
@@ -40,7 +34,7 @@ RowLayout {
           }
       }
 
-      pointSize: 2
+      pointSize: Math.max(2, Math.min(xaxis.xscale/200000, 20))
 
       xmin: xaxis.visibleMin
       xmax: xaxis.visibleMax
