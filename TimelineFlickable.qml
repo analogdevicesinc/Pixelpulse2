@@ -4,7 +4,7 @@ MouseArea {
     property real boundMin: 0
     property real boundMax: 1
     
-    property real maxScale: 100000
+    property real maxScale: 100000000
     property real xscale: 1 // pixels per unit
     
     readonly property real visibleMin: boundMin + timeline_flickable.contentX / xscale
