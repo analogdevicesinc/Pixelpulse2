@@ -67,10 +67,10 @@ public:
 void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSGMaterial *oldMaterial)
 {
     Q_ASSERT(program()->isLinked());
-    
+
     Material* m = static_cast<Material*>(newMaterial);
     program()->setUniformValue(m_id_matrix, state.combinedMatrix()*m->transformation);
-    
+
     if (state.isOpacityDirty()) {
         program()->setUniformValue(m_id_opacity, state.opacity());
     }
@@ -126,10 +126,9 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     material->transformation.translate(-m_xmin, m_ymin);
 
     material->pointSize = m_pointSize;
-    
+
     m_buffer->toVertexData(m_xmin, m_xmax, geometry->vertexDataAsPoint2D(), n_points);
     node->markDirty(QSGNode::DirtyGeometry);
 
     return node;
 }
-

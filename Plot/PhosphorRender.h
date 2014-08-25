@@ -11,7 +11,7 @@ class PhosphorRender : public QQuickItem
     Q_PROPERTY(double xmax READ xmax WRITE setXmax NOTIFY xmaxChanged)
     Q_PROPERTY(double ymin READ ymin WRITE setYmin NOTIFY yminChanged)
     Q_PROPERTY(double ymax READ ymax WRITE setYmax NOTIFY ymaxChanged)
-    
+
     Q_PROPERTY(double pointSize READ pointSize WRITE setPointSize NOTIFY pointSizeChanged)
 
     

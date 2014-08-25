@@ -6,7 +6,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 
 Window {
-	
+
     width: 640
     height: 640
 
