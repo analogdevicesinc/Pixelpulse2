@@ -91,8 +91,8 @@ ApplicationWindow {
 				}*/
 
 				Component.onCompleted: {
-					setBounds(-1, 1)
-					setVisible(-0.5, 0.5)
+					setBounds(0, 1)
+					setVisible(0, 0.5)
 				}
 			}
 		}

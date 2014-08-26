@@ -19,7 +19,7 @@ MouseArea {
     }
 
     function setVisible(min, max) {
-      xscale = (max - min) * timeline_flickable.width
+      xscale = timeline_flickable.width / (max - min)
       timeline_flickable.contentX = xscale*(min - boundMin)
     }
 
