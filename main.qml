@@ -2,11 +2,23 @@ import QtQuick 2.1
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
+import SMU 1.0
 
 ApplicationWindow {
 	width: 1024
 	height: 768
 	title: "signalspec"
+
+	Session {
+		id: session
+
+		Component.onCompleted: {
+			session.openAllDevices()
+			console.log(session.devices.length)
+			console.log(session.devices[0].channels.length)
+			console.log(session.devices[0].channels[0].signals.length)
+		}
+	}
 
 	Rectangle {
 		anchors.fill: parent
@@ -55,6 +67,7 @@ ApplicationWindow {
 
 					TimelineHeader {
 						id: timeline_header
+						xaxis: timeline_xaxis
 						Layout.fillWidth: true
 					}
 				}
@@ -63,24 +76,29 @@ ApplicationWindow {
 					Layout.fillHeight: true
 					Layout.fillWidth: true
 
-					SignalRow {
-						xaxis: xaxis
-						test: 'triangle'
-						Layout.fillHeight: true
-						Layout.fillWidth: true
-					}
+					Repeater {
+						model: session.devices
 
-					SignalRow {
-						xaxis: xaxis
-						test: 'sine'
-						Layout.fillHeight: true
-						Layout.fillWidth: true
+						Repeater {
+							model: channels
+
+							Repeater {
+								model: modelData.signals
+
+								SignalRow {
+									xaxis: timeline_xaxis
+									test: 'triangle'
+									Layout.fillHeight: true
+									Layout.fillWidth: true
+								}
+							}
+						}
 					}
 				}
 			}
 
 			TimelineFlickable {
-				id: xaxis
+				id: timeline_xaxis
 				anchors.fill: parent
 				anchors.leftMargin: toolbar.width + 2
 				anchors.rightMargin: 2

@@ -41,6 +41,7 @@ Rectangle {
 		}
 	}*/
 
+  property var xaxis
   property real min_spacing: 70
   property real pow: Math.floor(Math.log(min_spacing * 100 / xaxis.xscale) / Math.LN10)
   property real majorStep: Math.pow(10, pow)

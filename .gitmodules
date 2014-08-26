@@ -1,0 +1,3 @@
+[submodule "libsmu"]
+	path = libsmu
+	url = https://github.com/signalspec/libsmu
