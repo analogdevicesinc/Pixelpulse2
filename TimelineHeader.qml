@@ -3,7 +3,6 @@ import QtQuick 2.1
 Rectangle {
   id: timeline
 	anchors.top: parent.top
-	height: 56
 	color: "#424242"
 	clip: true
 

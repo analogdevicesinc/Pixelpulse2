@@ -40,35 +40,23 @@ ApplicationWindow {
 
 				RowLayout {
 					Layout.fillWidth: true
+					Layout.minimumHeight: 56
+					Layout.maximumHeight: 56
 
 					spacing: 2
 
-					Rectangle {
+					Toolbar {
 						id: toolbar
 						width: 320
-						height: 56
-
-						radius: 2
-
-						gradient: Gradient {
-							GradientStop { position: 0.0; color: '#565666' }
-							GradientStop { position: 0.15; color: '#6a6a7d' }
-							GradientStop { position: 0.5; color: '#5a5a6a' }
-							GradientStop { position: 1.0; color: '#585868' }
-						}
-
-						ToolButton {
-							text: "Config"
-						}
-						ToolButton {
-							text: "Start"
-						}
+						Layout.fillHeight: true
 					}
 
 					TimelineHeader {
 						id: timeline_header
-						xaxis: timeline_xaxis
 						Layout.fillWidth: true
+						Layout.fillHeight: true
+
+						xaxis: timeline_xaxis
 					}
 				}
 
