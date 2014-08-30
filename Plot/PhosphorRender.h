@@ -1,4 +1,6 @@
-﻿#include <QtQuick/QQuickItem>
+#pragma once
+
+#include <QtQuick/QQuickItem>
 #include "FloatBuffer.h"
 
 class PhosphorRender : public QQuickItem
@@ -14,7 +16,7 @@ class PhosphorRender : public QQuickItem
 
     Q_PROPERTY(double pointSize READ pointSize WRITE setPointSize NOTIFY pointSizeChanged)
 
-    
+
 public:
     PhosphorRender(QQuickItem *parent = 0);
     ~PhosphorRender();

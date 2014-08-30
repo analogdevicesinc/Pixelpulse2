@@ -1,5 +1,18 @@
 #include "SMU.h"
-#include "../libsmu/libsmu.hpp"
+#include "libsmu/libsmu.hpp"
+#include "Plot/PhosphorRender.h"
+#include "Plot/FloatBuffer.h"
+
+void registerTypes() {
+    qmlRegisterType<SessionItem>();
+    qmlRegisterType<DeviceItem>();
+    qmlRegisterType<ChannelItem>();
+    qmlRegisterType<SignalItem>();
+    qmlRegisterType<ModeItem>();
+
+    qmlRegisterType<PhosphorRender>("Plot", 1, 0, "PhosphorRender");
+    qmlRegisterType<FloatBuffer>("Plot", 1, 0, "FloatBuffer");
+}
 
 SessionItem::SessionItem():
 m_session(std::unique_ptr<Session>(new Session))

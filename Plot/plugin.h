@@ -1,3 +1,4 @@
+#pragma once
 #include <QQmlExtensionPlugin>
 
 #include "PhosphorRender.h"

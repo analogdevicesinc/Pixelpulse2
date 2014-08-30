@@ -2,22 +2,15 @@ import QtQuick 2.1
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
-import SMU 1.0
 
 ApplicationWindow {
 	width: 1024
 	height: 768
 	title: "signalspec"
+	visible: true
 
-	Session {
-		id: session
-
-		Component.onCompleted: {
-			session.openAllDevices()
-			console.log(session.devices.length)
-			console.log(session.devices[0].channels.length)
-			console.log(session.devices[0].channels[0].signals.length)
-		}
+	Component.onCompleted: {
+		console.log(session);
 	}
 
 	Rectangle {

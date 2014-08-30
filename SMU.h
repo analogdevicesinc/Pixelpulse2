@@ -1,4 +1,5 @@
-﻿#include <QtQuick/QQuickItem>
+#pragma once
+#include <QtQuick/QQuickItem>
 #include <memory>
 
 class SessionItem;
@@ -75,3 +76,5 @@ Q_OBJECT
 public:
   ModeItem();
 };
+
+void registerTypes();
