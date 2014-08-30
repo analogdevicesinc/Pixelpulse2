@@ -1,6 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
+import QtQuick.Controls.Styles 1.1
 
 Rectangle {
   radius: 2
@@ -12,10 +13,41 @@ Rectangle {
     GradientStop { position: 1.0; color: '#585868' }
   }
 
-  ToolButton {
-    text: "Config"
+  Component {
+    id: btnStyle
+    ButtonStyle {
+      background: Rectangle {
+        implicitWidth: 56
+        opacity: control.pressed ? 0.3 : control.checked ? 0.2 : 0.01
+        color: 'white'
+      }
+    }
   }
-  ToolButton {
-    text: "Start"
+
+  RowLayout {
+    anchors.fill: parent
+
+    Button {
+      tooltip: "Menu"
+      Layout.fillHeight: true
+      style: btnStyle
+
+      menu: Menu {
+        MenuItem { text: "About" }
+        MenuItem { text: "Exit" }
+      }
+      iconSource: './icons/gear.png'
+    }
+
+    Button {
+      tooltip: "Start"
+      checkable: true
+      Layout.fillHeight: true
+      Layout.alignment: Qt.AlignRight
+      style: btnStyle
+      iconSource: checked ? './icons/pause.png' : './icons/play.png'
+    }
   }
+
+
 }
