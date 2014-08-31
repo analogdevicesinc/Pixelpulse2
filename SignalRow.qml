@@ -6,11 +6,11 @@ RowLayout {
   Layout.fillHeight: true
   property var xaxis
   property var test
+  property var signal
 
   Rectangle {
     width: 320
     Layout.fillHeight: true
-
     color: '#444444'
   }
 
@@ -21,18 +21,7 @@ RowLayout {
       id: line
       anchors.margins: 20
 
-      buffer: FloatBuffer{}
-
-      Component.onCompleted: {
-          if (test == 'sine') {
-            this.buffer.fillSine(1/533/1000, 533, 1);
-          } else {
-            this.buffer.fillSawtooth(1/533/1000, 333, 1);
-          }
-          for (var i=0; i<0; i++) {
-              this.buffer.jitter(0.01);
-          }
-      }
+      buffer: signal.buffer
 
       pointSize: Math.max(2, Math.min(xaxis.xscale/200000, 20))
 

@@ -46,6 +46,12 @@ Rectangle {
       Layout.alignment: Qt.AlignRight
       style: btnStyle
       iconSource: checked ? './icons/pause.png' : './icons/play.png'
+
+      onClicked: {
+        session.sampleRate = 10000
+        session.sampleCount = 10000
+        session.start();
+      }
     }
   }
 

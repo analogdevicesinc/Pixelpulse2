@@ -15,14 +15,17 @@ void registerTypes() {
 }
 
 SessionItem::SessionItem():
-m_session(std::unique_ptr<Session>(new Session))
+m_session(std::unique_ptr<Session>(new Session)),
+m_sample_rate(0),
+m_sample_count(0)
 {
 
 }
 
 SessionItem::~SessionItem() {}
 
-void SessionItem::openAllDevices() {
+void SessionItem::openAllDevices()
+{
   m_session->update_available_devices();
   for (auto i: m_session->m_available_devices) {
 		auto dev = m_session->add_device(&*i);
@@ -30,6 +33,35 @@ void SessionItem::openAllDevices() {
 	}
 
   devicesChanged();
+}
+
+void SessionItem::start()
+{
+  m_active = true;
+  activeChanged();
+  m_session->configure(m_sample_rate);
+
+  // Configure buffers
+  for (auto dev: m_devices) {
+    for (auto chan: dev->m_channels) {
+      for (auto sig: chan->m_signals) {
+        sig->m_buffer->allocate(m_sample_count);
+        sig->m_signal->measure_buffer(sig->m_buffer->data(), m_sample_count);
+      }
+    }
+  }
+
+  m_session->run(m_sample_count);
+  m_active = false;
+  activeChanged();
+
+  for (auto dev: m_devices) {
+    for (auto chan: dev->m_channels) {
+      for (auto sig: chan->m_signals) {
+        sig->m_buffer->setValid(0, m_sample_count);
+      }
+    }
+  }
 }
 
 DeviceItem::DeviceItem(Device* dev):
@@ -54,7 +86,8 @@ m_device(dev), m_index(ch_i)
 }
 
 SignalItem::SignalItem(Signal* sig):
-m_signal(sig)
+m_signal(sig),
+m_buffer(new FloatBuffer(this))
 {
   auto sig_info = sig->info();
 }

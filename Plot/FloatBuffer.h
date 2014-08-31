@@ -7,10 +7,9 @@
 class FloatBuffer : public QObject
 {
 	Q_OBJECT
-    Q_PROPERTY(qreal duration READ duration NOTIFY durationChanged)
 
 public:
-    FloatBuffer(QObject *parent = 0);
+	FloatBuffer(QObject *parent = 0);
 
 	unsigned countPointsBetween(double start, double end) {
 		return timeToIndex(end) - timeToIndex(start);
@@ -25,50 +24,54 @@ public:
 		}
 	}
 
-	qreal duration() {
-		return m_data.size() * m_secondsPerSample;
+	void allocate(unsigned length) {
+		m_data.resize(length);
+		if (m_length > length) {
+			m_length = length;
+			dataChanged();
+		}
 	}
 
-	Q_INVOKABLE void fillSine(float t, float freq, float len);
-	Q_INVOKABLE void fillSquare(float t, float freq, float len);
-	Q_INVOKABLE void fillSawtooth(float t, float freq, float len);
-	Q_INVOKABLE void jitter(float amount);
+	float* data() {
+		return m_data.data();
+	}
 
-	Q_INVOKABLE void rotate(unsigned samples) {
-		m_split = (m_split + samples) % m_data.size();
+	void setValid(unsigned start, unsigned length) {
+		m_start = start;
+		m_length = length;
 		dataChanged();
 	}
 
 signals:
-	void durationChanged(qreal duration);
 	void dataChanged();
 
 public slots:
-    QObject * getObject() {
-    	return new FloatBuffer();
-    }
+	QObject * getObject() {
+		return new FloatBuffer();
+	}
 
 private:
 	float m_secondsPerSample;
 	std::vector<float> m_data;
-	unsigned m_split;
+	size_t m_start;
+	size_t m_length;
 
 	unsigned unwrapIndex(unsigned index) {
-		if (index >= m_split) {
-			return (index - m_split);
+		if (index >= m_start) {
+			return (index - m_start);
 		} else {
-			return (index + (m_data.size() - m_split));
+			return (index + (m_data.size() - m_start));
 		}
 	}
 
 	unsigned wrapIndex(unsigned index) {
-		return (index + m_split) % m_data.size();
+		return (index + m_start) % m_data.size();
 	}
 
 	unsigned timeToIndex(double time) {
 		if (time < 0) time = 0;
 		unsigned t = time / m_secondsPerSample;
-		if (t > m_data.size()) return m_data.size();
+		if (t > m_length) return m_length;
 		return t;
 	}
 

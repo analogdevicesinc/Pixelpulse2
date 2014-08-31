@@ -9,10 +9,6 @@ ApplicationWindow {
 	title: "signalspec"
 	visible: true
 
-	Component.onCompleted: {
-		console.log(session);
-	}
-
 	Rectangle {
 		anchors.fill: parent
 		color: '#0c0c0c'
@@ -67,6 +63,7 @@ ApplicationWindow {
 								model: modelData.signals
 
 								SignalRow {
+									signal: modelData
 									xaxis: timeline_xaxis
 									test: 'triangle'
 									Layout.fillHeight: true
@@ -83,11 +80,6 @@ ApplicationWindow {
 				anchors.fill: parent
 				anchors.leftMargin: toolbar.width + 2
 				anchors.rightMargin: 2
-				/*Rectangle {
-					anchors.fill: parent
-					color: "blue"
-					opacity: 0.5
-				}*/
 
 				Component.onCompleted: {
 					setBounds(0, 1)
