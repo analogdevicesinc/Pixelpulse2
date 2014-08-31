@@ -123,7 +123,7 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
 
     material->transformation.setToIdentity();
     material->transformation.scale(bounds.width()/(m_xmax - m_xmin), bounds.height()/(m_ymin - m_ymax));
-    material->transformation.translate(-m_xmin, m_ymin);
+    material->transformation.translate(-m_xmin, -m_ymax);
 
     material->pointSize = m_pointSize;
 
