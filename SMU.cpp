@@ -37,6 +37,8 @@ void SessionItem::openAllDevices()
 
 void SessionItem::start()
 {
+  if (m_sample_rate == 0) return;
+
   m_active = true;
   activeChanged();
   m_session->configure(m_sample_rate);
@@ -45,6 +47,7 @@ void SessionItem::start()
   for (auto dev: m_devices) {
     for (auto chan: dev->m_channels) {
       for (auto sig: chan->m_signals) {
+        sig->m_buffer->setRate(1.0/m_sample_rate);
         sig->m_buffer->allocate(m_sample_count);
         sig->m_signal->measure_buffer(sig->m_buffer->data(), m_sample_count);
       }

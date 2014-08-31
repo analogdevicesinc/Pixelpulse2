@@ -24,6 +24,11 @@ public:
 		}
 	}
 
+	void setRate(float secondsPerSample) {
+		m_secondsPerSample = secondsPerSample;
+		dataChanged();
+	}
+
 	void allocate(unsigned length) {
 		m_data.resize(length);
 		if (m_length > length) {

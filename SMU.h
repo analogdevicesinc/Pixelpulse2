@@ -18,8 +18,8 @@ class SessionItem : public QObject {
   Q_OBJECT
   Q_PROPERTY(QQmlListProperty<DeviceItem> devices READ getDevices NOTIFY devicesChanged)
   Q_PROPERTY(bool active READ getActive NOTIFY activeChanged);
-  Q_PROPERTY(unsigned sampleRate MEMBER m_sample_rate);
-  Q_PROPERTY(unsigned sampleCount MEMBER m_sample_count);
+  Q_PROPERTY(unsigned sampleRate MEMBER m_sample_rate NOTIFY sampleRateChanged);
+  Q_PROPERTY(unsigned sampleCount MEMBER m_sample_count NOTIFY sampleCountChanged);
 
 public:
   SessionItem();
