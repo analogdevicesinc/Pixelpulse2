@@ -1,5 +1,6 @@
 #pragma once
 #include <QtQuick/QQuickItem>
+#include "libsmu/libsmu.hpp"
 #include <memory>
 
 class SessionItem;
@@ -7,10 +8,6 @@ class DeviceItem;
 class ChannelItem;
 class SignalItem;
 class ModeItem;
-
-class Session;
-class Device;
-class Signal;
 
 class FloatBuffer;
 
@@ -48,26 +45,28 @@ protected:
 class DeviceItem : public QObject {
   Q_OBJECT
   Q_PROPERTY(QQmlListProperty<ChannelItem> channels READ getChannels CONSTANT);
+  Q_PROPERTY(QString label READ getLabel CONSTANT);
 
 public:
   DeviceItem(Device*);
   QQmlListProperty<ChannelItem> getChannels() { return QQmlListProperty<ChannelItem>(this, m_channels); }
+  QString getLabel() const { return QString(m_device->info()->label); }
 
 protected:
   Device* const m_device;
-
   QList<ChannelItem*> m_channels;
-
   friend class SessionItem;
 };
 
 class ChannelItem : public QObject {
   Q_OBJECT
   Q_PROPERTY(QQmlListProperty<SignalItem> signals READ getSignals CONSTANT);
+  Q_PROPERTY(QString label READ getLabel CONSTANT);
 
 public:
   ChannelItem(Device*, unsigned index);
   QQmlListProperty<SignalItem> getSignals() { return QQmlListProperty<SignalItem>(this, m_signals); }
+  QString getLabel() const { return QString(m_device->channel_info(m_index)->label); }
 
 protected:
   Device* const m_device;
@@ -82,12 +81,18 @@ protected:
 class SignalItem : public QObject {
   Q_OBJECT
   Q_PROPERTY(FloatBuffer* buffer READ getBuffer CONSTANT);
+  Q_PROPERTY(QString label READ getLabel CONSTANT);
+  Q_PROPERTY(double min READ getMin CONSTANT);
+  Q_PROPERTY(double max READ getMax CONSTANT);
+  Q_PROPERTY(double resolution READ getResolution CONSTANT);
 
 public:
   SignalItem(Signal*);
-  FloatBuffer* getBuffer() const {
-    return m_buffer;
-  }
+  FloatBuffer* getBuffer() const { return m_buffer; }
+  QString getLabel() const { return QString(m_signal->info()->label); }
+  double getMin() const { return m_signal->info()->min; }
+  double getMax() const { return m_signal->info()->max; }
+  double getResolution() const { return m_signal->info()->resolution; }
 
 protected:
   Signal* const m_signal;

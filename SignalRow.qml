@@ -5,13 +5,17 @@ import Plot 1.0
 RowLayout {
   Layout.fillHeight: true
   property var xaxis
-  property var test
   property var signal
 
   Rectangle {
     width: 320
     Layout.fillHeight: true
     color: '#444444'
+
+    Text {
+      color: 'white'
+      text: signal.label
+    }
   }
 
   PhosphorRender {
@@ -27,7 +31,7 @@ RowLayout {
 
       xmin: xaxis.visibleMin
       xmax: xaxis.visibleMax
-      ymin: -1.1
-      ymax: 1.1
+      ymin: signal.min
+      ymax: signal.max
   }
 }

@@ -65,7 +65,6 @@ ApplicationWindow {
 								SignalRow {
 									signal: modelData
 									xaxis: timeline_xaxis
-									test: 'triangle'
 									Layout.fillHeight: true
 									Layout.fillWidth: true
 								}
