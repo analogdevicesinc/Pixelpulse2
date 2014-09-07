@@ -17,9 +17,10 @@ void registerTypes() {
 SessionItem::SessionItem():
 m_session(std::unique_ptr<Session>(new Session)),
 m_sample_rate(0),
-m_sample_count(0)
+m_sample_count(0),
+m_active(false)
 {
-
+  connect(this, &SessionItem::progress, this, &SessionItem::onProgress, Qt::QueuedConnection);
 }
 
 SessionItem::~SessionItem() {}
@@ -37,6 +38,7 @@ void SessionItem::openAllDevices()
 
 void SessionItem::start()
 {
+  if (m_active) return;
   if (m_sample_rate == 0) return;
 
   m_active = true;
@@ -54,7 +56,14 @@ void SessionItem::start()
     }
   }
 
-  m_session->run(m_sample_count);
+  m_session->start(m_sample_count, [this](){
+    emit progress();
+  });
+}
+
+void SessionItem::onProgress()
+{
+  m_session->end();
   m_active = false;
   activeChanged();
 

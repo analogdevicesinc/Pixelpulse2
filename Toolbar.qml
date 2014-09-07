@@ -41,11 +41,10 @@ Rectangle {
 
     Button {
       tooltip: "Start"
-      checkable: true
       Layout.fillHeight: true
       Layout.alignment: Qt.AlignRight
       style: btnStyle
-      iconSource: checked ? './icons/pause.png' : './icons/play.png'
+      iconSource: session.active ? './icons/pause.png' : './icons/play.png'
 
       onClicked: {
         session.sampleRate = 10000

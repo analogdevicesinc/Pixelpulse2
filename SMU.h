@@ -33,6 +33,10 @@ signals:
   void activeChanged();
   void sampleRateChanged();
   void sampleCountChanged();
+  void progress();
+
+protected slots:
+  void onProgress();
 
 protected:
   const std::unique_ptr<Session> m_session;
