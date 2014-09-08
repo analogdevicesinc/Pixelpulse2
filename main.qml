@@ -18,6 +18,8 @@ ApplicationWindow {
 		anchors.fill: parent
 
 		Item {
+			// The entire signal + timeline pane
+			id: timelinePane
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 
@@ -49,25 +51,24 @@ ApplicationWindow {
 					}
 				}
 
-				ColumnLayout {
+				Rectangle {
+					// The signals column to the left of the timeline plots. The plots are
+					// contained within this, but positioned to the right of the width
+					// specified here.
+					id: signalsPane
 					Layout.fillHeight: true
-					Layout.fillWidth: true
+					width: toolbar.width
+					color: '#666'
 
-					Repeater {
-						model: session.devices
+					ColumnLayout {
+						anchors.fill: parent
 
 						Repeater {
-							model: channels
-
-							Repeater {
-								model: modelData.signals
-
-								SignalRow {
-									signal: modelData
-									xaxis: timeline_xaxis
-									Layout.fillHeight: true
-									Layout.fillWidth: true
-								}
+							model: session.devices
+							DeviceRow {
+								Layout.fillHeight: true
+								Layout.fillWidth: true
+								device: model
 							}
 						}
 					}

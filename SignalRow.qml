@@ -2,25 +2,22 @@ import QtQuick 2.1
 import QtQuick.Layouts 1.0
 import Plot 1.0
 
-RowLayout {
-  Layout.fillHeight: true
+Rectangle {
   property var xaxis
   property var signal
 
-  Rectangle {
-    width: 320
-    Layout.fillHeight: true
-    color: '#444444'
+  color: '#444444'
 
-    Text {
-      color: 'white'
-      text: signal.label
-    }
+  Text {
+    color: 'white'
+    text: signal.label
   }
 
   PhosphorRender {
-      Layout.fillHeight: true
-      Layout.fillWidth: true
+      x: parent.width
+      y: 0
+      width: xaxis.width
+      height: parent.height
 
       id: line
       anchors.margins: 20
