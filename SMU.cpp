@@ -12,6 +12,8 @@ void registerTypes() {
 
     qmlRegisterType<PhosphorRender>("Plot", 1, 0, "PhosphorRender");
     qmlRegisterType<FloatBuffer>("Plot", 1, 0, "FloatBuffer");
+
+    qRegisterMetaType<sample_t>("sample_t");
 }
 
 SessionItem::SessionItem():
@@ -21,6 +23,15 @@ m_sample_count(0),
 m_active(false)
 {
   connect(this, &SessionItem::progress, this, &SessionItem::onProgress, Qt::QueuedConnection);
+  connect(this, &SessionItem::completed, this, &SessionItem::onCompleted, Qt::QueuedConnection);
+
+  m_session->m_completion_callback = [this](){
+    emit completed();
+  };
+
+  m_session->m_progress_callback = [this](sample_t n) {
+    emit progress(n);
+  };
 }
 
 SessionItem::~SessionItem() {}
@@ -56,21 +67,21 @@ void SessionItem::start()
     }
   }
 
-  m_session->start(m_sample_count, [this](){
-    emit progress();
-  });
+  m_session->start(m_sample_count);
 }
 
-void SessionItem::onProgress()
+void SessionItem::onCompleted()
 {
   m_session->end();
   m_active = false;
   activeChanged();
+}
 
+void SessionItem::onProgress(sample_t sample) {
   for (auto dev: m_devices) {
     for (auto chan: dev->m_channels) {
       for (auto sig: chan->m_signals) {
-        sig->m_buffer->setValid(0, m_sample_count);
+        sig->m_buffer->setValid(0, sample);
       }
     }
   }
