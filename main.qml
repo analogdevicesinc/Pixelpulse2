@@ -11,7 +11,7 @@ ApplicationWindow {
 
 	Rectangle {
 		anchors.fill: parent
-		color: '#0c0c0c'
+		color: '#000'
 	}
 
 	RowLayout {
@@ -62,6 +62,7 @@ ApplicationWindow {
 
 					ColumnLayout {
 						anchors.fill: parent
+						anchors.bottomMargin: 16
 
 						Repeater {
 							model: session.devices
@@ -78,8 +79,8 @@ ApplicationWindow {
 			TimelineFlickable {
 				id: timeline_xaxis
 				anchors.fill: parent
-				anchors.leftMargin: toolbar.width + 2
-				anchors.rightMargin: 2
+				anchors.leftMargin: toolbar.width
+				anchors.rightMargin: 48
 
 				Component.onCompleted: {
 					setBounds(0, 1)

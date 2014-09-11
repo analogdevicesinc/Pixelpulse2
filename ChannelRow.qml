@@ -9,6 +9,7 @@ Rectangle {
   ColumnLayout {
     anchors.fill: parent
     anchors.leftMargin: 10
+    spacing: 24
 
     Text {
       text: channel.label
