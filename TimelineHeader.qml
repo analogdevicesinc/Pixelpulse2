@@ -13,39 +13,12 @@ Rectangle {
 		GradientStop { position: 1.0; color: '#424242' }
 	}
 
-  /*
-	Item {
-		x: xaxis.xToPx(0)
-		y: 0
-		height: parent.height
-
-		Rectangle {
-			width: 1
-			height: parent.height
-
-			gradient: Gradient {
-				GradientStop {position: 0.3; color: '#00eeeeee'}
-				GradientStop {position: 0.5; color: '#aaeeeeee'}
-				GradientStop {position: 1.0; color: '#ffeeeeee'}
-			}
-		}
-
-
-		Text {
-			text: '0'
-			color: 'white'
-			y: 16
-			anchors.left: parent.left
-			anchors.leftMargin: 4
-		}
-	}*/
-
   property var xaxis
   property real min_spacing: 70
   property real pow: Math.floor(Math.log(min_spacing * 100 / xaxis.xscale) / Math.LN10)
   property real majorStep: Math.pow(10, pow)
 	property real step: majorStep / 10
-	property real start: Math.ceil(xaxis.visibleMin / step)
+	property real start: Math.floor(xaxis.visibleMin / step)
 
   property real unitPow: (pow - 2) % 3 + 1
   property real unitScale: Math.pow(10, unitPow)
@@ -62,13 +35,15 @@ Rectangle {
   }
 
 	Repeater {
-		model: xaxis.width / min_spacing
+		model: timeline.width / min_spacing + 1
     Rectangle {
         property real n: start + index
         property real xval: n * step
         property real rel: ((n % 10 + 10) % 10)
         property bool isMajor: rel == 0
         property real relVal: rel * unitScale
+        
+        visible: xval >= xaxis.boundMin && xval <= xaxis.boundMax
 
         x: xaxis.xToPx(xval)
         y: timeline.height-height
