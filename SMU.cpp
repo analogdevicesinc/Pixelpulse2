@@ -120,6 +120,12 @@ m_buffer(new FloatBuffer(this)),
 m_src(new SrcItem(this))
 {
   auto sig_info = sig->info();
+  connect(m_channel, &ChannelItem::modeChanged, this, &SignalItem::onParentModeChanged);
+}
+
+void SignalItem::onParentModeChanged(int) {
+  isOutputChanged(getIsOutput());
+  isInputChanged(getIsInput());
 }
 
 SrcItem::SrcItem(SignalItem* parent):

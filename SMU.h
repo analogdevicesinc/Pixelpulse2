@@ -99,6 +99,8 @@ class SignalItem : public QObject {
   Q_PROPERTY(double max READ getMax CONSTANT);
   Q_PROPERTY(double resolution READ getResolution CONSTANT);
   Q_PROPERTY(SrcItem* src READ getSrc CONSTANT);
+  Q_PROPERTY(bool isOutput READ getIsOutput NOTIFY isOutputChanged);
+  Q_PROPERTY(bool isInput READ getIsInput NOTIFY isInputChanged);
 
 public:
   SignalItem(ChannelItem*, int index, Signal*);
@@ -108,6 +110,20 @@ public:
   double getMax() const { return m_signal->info()->max; }
   double getResolution() const { return m_signal->info()->resolution; }
   SrcItem* getSrc() const { return m_src; }
+  bool getIsOutput() const { 
+    return m_signal->info()->outputModes & (1<<m_channel->m_mode);
+  }
+  bool getIsInput() const { 
+    return m_signal->info()->inputModes & (1<<m_channel->m_mode);
+  }
+  
+  
+signals:
+  void isOutputChanged(bool);
+  void isInputChanged(bool);
+  
+protected slots:
+  void onParentModeChanged(int);
 
 protected:
   int const m_index;
