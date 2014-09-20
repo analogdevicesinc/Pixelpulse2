@@ -8,6 +8,7 @@ class DeviceItem;
 class ChannelItem;
 class SignalItem;
 class ModeItem;
+class SrcItem;
 
 class FloatBuffer;
 
@@ -68,15 +69,20 @@ class ChannelItem : public QObject {
   Q_OBJECT
   Q_PROPERTY(QQmlListProperty<SignalItem> signals READ getSignals CONSTANT);
   Q_PROPERTY(QString label READ getLabel CONSTANT);
+  Q_PROPERTY(unsigned mode MEMBER m_mode NOTIFY modeChanged);
 
 public:
   ChannelItem(Device*, unsigned index);
   QQmlListProperty<SignalItem> getSignals() { return QQmlListProperty<SignalItem>(this, m_signals); }
   QString getLabel() const { return QString(m_device->channel_info(m_index)->label); }
 
+signals:
+  void modeChanged(unsigned mode);
+
 protected:
   Device* const m_device;
   const unsigned m_index;
+  unsigned m_mode;
 
   QList<ModeItem *> m_modes;
   QList<SignalItem*> m_signals;
@@ -91,6 +97,7 @@ class SignalItem : public QObject {
   Q_PROPERTY(double min READ getMin CONSTANT);
   Q_PROPERTY(double max READ getMax CONSTANT);
   Q_PROPERTY(double resolution READ getResolution CONSTANT);
+  Q_PROPERTY(SrcItem* src READ getSrc CONSTANT);
 
 public:
   SignalItem(Signal*);
@@ -99,17 +106,58 @@ public:
   double getMin() const { return m_signal->info()->min; }
   double getMax() const { return m_signal->info()->max; }
   double getResolution() const { return m_signal->info()->resolution; }
+  SrcItem* getSrc() const { return m_src; }
 
 protected:
   Signal* const m_signal;
   FloatBuffer* m_buffer;
+  SrcItem* m_src;
   friend class SessionItem;
+  friend class SrcItem;
 };
 
 class ModeItem : public QObject {
 Q_OBJECT
 public:
   ModeItem();
+};
+
+class SrcItem : public QObject {
+  Q_OBJECT
+  Q_PROPERTY(QString src   READ getSrc    WRITE setSrc    NOTIFY srcChanged);
+  Q_PROPERTY(double v1     READ getV1     WRITE setV1     NOTIFY V1Changed);
+  Q_PROPERTY(double v2     READ getV2     WRITE setV2     NOTIFY V2Changed);
+  Q_PROPERTY(double period READ getPeriod WRITE setPeriod NOTIFY periodChanged);
+  Q_PROPERTY(double phase  READ getPhase  WRITE setPhase  NOTIFY phaseChanged);
+  Q_PROPERTY(double duty   READ getDuty   WRITE setDuty   NOTIFY dutyChanged);
+  
+public: 
+  SrcItem(SignalItem*);
+  
+  QString getSrc() { return ""; }
+  double getV1()     { return m_parent->m_signal->m_src_v1; }
+  double getV2()     { return m_parent->m_signal->m_src_v2; }
+  double getPeriod() { return m_parent->m_signal->m_src_period; }
+  double getPhase()  { return m_parent->m_signal->m_src_phase; }
+  double getDuty()   { return m_parent->m_signal->m_src_duty; }
+  
+  void setSrc(QString s) {}
+  void setV1(double v)     { if (v != getV1())     { m_parent->m_signal->m_src_v1     = v; emit V1Changed(v); }}
+  void setV2(double v)     { if (v != getV2())     { m_parent->m_signal->m_src_v2     = v; emit V2Changed(v); }}
+  void setPeriod(double v) { if (v != getPeriod()) { m_parent->m_signal->m_src_period = v; emit periodChanged(v); }}
+  void setPhase(double v)  { if (v != getPhase())  { m_parent->m_signal->m_src_phase  = v; emit phaseChanged(v); }}
+  void setDuty(double v)   { if (v != getDuty())   { m_parent->m_signal->m_src_duty   = v; emit dutyChanged(v); }}
+
+signals:
+  void srcChanged(QString);
+  void V1Changed(double);
+  void V2Changed(double);
+  void periodChanged(double);
+  void phaseChanged(double);
+  void dutyChanged(double);
+
+protected:
+  SignalItem* m_parent;
 };
 
 void registerTypes();

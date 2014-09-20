@@ -9,6 +9,7 @@ void registerTypes() {
     qmlRegisterType<ChannelItem>();
     qmlRegisterType<SignalItem>();
     qmlRegisterType<ModeItem>();
+    qmlRegisterType<SrcItem>();
 
     qmlRegisterType<PhosphorRender>("Plot", 1, 0, "PhosphorRender");
     qmlRegisterType<FloatBuffer>("Plot", 1, 0, "FloatBuffer");
@@ -59,6 +60,7 @@ void SessionItem::start()
   // Configure buffers
   for (auto dev: m_devices) {
     for (auto chan: dev->m_channels) {
+      dev->m_device->set_mode(chan->m_index, chan->m_mode);
       for (auto sig: chan->m_signals) {
         sig->m_buffer->setRate(1.0/m_sample_rate);
         sig->m_buffer->allocate(m_sample_count);
@@ -98,7 +100,7 @@ m_device(dev)
 }
 
 ChannelItem::ChannelItem(Device* dev, unsigned ch_i):
-m_device(dev), m_index(ch_i)
+m_device(dev), m_index(ch_i), m_mode(0)
 {
   auto ch_info = dev->channel_info(ch_i);
 
@@ -110,9 +112,15 @@ m_device(dev), m_index(ch_i)
 
 SignalItem::SignalItem(Signal* sig):
 m_signal(sig),
-m_buffer(new FloatBuffer(this))
+m_buffer(new FloatBuffer(this)),
+m_src(new SrcItem(this))
 {
   auto sig_info = sig->info();
+}
+
+SrcItem::SrcItem(SignalItem* parent):
+m_parent(parent)
+{
 }
 
 ModeItem::ModeItem()
