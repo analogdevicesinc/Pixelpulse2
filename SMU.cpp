@@ -42,7 +42,7 @@ void SessionItem::openAllDevices()
   m_session->update_available_devices();
   for (auto i: m_session->m_available_devices) {
 		auto dev = m_session->add_device(&*i);
-    m_devices.append(new DeviceItem(dev));
+    m_devices.append(new DeviceItem(this, dev));
 	}
 
   devicesChanged();
@@ -89,28 +89,32 @@ void SessionItem::onProgress(sample_t sample) {
   }
 }
 
-DeviceItem::DeviceItem(Device* dev):
+DeviceItem::DeviceItem(SessionItem* parent, Device* dev):
+QObject(parent),
 m_device(dev)
 {
   auto dev_info = dev->info();
 
   for (unsigned ch_i=0; ch_i < dev_info->channel_count; ch_i++) {
-    m_channels.append(new ChannelItem(dev, ch_i));
+    m_channels.append(new ChannelItem(this, dev, ch_i));
   }
 }
 
-ChannelItem::ChannelItem(Device* dev, unsigned ch_i):
-m_device(dev), m_index(ch_i), m_mode(0)
+ChannelItem::ChannelItem(DeviceItem* parent, Device* dev, unsigned ch_i):
+QObject(parent), m_device(dev), m_index(ch_i), m_mode(0)
 {
   auto ch_info = dev->channel_info(ch_i);
 
   for (unsigned sig_i=0; sig_i < ch_info->signal_count; sig_i++) {
     auto sig = dev->signal(ch_i, sig_i);
-    m_signals.append(new SignalItem(sig));
+    m_signals.append(new SignalItem(this, ch_i, sig));
   }
 }
 
-SignalItem::SignalItem(Signal* sig):
+SignalItem::SignalItem(ChannelItem* parent, int index, Signal* sig):
+QObject(parent),
+m_index(index),
+m_channel(parent),
 m_signal(sig),
 m_buffer(new FloatBuffer(this)),
 m_src(new SrcItem(this))
@@ -119,6 +123,7 @@ m_src(new SrcItem(this))
 }
 
 SrcItem::SrcItem(SignalItem* parent):
+QObject(parent),
 m_parent(parent)
 {
 }

@@ -55,7 +55,7 @@ class DeviceItem : public QObject {
   Q_PROPERTY(QString label READ getLabel CONSTANT);
 
 public:
-  DeviceItem(Device*);
+  DeviceItem(SessionItem*, Device*);
   QQmlListProperty<ChannelItem> getChannels() { return QQmlListProperty<ChannelItem>(this, m_channels); }
   QString getLabel() const { return QString(m_device->info()->label); }
 
@@ -72,7 +72,7 @@ class ChannelItem : public QObject {
   Q_PROPERTY(unsigned mode MEMBER m_mode NOTIFY modeChanged);
 
 public:
-  ChannelItem(Device*, unsigned index);
+  ChannelItem(DeviceItem*, Device*, unsigned index);
   QQmlListProperty<SignalItem> getSignals() { return QQmlListProperty<SignalItem>(this, m_signals); }
   QString getLabel() const { return QString(m_device->channel_info(m_index)->label); }
 
@@ -88,6 +88,7 @@ protected:
   QList<SignalItem*> m_signals;
 
   friend class SessionItem;
+  friend class SignalItem;
 };
 
 class SignalItem : public QObject {
@@ -100,7 +101,7 @@ class SignalItem : public QObject {
   Q_PROPERTY(SrcItem* src READ getSrc CONSTANT);
 
 public:
-  SignalItem(Signal*);
+  SignalItem(ChannelItem*, int index, Signal*);
   FloatBuffer* getBuffer() const { return m_buffer; }
   QString getLabel() const { return QString(m_signal->info()->label); }
   double getMin() const { return m_signal->info()->min; }
@@ -109,6 +110,8 @@ public:
   SrcItem* getSrc() const { return m_src; }
 
 protected:
+  int const m_index;
+  ChannelItem* const m_channel;
   Signal* const m_signal;
   FloatBuffer* m_buffer;
   SrcItem* m_src;
