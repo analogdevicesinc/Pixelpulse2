@@ -65,6 +65,7 @@ void SessionItem::start()
         sig->m_buffer->setRate(1.0/m_sample_rate);
         sig->m_buffer->allocate(m_sample_count);
         sig->m_signal->measure_buffer(sig->m_buffer->data(), m_sample_count);
+        sig->m_src->update();
       }
     }
   }
@@ -130,8 +131,33 @@ void SignalItem::onParentModeChanged(int) {
 
 SrcItem::SrcItem(SignalItem* parent):
 QObject(parent),
-m_parent(parent)
+m_parent(parent),
+m_src("constant"),
+m_v1(0),
+m_v2(0),
+m_period(0),
+m_phase(0),
+m_duty(0)
 {
+}
+
+void SrcItem::update() {
+  Src v = SRC_CONSTANT;
+  if      (m_src == "constant") v = SRC_CONSTANT;
+  else if (m_src == "buffer")   v = SRC_BUFFER;
+  else if (m_src == "callback") v = SRC_CALLBACK;
+  else if (m_src == "square")   v = SRC_SQUARE;
+  else if (m_src == "sawtooth") v = SRC_SAWTOOTH;
+  else if (m_src == "sine")     v = SRC_SINE;
+  else if (m_src == "triangle") v = SRC_TRIANGLE;
+  else return;
+
+  m_parent->m_signal->m_src        = v;
+  m_parent->m_signal->m_src_v1     = m_v1;
+  m_parent->m_signal->m_src_v2     = m_v2;
+  m_parent->m_signal->m_src_period = m_period;
+  m_parent->m_signal->m_src_phase  = m_phase;
+  m_parent->m_signal->m_src_duty   = m_duty;
 }
 
 ModeItem::ModeItem()

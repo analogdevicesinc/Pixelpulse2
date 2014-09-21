@@ -110,18 +110,18 @@ public:
   double getMax() const { return m_signal->info()->max; }
   double getResolution() const { return m_signal->info()->resolution; }
   SrcItem* getSrc() const { return m_src; }
-  bool getIsOutput() const { 
+  bool getIsOutput() const {
     return m_signal->info()->outputModes & (1<<m_channel->m_mode);
   }
-  bool getIsInput() const { 
+  bool getIsInput() const {
     return m_signal->info()->inputModes & (1<<m_channel->m_mode);
   }
-  
-  
+
+
 signals:
   void isOutputChanged(bool);
   void isInputChanged(bool);
-  
+
 protected slots:
   void onParentModeChanged(int);
 
@@ -143,39 +143,33 @@ public:
 
 class SrcItem : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QString src   READ getSrc    WRITE setSrc    NOTIFY srcChanged);
-  Q_PROPERTY(double v1     READ getV1     WRITE setV1     NOTIFY V1Changed);
-  Q_PROPERTY(double v2     READ getV2     WRITE setV2     NOTIFY V2Changed);
-  Q_PROPERTY(double period READ getPeriod WRITE setPeriod NOTIFY periodChanged);
-  Q_PROPERTY(double phase  READ getPhase  WRITE setPhase  NOTIFY phaseChanged);
-  Q_PROPERTY(double duty   READ getDuty   WRITE setDuty   NOTIFY dutyChanged);
-  
-public: 
+  Q_PROPERTY(QString src   MEMBER m_src     NOTIFY srcChanged);
+  Q_PROPERTY(double v1     MEMBER m_v1      NOTIFY v1Changed);
+  Q_PROPERTY(double v2     MEMBER m_v2      NOTIFY v2Changed);
+  Q_PROPERTY(double period MEMBER m_period  NOTIFY periodChanged);
+  Q_PROPERTY(double phase  MEMBER m_phase   NOTIFY phaseChanged);
+  Q_PROPERTY(double duty   MEMBER m_duty    NOTIFY dutyChanged);
+
+public:
   SrcItem(SignalItem*);
-  
-  QString getSrc() { return ""; }
-  double getV1()     { return m_parent->m_signal->m_src_v1; }
-  double getV2()     { return m_parent->m_signal->m_src_v2; }
-  double getPeriod() { return m_parent->m_signal->m_src_period; }
-  double getPhase()  { return m_parent->m_signal->m_src_phase; }
-  double getDuty()   { return m_parent->m_signal->m_src_duty; }
-  
-  void setSrc(QString s) {}
-  void setV1(double v)     { if (v != getV1())     { m_parent->m_signal->m_src_v1     = v; emit V1Changed(v); }}
-  void setV2(double v)     { if (v != getV2())     { m_parent->m_signal->m_src_v2     = v; emit V2Changed(v); }}
-  void setPeriod(double v) { if (v != getPeriod()) { m_parent->m_signal->m_src_period = v; emit periodChanged(v); }}
-  void setPhase(double v)  { if (v != getPhase())  { m_parent->m_signal->m_src_phase  = v; emit phaseChanged(v); }}
-  void setDuty(double v)   { if (v != getDuty())   { m_parent->m_signal->m_src_duty   = v; emit dutyChanged(v); }}
+  Q_INVOKABLE void update();
 
 signals:
   void srcChanged(QString);
-  void V1Changed(double);
-  void V2Changed(double);
+  void v1Changed(double);
+  void v2Changed(double);
   void periodChanged(double);
   void phaseChanged(double);
   void dutyChanged(double);
 
 protected:
+  QString m_src;
+  double m_v1;
+  double m_v2;
+  double m_period;
+  double m_phase;
+  double m_duty;
+
   SignalItem* m_parent;
 };
 
