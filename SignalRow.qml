@@ -49,5 +49,8 @@ Rectangle {
         ymin: signal.min
         ymax: signal.max
     }
+
+    OverlayConstant{}
+
   }
 }

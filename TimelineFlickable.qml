@@ -1,6 +1,7 @@
 import QtQuick 2.1
 
 MouseArea {
+    z: -1
     property real boundMin: 0
     property real boundMax: 1
 
