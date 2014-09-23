@@ -35,11 +35,11 @@ signals:
   void sampleRateChanged();
   void sampleCountChanged();
   void progress(sample_t);
-  void completed();
+  void finished();
 
 protected slots:
   void onProgress(sample_t);
-  void onCompleted();
+  void onFinished();
 
 protected:
   const std::unique_ptr<Session> m_session;

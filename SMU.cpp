@@ -24,10 +24,10 @@ m_sample_count(0),
 m_active(false)
 {
   connect(this, &SessionItem::progress, this, &SessionItem::onProgress, Qt::QueuedConnection);
-  connect(this, &SessionItem::completed, this, &SessionItem::onCompleted, Qt::QueuedConnection);
+  connect(this, &SessionItem::finished, this, &SessionItem::onFinished, Qt::QueuedConnection);
 
   m_session->m_completion_callback = [this](){
-    emit completed();
+    emit finished();
   };
 
   m_session->m_progress_callback = [this](sample_t n) {
@@ -73,7 +73,7 @@ void SessionItem::start()
   m_session->start(m_sample_count);
 }
 
-void SessionItem::onCompleted()
+void SessionItem::onFinished()
 {
   m_session->end();
   m_active = false;
