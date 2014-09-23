@@ -39,17 +39,34 @@ Rectangle {
       iconSource: './icons/gear.png'
     }
 
+    ColumnLayout {
+      Layout.maximumWidth: 96
+      ComboBox {
+        model: ['1kHz', '10kHz', '20kHz', '40kHz', '80kHz', '100kHz']
+        Layout.fillWidth: true
+      }
+      SpinBox {
+        Layout.fillWidth: true
+        suffix: "s"
+        decimals: 3
+        stepSize: 1
+        minimumValue: 0.001
+        maximumValue: 100
+        onValueChanged: {
+          controller.sampleTime = value
+        }
+      }
+    }
+
     Button {
       tooltip: "Start"
       Layout.fillHeight: true
       Layout.alignment: Qt.AlignRight
       style: btnStyle
-      iconSource: session.active ? './icons/pause.png' : './icons/play.png'
+      iconSource: controller.enabled ? './icons/pause.png' : './icons/play.png'
 
       onClicked: {
-        session.sampleRate = 10000
-        session.sampleCount = 10000
-        session.start();
+        controller.toggle()
       }
     }
   }

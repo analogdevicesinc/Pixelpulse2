@@ -6,7 +6,7 @@ MouseArea {
     property real boundMax: 1
 
     property real maxScale: 100000000
-    property real xscale: 1 // pixels per unit
+    property real xscale: 100 // pixels per unit
 
     readonly property real visibleMin: boundMin + timeline_flickable.contentX / xscale
     readonly property real visibleMax: boundMin + (timeline_flickable.contentX + timeline_flickable.width) / xscale
@@ -27,6 +27,12 @@ MouseArea {
     function setBounds(min, max) {
       boundMin = min
       boundMax = max
+    }
+
+    onBoundMaxChanged: {
+      if (boundMax < visibleMax || timeline_flickable.atXEnd) {
+        setVisible(visibleMin, boundMax)
+      }
     }
 
     onWheel: {

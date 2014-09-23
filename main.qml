@@ -9,6 +9,10 @@ ApplicationWindow {
 	title: "signalspec"
 	visible: true
 
+	Controller {
+		id: controller
+	}
+
 	Rectangle {
 		anchors.fill: parent
 		color: '#000'
@@ -82,10 +86,8 @@ ApplicationWindow {
 				anchors.leftMargin: toolbar.width
 				anchors.rightMargin: 48
 
-				Component.onCompleted: {
-					setBounds(0, 1)
-					setVisible(0, 0.5)
-				}
+				boundMin: 0
+				boundMax: controller.sampleTime
 			}
 		}
 	}
