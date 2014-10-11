@@ -47,6 +47,13 @@ public:
 		dataChanged();
 	}
 
+	void incValid(unsigned length) {
+		if (m_length < length) {
+			m_length = length;
+		}
+		dataChanged();
+	}
+
 signals:
 	void dataChanged();
 

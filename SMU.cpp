@@ -84,7 +84,7 @@ void SessionItem::onProgress(sample_t sample) {
   for (auto dev: m_devices) {
     for (auto chan: dev->m_channels) {
       for (auto sig: chan->m_signals) {
-        sig->m_buffer->setValid(0, sample);
+        sig->m_buffer->incValid(sample);
       }
     }
   }
