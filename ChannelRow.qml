@@ -22,6 +22,20 @@ Rectangle {
       }
     }
 
+    menu: Menu {
+      MenuItem { text: "Measure Voltage"
+        onTriggered: channel.mode = 0
+      }
+      MenuItem { text: "Source Voltage, Measure Current"
+        onTriggered: channel.mode = 1
+      }
+      MenuItem { text: "Source Current, Measure Voltage"
+        onTriggered: channel.mode = 2
+      }
+    }
+  }
+
+
   Text {
     text: "Channel " + channel.label
     color: 'white'

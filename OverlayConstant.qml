@@ -8,15 +8,13 @@ MouseArea {
 
   cursorShape: Qt.SizeVerCursor
 
-  onPositionChanged: {
-    channel.mode = 1
+  function set(mouse) {
+    channel.mode = signal.label == 'Voltage' ? 1 : 2; // TODO: `sourceMode` in signalInfo
     signal.src.v1 = Math.min(Math.max(axes.pxToY(mouse.y), signal.min), signal.max)
   }
 
-  onClicked: {
-    channel.mode = 1
-    signal.src.v1 = Math.min(Math.max(axes.pxToY(mouse.y), signal.min), signal.max)
-  }
+  onPositionChanged: set(mouse)
+  onClicked: set(mouse)
 
   Item {
     id: dragDot
