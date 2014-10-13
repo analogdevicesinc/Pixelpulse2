@@ -1,6 +1,8 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.0
 import Plot 1.0
+import QtQuick.Controls 1.0
+import QtQuick.Controls.Styles 1.1
 
 Rectangle {
   property var xaxis
@@ -8,9 +10,26 @@ Rectangle {
 
   color: '#444444'
 
+  Button {
+    anchors.top: parent.top
+    anchors.left: parent.left
+    width: timelinePane.hspacing
+    height: timelinePane.hspacing
+
+    style: ButtonStyle {
+      background: Rectangle {
+        opacity: control.pressed ? 0.3 : control.checked ? 0.2 : 0.1
+        color: 'black'
+      }
+    }
   Text {
     color: 'white'
     text: signal.label
+    rotation: -90
+    transformOrigin: Item.TopLeft
+    font.pixelSize: 18
+    y: width + timelinePane.hspacing + 8
+    x: (timelinePane.hspacing - height) / 2
   }
 
   Axes {

@@ -27,19 +27,45 @@ Rectangle {
   RowLayout {
     anchors.fill: parent
 
+    ExclusiveGroup {
+      id: timeGroup
+    }
+
     Button {
       tooltip: "Menu"
       Layout.fillHeight: true
       style: btnStyle
 
       menu: Menu {
+        Menu {
+          title: "Sample Rate"
+          MenuItem { text: '1 kHz' }
+          MenuItem { text: '4 kHz' }
+          MenuItem { text: '10 kHz' }
+          MenuItem { text: '40 kHz' }
+          MenuItem { text: '100 kHz' }
+        }
+        Menu {
+          title: "Sample Time"
+          MenuItem { exclusiveGroup: timeGroup; checkable: true;
+            onTriggered: controller.sampleTime = 0.01; text: '10 ms' }
+          MenuItem { exclusiveGroup: timeGroup; checkable: true;
+            onTriggered: controller.sampleTime = 0.1; text: '100 ms' }
+          MenuItem { exclusiveGroup: timeGroup; checkable: true;
+            onTriggered: controller.sampleTime = 1; text: '1 s' }
+          MenuItem { exclusiveGroup: timeGroup; checkable: true;
+            onTriggered: controller.sampleTime = 10; text: '10 s' }
+        }
+        MenuSeparator{}
         MenuItem { text: "About" }
-        MenuItem { text: "Exit" }
+        MenuItem { text: "Exit"; onTriggered: Qt.quit() }
       }
       iconSource: './icons/gear.png'
     }
 
+  /*
     ColumnLayout {
+      visible: false
       Layout.maximumWidth: 96
       ComboBox {
         model: ['1kHz', '10kHz', '20kHz', '40kHz', '80kHz', '100kHz']
@@ -57,6 +83,7 @@ Rectangle {
         }
       }
     }
+    */
 
     Button {
       tooltip: "Start"

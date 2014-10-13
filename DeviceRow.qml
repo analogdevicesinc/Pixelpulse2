@@ -6,14 +6,20 @@ Rectangle {
   property var device
   color: '#222'
 
+  Text {
+    text: device.label
+    color: 'white'
+    rotation: -90
+    transformOrigin: Item.TopLeft
+    font.pixelSize: 18
+    y: width + timelinePane.hspacing + 8
+    x: (timelinePane.hspacing - height) / 2
+  }
+
   ColumnLayout {
     anchors.fill: parent
-    anchors.leftMargin: 10
-
-    Text {
-      text: device.label
-      color: 'white'
-    }
+    anchors.leftMargin: timelinePane.hspacing
+    spacing: timelinePane.vspacing
 
     Repeater {
       model: device.channels
