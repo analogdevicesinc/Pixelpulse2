@@ -5,10 +5,26 @@ import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
 
 Rectangle {
+  id: signalBlock
   property var xaxis
   property var signal
 
   color: '#444444'
+
+
+  function switchToConstant() {
+     signal.src.src = 'constant'
+  }
+
+  function switchToPeriodic(type) {
+    if (signal.src.src == 'constant') {
+      console.log('stp', type)
+      signal.src.v1 = 0
+      signal.src.v2 = 5
+      signal.src.period = 100
+    }
+    signal.src.src = type
+  }
 
   Button {
     anchors.top: parent.top
@@ -22,6 +38,23 @@ Rectangle {
         color: 'black'
       }
     }
+
+    menu: Menu {
+      MenuItem { text: "Constant"
+        onTriggered: signalBlock.switchToConstant()
+      }
+      MenuItem { text: "Sine"
+        onTriggered: signalBlock.switchToPeriodic('sine')
+      }
+      MenuItem { text: "Triangle"
+        onTriggered: signalBlock.switchToPeriodic('triangle')
+      }
+      MenuItem { text: "Square"
+        onTriggered: signalBlock.switchToPeriodic('square')
+      }
+    }
+  }
+
   Text {
     color: 'white'
     text: signal.label
