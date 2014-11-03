@@ -16,32 +16,13 @@ MouseArea {
   onPositionChanged: set(mouse)
   onClicked: set(mouse)
 
-  Item {
+  DragDot {
     id: dragDot
     anchors.horizontalCenter: parent.horizontalCenter
-    width: 0
-    height: 0
-
-    property real value: signal.src.v1
     y: axes.yToPx(value)
 
-    Text {
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.right: parent.left
-      anchors.rightMargin: 12
-      text: dragDot.value.toFixed(2)
-      color: 'white'
-    }
-
-    Rectangle {
-      width: 12
-      height: width
-      radius: width/2
-      color: signal.isOutput ? "blue" : "black"
-      border.width: signal.isOutput ? 0 : 3
-      border.color: "blue"
-      x: -height/2
-      y: -width/2
-    }
+    value: signal.src.v1
+    filled: signal.isOutput
+    color: "blue"
   }
 }

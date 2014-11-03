@@ -147,12 +147,19 @@ class SrcItem : public QObject {
   Q_PROPERTY(double v1     MEMBER m_v1      NOTIFY v1Changed);
   Q_PROPERTY(double v2     MEMBER m_v2      NOTIFY v2Changed);
   Q_PROPERTY(double period MEMBER m_period  NOTIFY periodChanged);
-  Q_PROPERTY(double phase  MEMBER m_phase   NOTIFY phaseChanged);
+  Q_PROPERTY(double phase  MEMBER m_phase   WRITE setPhase NOTIFY phaseChanged);
   Q_PROPERTY(double duty   MEMBER m_duty    NOTIFY dutyChanged);
 
 public:
   SrcItem(SignalItem*);
   Q_INVOKABLE void update();
+  void setPhase(double phase) {
+    phase = fmod(fmod(phase, m_period)+m_period, m_period);
+    if (phase != m_phase) {
+      m_phase = phase;
+      phaseChanged(m_phase);
+    }
+  }
 
 signals:
   void srcChanged(QString);
