@@ -6,7 +6,7 @@ import QtQuick.Controls 1.0
 ApplicationWindow {
 	width: 1024
 	height: 768
-	title: "signalspec"
+	title: "Pixelpulse"
 	visible: true
 
 	Controller {
