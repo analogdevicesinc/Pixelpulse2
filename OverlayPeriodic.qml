@@ -60,7 +60,7 @@ MouseArea {
     color: "blue"
 
     x: xaxis.xToPx(phaseZeroNearCenter() + period/2)
-    y: axes.yToPx(value)
+    y: axes.yToPxClamped(value)
   }
 
   DragDot {
@@ -70,7 +70,7 @@ MouseArea {
     color: "blue"
 
     x: xaxis.xToPx(phaseZeroNearCenter())
-    y: axes.yToPx(value)
+    y: axes.yToPxClamped(value)
   }
 
 }

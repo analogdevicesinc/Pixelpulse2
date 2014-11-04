@@ -19,7 +19,7 @@ MouseArea {
   DragDot {
     id: dragDot
     anchors.horizontalCenter: parent.horizontalCenter
-    y: axes.yToPx(value)
+    y: axes.yToPxClamped(value)
 
     value: signal.src.v1
     filled: signal.isOutput

@@ -83,6 +83,28 @@ Rectangle {
     gridColor: '#222'
     textColor: '#666'
 
+    // Shift + scroll for Y-axis zoom
+    MouseArea {
+      anchors.fill: parent
+      onPressed: {
+        mouse.accepted = false
+      }
+
+      onWheel: {
+        if (wheel.modifiers & Qt.ShiftModifier) {
+          var s = Math.pow(1.15, wheel.angleDelta.y/120);
+          var y = axes.pxToY(wheel.y);
+
+          if (axes.ymax - axes.ymin < signal.resolution * 8 && s < 1) return;
+
+          axes.ymin = Math.max(y - s * (y - axes.ymin), signal.min);
+          axes.ymax = Math.min(y - s * (y - axes.ymax), signal.max);
+        } else {
+          wheel.accepted = false;
+        }
+      }
+    }
+
     Rectangle {
       anchors.fill: parent
       color: '#0c0c0c'
@@ -92,14 +114,15 @@ Rectangle {
     PhosphorRender {
         id: line
         anchors.fill: parent
+        clip: true
 
         buffer: signal.buffer
         pointSize: Math.max(2, Math.min(xaxis.xscale/session.sampleRate*3, 20))
 
         xmin: xaxis.visibleMin
         xmax: xaxis.visibleMax
-        ymin: signal.min
-        ymax: signal.max
+        ymin: axes.ymin
+        ymax: axes.ymax
     }
 
     OverlayPeriodic{}

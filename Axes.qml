@@ -46,6 +46,7 @@ Item {
 
   property real yscale: height / (ymax - ymin)
   function yToPx(y) { return height - (y - ymin) * yscale }
+  function yToPxClamped(y) { return Math.min(Math.max(yToPx(y), 0), height) }
   function pxToY(px) { return (height - px) / yscale + ymin }
 
   property real xscale: width / (xmax - xmin)
