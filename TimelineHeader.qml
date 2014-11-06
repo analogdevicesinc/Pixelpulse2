@@ -2,23 +2,23 @@ import QtQuick 2.1
 
 Rectangle {
   id: timeline
-	anchors.top: parent.top
-	color: "#424242"
-	clip: true
+  anchors.top: parent.top
+  color: "#424242"
+  clip: true
 
-	gradient: Gradient {
-		GradientStop { position: 0.0; color: '#404040' }
-		GradientStop { position: 0.15; color: '#5a5a5a' }
-		GradientStop { position: 0.5; color: '#444444' }
-		GradientStop { position: 1.0; color: '#424242' }
-	}
+  gradient: Gradient {
+    GradientStop { position: 0.0; color: '#404040' }
+    GradientStop { position: 0.15; color: '#5a5a5a' }
+    GradientStop { position: 0.5; color: '#444444' }
+    GradientStop { position: 1.0; color: '#424242' }
+  }
 
   property var xaxis
   property real min_spacing: 70
   property real pow: Math.floor(Math.log(min_spacing * 100 / xaxis.xscale) / Math.LN10)
   property real majorStep: Math.pow(10, pow)
-	property real step: majorStep / 10
-	property real start: Math.floor(xaxis.visibleMin / step)
+  property real step: majorStep / 10
+  property real start: Math.floor(xaxis.visibleMin / step)
 
   property real unitPow: (pow - 2) % 3 + 1
   property real unitScale: Math.pow(10, unitPow)
@@ -31,18 +31,19 @@ Rectangle {
       case -6: return ' us'
       case -9: return ' ns'
       case -12: return ' ps'
+      default: return ''
     }
   }
 
-	Repeater {
-		model: timeline.width / min_spacing + 1
+  Repeater {
+    model: timeline.width / min_spacing + 1
     Rectangle {
         property real n: start + index
         property real xval: n * step
         property real rel: ((n % 10 + 10) % 10)
         property bool isMajor: rel == 0
         property real relVal: rel * unitScale
-        
+
         visible: xval >= xaxis.boundMin && xval <= xaxis.boundMax
 
         x: xaxis.xToPx(xval)
@@ -59,5 +60,5 @@ Rectangle {
           anchors.bottom: parent.top
         }
     }
-	}
+  }
 }
