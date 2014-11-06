@@ -80,7 +80,7 @@ void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSG
 }
 
 PhosphorRender::PhosphorRender(QQuickItem *parent)
-    : QQuickItem(parent)
+    : QQuickItem(parent), m_buffer(NULL), m_xmin(0), m_xmax(1), m_ymin(0), m_ymax(1), m_pointSize(0)
 {
     setFlag(ItemHasContents, true);
 }
