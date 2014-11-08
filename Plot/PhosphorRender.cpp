@@ -46,6 +46,7 @@ public:
 
     void deactivate() {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_POINT_SPRITE);
     }
 
 private:
@@ -76,6 +77,7 @@ void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSG
     }
 
     glBlendFunc(GL_ONE, GL_ONE);
+    glEnable(GL_POINT_SPRITE);
     glPointSize(m->pointSize);
 }
 
