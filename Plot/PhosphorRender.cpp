@@ -104,7 +104,6 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     if (!oldNode) {
         node = new QSGGeometryNode;
         geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), n_points);
-        geometry->setLineWidth(2);
         geometry->setDrawingMode(GL_POINTS);
         node->setGeometry(geometry);
         node->setFlag(QSGNode::OwnsGeometry);
@@ -116,6 +115,7 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
         node = static_cast<QSGGeometryNode *>(oldNode);
         geometry = node->geometry();
         geometry->allocate(n_points);
+        geometry->setLineWidth(m_pointSize);
         material = static_cast<Material*>(node->material());
     }
 
