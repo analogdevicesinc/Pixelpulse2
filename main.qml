@@ -96,10 +96,6 @@ ApplicationWindow {
 
 				boundMin: 0
 				boundMax: controller.sampleTime
-
-				Component.onCompleted: {
-					this.setVisible(boundMin, boundMax)
-				}
 			}
 		}
 	}

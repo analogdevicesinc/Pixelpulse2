@@ -45,6 +45,12 @@ MouseArea {
         timeline_flickable.returnToBounds()
     }
 
+    onWidthChanged: {
+        var minScale = timeline_flickable.width/(boundMax - boundMin)
+        xscale = Math.min(Math.max(xscale, minScale), maxScale)
+        timeline_flickable.returnToBounds()
+    }
+
     Flickable {
         id: timeline_flickable
 
