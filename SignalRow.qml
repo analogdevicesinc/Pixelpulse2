@@ -31,6 +31,8 @@ Rectangle {
     width: timelinePane.hspacing
     height: timelinePane.hspacing
 
+    iconSource: 'icons/' + signal.src.src + '.png'
+
     style: ButtonStyle {
       background: Rectangle {
         opacity: control.pressed ? 0.3 : control.checked ? 0.2 : 0.1

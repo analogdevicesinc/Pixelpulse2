@@ -15,7 +15,15 @@ Rectangle {
     width: timelinePane.hspacing
     height: timelinePane.hspacing
 
+    property var icons: [
+      'mv',
+      'svmi',
+      'simv',
+    ]
+    iconSource: 'icons/' + icons[channel.mode] + '.png'
+
     style: ButtonStyle {
+
       background: Rectangle {
         opacity: control.pressed ? 0.3 : control.checked ? 0.2 : 0.1
         color: 'black'

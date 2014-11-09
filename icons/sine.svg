@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="40"
+   height="40"
+   id="svg3835"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   inkscape:export-filename="/home/km/projects/helium/pixelpulse2/icons/sine.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
+   sodipodi:docname="sine.svg">
+  <defs
+     id="defs3837" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="148.61497"
+     inkscape:cy="-38.895092"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="1010"
+     inkscape:window-x="0"
+     inkscape:window-y="30"
+     inkscape:window-maximized="1">
+    <sodipodi:guide
+       orientation="0,1"
+       position="113.1371,2.6243442"
+       id="guide3858" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata3840">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-378.80719,-390.45972)">
+    <path
+       id="path4465"
+       title="sin(x)"
+       d="m 388.30719,410.45978 c 0.63636,-1.9995 1.27273,-3.9951 1.90909,-5.67765 0.63637,-1.6824 1.27273,-3.0438 1.9091,-3.8751 0.63636,-0.83115 1.27272,-1.1262 1.90908,-0.8421 0.63638,0.28395 1.27274,1.14915 1.9091,2.45805 0.63636,1.30905 1.27272,3.0597 1.90909,4.9782 0.63636,1.91835 1.27272,3.9984 1.90908,5.91735 0.63638,1.9188 1.27274,3.66825 1.9091,4.9779 0.63636,1.30995 1.27273,2.17335 1.90909,2.4582 0.63636,0.28515 1.27272,-0.015 1.90908,-0.8421 0.63638,-0.8301 1.27274,-2.1933 1.9091,-3.87495 0.63636,-1.6818 1.27273,-3.67815 1.90909,-5.6778"
+       style="fill:none;stroke:#8a8a8a;stroke-width:2.99999976;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
+       inkscape:export-filename="/home/km/projects/helium/pixelpulse2/icons/sine.png"
+       inkscape:export-xdpi="134.08"
+       inkscape:export-ydpi="134.08"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="opacity:0.5;fill:none;stroke:none"
+       id="rect3860"
+       width="40"
+       height="40"
+       x="378.80719"
+       y="390.45972" />
+  </g>
+</svg>
