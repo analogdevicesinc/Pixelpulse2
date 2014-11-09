@@ -54,6 +54,10 @@ public:
 		dataChanged();
 	}
 
+	double mean() {
+		return accumulate(m_data.begin(), m_data.end(), 0.0) / m_data.size();
+	}
+
 signals:
 	void dataChanged();
 

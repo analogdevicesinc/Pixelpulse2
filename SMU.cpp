@@ -78,6 +78,15 @@ void SessionItem::onFinished()
   m_session->end();
   m_active = false;
   activeChanged();
+
+  // Only in sweep-based modes
+  for (auto dev: m_devices) {
+    for (auto chan: dev->m_channels) {
+      for (auto sig: chan->m_signals) {
+        sig->updateMeasurement();
+      }
+    }
+  }
 }
 
 void SessionItem::onProgress(sample_t sample) {
@@ -118,7 +127,8 @@ m_index(index),
 m_channel(parent),
 m_signal(sig),
 m_buffer(new FloatBuffer(this)),
-m_src(new SrcItem(this))
+m_src(new SrcItem(this)),
+m_measurement(0.0)
 {
   auto sig_info = sig->info();
   connect(m_channel, &ChannelItem::modeChanged, this, &SignalItem::onParentModeChanged);
@@ -127,6 +137,11 @@ m_src(new SrcItem(this))
 void SignalItem::onParentModeChanged(int) {
   isOutputChanged(getIsOutput());
   isInputChanged(getIsInput());
+}
+
+void SignalItem::updateMeasurement(){
+  m_measurement = m_buffer->mean();
+  measurementChanged(m_measurement);
 }
 
 SrcItem::SrcItem(SignalItem* parent):

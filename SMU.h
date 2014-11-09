@@ -101,6 +101,7 @@ class SignalItem : public QObject {
   Q_PROPERTY(SrcItem* src READ getSrc CONSTANT);
   Q_PROPERTY(bool isOutput READ getIsOutput NOTIFY isOutputChanged);
   Q_PROPERTY(bool isInput READ getIsInput NOTIFY isInputChanged);
+  Q_PROPERTY(double measurement READ getMeasurement NOTIFY measurementChanged);
 
 public:
   SignalItem(ChannelItem*, int index, Signal*);
@@ -116,11 +117,14 @@ public:
   bool getIsInput() const {
     return m_signal->info()->inputModes & (1<<m_channel->m_mode);
   }
-
+  double getMeasurement() {
+    return m_measurement;
+  }
 
 signals:
   void isOutputChanged(bool);
   void isInputChanged(bool);
+  void measurementChanged(double);
 
 protected slots:
   void onParentModeChanged(int);
@@ -131,8 +135,11 @@ protected:
   Signal* const m_signal;
   FloatBuffer* m_buffer;
   SrcItem* m_src;
+  double m_measurement;
   friend class SessionItem;
   friend class SrcItem;
+
+  void updateMeasurement();
 };
 
 class ModeItem : public QObject {

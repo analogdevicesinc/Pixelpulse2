@@ -21,7 +21,7 @@ MouseArea {
     anchors.horizontalCenter: parent.horizontalCenter
     y: axes.yToPxClamped(value)
 
-    value: signal.src.v1
+    value: signal.isOutput ? signal.src.v1 : signal.measurement
     filled: signal.isOutput
     color: "blue"
   }
