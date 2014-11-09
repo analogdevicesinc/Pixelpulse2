@@ -18,9 +18,8 @@ Rectangle {
 
   function switchToPeriodic(type) {
     if (signal.src.src == 'constant') {
-      console.log('stp', type)
+      signal.src.v2 = signal.src.v1
       signal.src.v1 = 0
-      signal.src.v2 = 5
       signal.src.period = 100
     }
     signal.src.src = type
