@@ -125,8 +125,12 @@ Rectangle {
         ymax: axes.ymax
     }
 
-    OverlayPeriodic{}
-    OverlayConstant{}
+    OverlayPeriodic {
+      visible: signal.src.src == 'sine' || signal.src.src == 'triangle' || signal.src.src == 'sawtooth'
+    }
+    OverlayConstant {
+      visible: signal.src.src == 'constant'
+    }
 
   }
 }
