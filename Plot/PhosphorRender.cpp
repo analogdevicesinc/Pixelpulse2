@@ -82,7 +82,8 @@ void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSG
 }
 
 PhosphorRender::PhosphorRender(QQuickItem *parent)
-    : QQuickItem(parent), m_buffer(NULL), m_xmin(0), m_xmax(1), m_ymin(0), m_ymax(1), m_pointSize(0)
+    : QQuickItem(parent), m_ybuffer(NULL), m_xbuffer(NULL),
+    m_xmin(0), m_xmax(1), m_ymin(0), m_ymax(1), m_pointSize(0)
 {
     setFlag(ItemHasContents, true);
 }
@@ -93,7 +94,7 @@ PhosphorRender::~PhosphorRender()
 
 QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *)
 {
-    if (!m_buffer) {
+    if (!m_ybuffer) {
         return 0;
     }
 
@@ -101,7 +102,13 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     QSGGeometry *geometry = 0;
     Material *material = 0;
 
-    unsigned n_points = m_buffer->countPointsBetween(m_xmin, m_xmax);
+    unsigned n_points;
+
+    if (m_xbuffer) {
+        n_points = std::min(m_xbuffer->size(), m_ybuffer->size());
+    } else {
+        n_points = m_ybuffer->countPointsBetween(m_xmin, m_xmax);
+    }
 
     if (!oldNode) {
         node = new QSGGeometryNode;
@@ -129,7 +136,14 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
 
     material->pointSize = m_pointSize;
 
-    m_buffer->toVertexData(m_xmin, m_xmax, geometry->vertexDataAsPoint2D(), n_points);
+    auto verticies = geometry->vertexDataAsPoint2D();
+    if (m_xbuffer) {
+        for (int i=0; i<n_points; i++) {
+            verticies[i].set(m_xbuffer->get(i), m_ybuffer->get(i));
+        }
+    } else {
+        m_ybuffer->toVertexData(m_xmin, m_xmax, verticies, n_points);
+    }
     node->markDirty(QSGNode::DirtyGeometry);
 
     return node;

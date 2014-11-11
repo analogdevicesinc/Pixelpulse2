@@ -18,7 +18,7 @@ ApplicationWindow {
 		color: '#000'
 	}
 
-	RowLayout {
+	SplitView {
 		anchors.fill: parent
 
 		Item {
@@ -96,6 +96,19 @@ ApplicationWindow {
 
 				boundMin: 0
 				boundMax: controller.sampleTime
+			}
+		}
+
+		ColumnLayout {
+			Layout.preferredWidth: 400
+			spacing: 32
+			XYPlot {
+				xsignal: session.devices[0].channels[0].signals[0]
+				ysignal: session.devices[0].channels[0].signals[1]
+			}
+			XYPlot {
+				xsignal: session.devices[0].channels[1].signals[0]
+				ysignal: session.devices[0].channels[1].signals[1]
 			}
 		}
 	}

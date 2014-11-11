@@ -7,7 +7,8 @@ class PhosphorRender : public QQuickItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(FloatBuffer* buffer READ buffer WRITE setBuffer NOTIFY bufferChanged)
+    Q_PROPERTY(FloatBuffer* buffer READ buffer WRITE setBuffer NOTIFY yBufferChanged)
+    Q_PROPERTY(FloatBuffer* xBuffer READ xBuffer WRITE setXBuffer NOTIFY xBufferChanged)
 
     Q_PROPERTY(double xmin READ xmin WRITE setXmin NOTIFY xminChanged)
     Q_PROPERTY(double xmax READ xmax WRITE setXmax NOTIFY xmaxChanged)
@@ -29,15 +30,34 @@ public:
     emit PROP ## Changed(PROP); \
     update();
 
-    FloatBuffer* buffer() const { return m_buffer; }
-    void setBuffer(FloatBuffer* buffer) {
-        if (m_buffer && buffer != m_buffer) {
-            QObject::disconnect(m_buffer, &FloatBuffer::dataChanged, this, 0);
+    FloatBuffer* buffer() const { return m_ybuffer; }
+    void setBuffer(FloatBuffer* ybuffer) {
+        if (m_ybuffer != ybuffer) {
+            if (m_ybuffer) {
+                QObject::disconnect(m_ybuffer, &FloatBuffer::dataChanged, this, 0);
+            }
+            m_ybuffer = ybuffer;
+            if (m_ybuffer) {
+                QObject::connect(m_ybuffer, &FloatBuffer::dataChanged, this, &PhosphorRender::update);
+            }
+            emit yBufferChanged(m_ybuffer);
+            update();
         }
-        SETTER(buffer)
-        QObject::connect(m_buffer, &FloatBuffer::dataChanged, this, &PhosphorRender::update);
-
     }
+
+    FloatBuffer* xBuffer() const { return m_xbuffer; }
+    void setXBuffer(FloatBuffer* xbuffer) {
+        if (m_xbuffer) {
+            QObject::disconnect(m_xbuffer, &FloatBuffer::dataChanged, this, 0);
+        }
+        m_xbuffer = xbuffer;
+        if (m_xbuffer) {
+            QObject::connect(m_xbuffer, &FloatBuffer::dataChanged, this, &PhosphorRender::update);
+        }
+        emit xBufferChanged(m_xbuffer);
+        update();
+    }
+
 
     double xmin() const { return m_xmin; }
     void setXmin(double xmin) { SETTER(xmin) }
@@ -55,7 +75,8 @@ public:
     void setPointSize(double pointSize) { SETTER(pointSize) }
 
 signals:
-    void bufferChanged(FloatBuffer* b);
+    void xBufferChanged(FloatBuffer* b);
+    void yBufferChanged(FloatBuffer* b);
     void xminChanged(double v);
     void xmaxChanged(double v);
     void yminChanged(double v);
@@ -63,7 +84,8 @@ signals:
     void pointSizeChanged(double v);
 
 private:
-    FloatBuffer* m_buffer;
+    FloatBuffer* m_ybuffer;
+    FloatBuffer* m_xbuffer;
 
     double m_xmin;
     double m_xmax;

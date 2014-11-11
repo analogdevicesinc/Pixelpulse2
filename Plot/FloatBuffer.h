@@ -15,6 +15,14 @@ public:
 		return timeToIndex(end) - timeToIndex(start);
 	}
 
+	unsigned size() {
+		return m_length;
+	}
+
+	float get(unsigned i) {
+		return m_data[wrapIndex(i)];
+	}
+
 	void toVertexData(double start, double end, QSGGeometry::Point2D *vertices, unsigned n_verticies) {
 		unsigned i_min = timeToIndex(start);
 		unsigned i_max = timeToIndex(end);
