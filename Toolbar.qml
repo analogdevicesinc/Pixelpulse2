@@ -31,6 +31,10 @@ Rectangle {
       id: timeGroup
     }
 
+    ExclusiveGroup {
+      id: rateGroup
+    }
+
     Button {
       tooltip: "Menu"
       Layout.fillHeight: true
@@ -39,11 +43,16 @@ Rectangle {
       menu: Menu {
         Menu {
           title: "Sample Rate"
-          MenuItem { text: '1 kHz' }
-          MenuItem { text: '4 kHz' }
-          MenuItem { text: '10 kHz' }
-          MenuItem { text: '40 kHz' }
-          MenuItem { text: '100 kHz' }
+          MenuItem { exclusiveGroup: rateGroup; checkable: true;
+            onTriggered: controller.sampleRate = 1000; text: '1 kHz' }
+          MenuItem { exclusiveGroup: rateGroup; checkable: true;
+            onTriggered: controller.sampleRate = 4000; text: '4 kHz' }
+          MenuItem { exclusiveGroup: rateGroup; checkable: true;
+            onTriggered: controller.sampleRate = 10000; text: '10 kHz' }
+          MenuItem { exclusiveGroup: rateGroup; checkable: true;
+            onTriggered: controller.sampleRate = 40000; text: '40 kHz' }
+          MenuItem { exclusiveGroup: rateGroup; checkable: true;
+            onTriggered: controller.sampleRate = 100000; text: '100 kHz' }
         }
         Menu {
           title: "Sample Time"
