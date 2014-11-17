@@ -93,7 +93,7 @@ Rectangle {
 
       onWheel: {
         if (wheel.modifiers & Qt.ShiftModifier) {
-          var s = Math.pow(1.15, wheel.angleDelta.y/120);
+          var s = Math.pow(1.15, -wheel.angleDelta.y/120);
           var y = axes.pxToY(wheel.y);
 
           if (axes.ymax - axes.ymin < signal.resolution * 8 && s < 1) return;
