@@ -15,5 +15,9 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("session", &smu_session);
 
     engine.load("main.qml");
-    return app.exec();
+    int r = app.exec();
+
+    smu_session.closeAllDevices();
+
+    return r;
 }

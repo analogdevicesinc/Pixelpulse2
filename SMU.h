@@ -23,6 +23,7 @@ public:
   SessionItem();
   ~SessionItem();
   Q_INVOKABLE void openAllDevices();
+  Q_INVOKABLE void closeAllDevices();
 
   Q_INVOKABLE void start();
 

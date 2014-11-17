@@ -35,7 +35,9 @@ m_active(false)
   };
 }
 
-SessionItem::~SessionItem() {}
+SessionItem::~SessionItem() {
+    Q_ASSERT(m_devices.size() == 0);
+}
 
 void SessionItem::openAllDevices()
 {
@@ -46,6 +48,18 @@ void SessionItem::openAllDevices()
 	}
 
   devicesChanged();
+}
+
+void SessionItem::closeAllDevices()
+{
+    qDebug() << "Closing devices";
+    m_session->cancel();
+    m_session->end();
+    for (auto i: m_devices) {
+      m_session->remove_device(i->m_device);
+      delete i;
+    }
+    m_devices.clear();
 }
 
 void SessionItem::start()
