@@ -9,6 +9,7 @@ ApplicationWindow {
 	title: "Pixelpulse"
 	visible: true
 
+	property var toolbarHeight: 56
 	Controller {
 		id: controller
 	}
@@ -41,8 +42,8 @@ ApplicationWindow {
 
 				RowLayout {
 					Layout.fillWidth: true
-					Layout.minimumHeight: 56
-					Layout.maximumHeight: 56
+					Layout.minimumHeight: toolbarHeight
+					Layout.maximumHeight: toolbarHeight
 
 					spacing: 2
 
