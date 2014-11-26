@@ -41,7 +41,7 @@ Item {
 
         xBuffer: xsignal.buffer
         buffer: ysignal.buffer
-        pointSize: Math.max(2, Math.min(xaxis.xscale/session.sampleRate*3, 20))
+        pointSize: 2
 
         xmin: axes.xmin
         xmax: axes.xmax
