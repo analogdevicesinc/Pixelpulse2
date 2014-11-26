@@ -12,6 +12,8 @@ ToolbarStyle {
     id: rateGroup
   }
 
+  property alias plotsVisible: plotsVisibleItem.checked
+  property alias contentVisible: contentVisibleItem.checked
 
   Button {
     tooltip: "Menu"
@@ -44,7 +46,16 @@ ToolbarStyle {
           onTriggered: controller.sampleTime = 10; text: '10 s' }
       }
 
+      MenuItem {
+        id: plotsVisibleItem
+        text: "Plots"
+        checkable: true
+      }
 
+      MenuItem {
+        id: contentVisibleItem
+        text: "Documentation"
+        checkable: true
       }
 
       MenuSeparator{}
