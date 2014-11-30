@@ -127,7 +127,7 @@ Rectangle {
     }
 
     OverlayPeriodic {
-      visible: signal.src.src == 'sine' || signal.src.src == 'triangle' || signal.src.src == 'sawtooth'
+      visible: signal.src.src == 'sine' || signal.src.src == 'triangle' || signal.src.src == 'sawtooth' || signal.src.src == 'square'
     }
     OverlayConstant {
       visible: signal.src.src == 'constant'
