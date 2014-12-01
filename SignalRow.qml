@@ -50,6 +50,9 @@ Rectangle {
       MenuItem { text: "Triangle"
         onTriggered: signalBlock.switchToPeriodic('triangle')
       }
+      MenuItem { text: "Sawtooth"
+        onTriggered: signalBlock.switchToPeriodic('sawtooth')
+      }
       MenuItem { text: "Square"
         onTriggered: signalBlock.switchToPeriodic('square')
       }
