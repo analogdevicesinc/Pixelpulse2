@@ -42,7 +42,7 @@ Item {
           axes.ymin = Math.max(y - s * (y - axes.ymin), ysignal.min);
           axes.ymax = Math.min(y - s * (y - axes.ymax), ysignal.max);
         }
-		else if (wheel.modifiers) {
+		else {
           var s = Math.pow(1.15, -wheel.angleDelta.y/120);
           var x = axes.pxToX(wheel.x);
 
@@ -50,9 +50,6 @@ Item {
           axes.xmin = Math.max(x - s * (x - axes.xmin), xsignal.min);
           axes.xmax = Math.min(x - s * (x - axes.xmax), xsignal.max);
 		}
-		else {
-          wheel.accepted = false;
-        }
       }
     }
     gridColor: '#222'
