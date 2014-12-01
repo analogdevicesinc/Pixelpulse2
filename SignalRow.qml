@@ -11,12 +11,13 @@ Rectangle {
 
   color: '#444444'
 
-
   function switchToConstant() {
+	 channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
      signal.src.src = 'constant'
   }
 
   function switchToPeriodic(type) {
+	channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
     if (signal.src.src == 'constant') {
       signal.src.v2 = signal.src.v1
       signal.src.v1 = 0
@@ -130,8 +131,9 @@ Rectangle {
     }
 
     OverlayPeriodic {
-      visible: signal.src.src == 'sine' || signal.src.src == 'triangle' || signal.src.src == 'sawtooth' || signal.src.src == 'square'
+      visible: (signal.src.src == 'sine' || signal.src.src == 'triangle' || signal.src.src == 'sawtooth' || signal.src.src == 'square') && (channel.mode == {'Voltage': 1, 'Current': 2}[signal.label])
     }
+
     OverlayConstant {
       visible: signal.src.src == 'constant'
     }
