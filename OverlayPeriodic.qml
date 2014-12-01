@@ -30,6 +30,8 @@ MouseArea {
       dragging = 'd1'
     } else if (near(mouse, d2, 10)) {
       dragging = 'd2'
+    } else if (near(mouse, d3, 10)) {
+      dragging = 'd3'
     } else {
       mouse.accepted = false
       return;
@@ -43,14 +45,18 @@ MouseArea {
     if (dragging == 'd1') {
       var oldPeriod = signal.src.period;
       var newPeriod = (xaxis.pxToX(mouse.x) - relX) / sampleTick * 2
-      signal.src.period = (xaxis.pxToX(mouse.x) - relX) / sampleTick * 2
+      signal.src.period = (xaxis.pxToX(mouse.x) - relX) / sampleTick * ( (signal.src.src == 'square' || signal.src.src == 'sawtooth') ? 1: 2)
       signal.src.phase = -relX/sampleTick
       signal.src.v1 = y;
     } else if (dragging == 'd2') {
       relX = xaxis.pxToX(mouse.x)
       signal.src.phase = -relX/sampleTick
       signal.src.v2 = y;
-    }
+    } else if (dragging == 'd3') {
+      var duty = (xaxis.pxToX(mouse.x) - relX) / period
+	  signal.src.duty = duty;
+      signal.src.v2 = y;
+  }
   }
 
   DragDot {
@@ -59,7 +65,7 @@ MouseArea {
     filled: signal.isOutput
     color: "blue"
 
-    x: xaxis.xToPx(phaseZeroNearCenter() + period/2)
+    x: xaxis.xToPx(phaseZeroNearCenter() +( (signal.src.src == 'square' || signal.src.src == 'sawtooth') ? period : period/2))
     y: axes.yToPxClamped(value)
   }
 
@@ -70,6 +76,16 @@ MouseArea {
     color: "blue"
 
     x: xaxis.xToPx(phaseZeroNearCenter())
+    y: axes.yToPxClamped(value)
+  }
+
+  DragDot {
+    id: d3
+    value: signal.src.v2
+    filled: signal.isOutput
+    color: "blue"
+	visible: signal.src.src == 'square'
+    x: xaxis.xToPx(phaseZeroNearCenter() + signal.src.duty*period)
     y: axes.yToPxClamped(value)
   }
 

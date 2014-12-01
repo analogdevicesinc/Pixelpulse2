@@ -169,7 +169,7 @@ m_v1(0),
 m_v2(0),
 m_period(0),
 m_phase(0),
-m_duty(0)
+m_duty(0.5)
 {
 }
 
