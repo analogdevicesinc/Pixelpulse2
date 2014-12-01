@@ -2,7 +2,8 @@ import QtQuick 2.0
 
 Item {
   property bool enabled: false
-  property string mode: "repeat"
+  property bool continuous: false
+  property bool repeat: true
   property real sampleRate: 100000
   property real sampleTime: 0.1
   readonly property int sampleCount: sampleTime * sampleRate
@@ -10,7 +11,7 @@ Item {
   function trigger() {
     session.sampleRate = sampleRate
     session.sampleCount = sampleCount
-    session.start();
+    session.start(continuous);
   }
 
   Timer {
@@ -31,11 +32,13 @@ Item {
   Connections {
     target: session
     onFinished: {
-      if (mode == "one") {
-        enabled = false;
-      } else if (mode == "repeat") {
-        if (enabled) {
-          timer.start();
+      if (!continuous) {
+        if (repeat) {
+            if (enabled) {
+                timer.start();
+            } else {
+                enabled = false;
+            }
         }
       }
     }

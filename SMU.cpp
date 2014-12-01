@@ -74,7 +74,7 @@ void SessionItem::closeAllDevices()
     }
 }
 
-void SessionItem::start()
+void SessionItem::start(bool continuous)
 {
   if (m_active) return;
   if (m_sample_rate == 0) return;
@@ -90,13 +90,13 @@ void SessionItem::start()
       for (auto sig: chan->m_signals) {
         sig->m_buffer->setRate(1.0/m_sample_rate);
         sig->m_buffer->allocate(m_sample_count);
-        sig->m_signal->measure_buffer(sig->m_buffer->data(), m_sample_count);
+        sig->m_signal->measure_callback([=](float d){ sig->m_buffer->shift(d); });
         sig->m_src->update();
       }
     }
   }
 
-  m_session->start(m_sample_count);
+  m_session->start(continuous ? 0 : m_sample_count);
 }
 
 void SessionItem::onAttached()

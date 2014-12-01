@@ -23,6 +23,15 @@ public:
 		return m_data[wrapIndex(i)];
 	}
 
+    void shift(float d) {
+        m_data[wrapIndex(m_length)] = d;
+        if (m_length < m_data.size()) {
+            m_length += 1;
+        } else {
+            m_start = (m_start + 1) % m_data.size();
+        }
+    }
+
 	void toVertexData(double start, double end, QSGGeometry::Point2D *vertices, unsigned n_verticies) {
 		unsigned i_min = timeToIndex(start);
 		unsigned i_max = timeToIndex(end);
@@ -38,6 +47,7 @@ public:
 	}
 
 	void allocate(unsigned length) {
+        m_start = m_length = 0;
 		m_data.resize(length);
 		if (m_length > length) {
 			m_length = length;
@@ -56,9 +66,9 @@ public:
 	}
 
 	void incValid(unsigned length) {
-		if (m_length < length) {
+        /*if (m_length < length) {
 			m_length = length;
-		}
+        }*/
 		dataChanged();
 	}
 

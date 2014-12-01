@@ -25,7 +25,7 @@ public:
   Q_INVOKABLE void openAllDevices();
   Q_INVOKABLE void closeAllDevices();
 
-  Q_INVOKABLE void start();
+  Q_INVOKABLE void start(bool continuous);
 
   bool getActive() { return m_active; }
   QQmlListProperty<DeviceItem> getDevices() { return QQmlListProperty<DeviceItem>(this, m_devices); }

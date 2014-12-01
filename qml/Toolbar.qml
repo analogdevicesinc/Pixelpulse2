@@ -12,6 +12,7 @@ ToolbarStyle {
     id: rateGroup
   }
 
+  property alias repeatedSweep: repeatedSweepItem.checked
   property alias plotsVisible: plotsVisibleItem.checked
   property alias contentVisible: contentVisibleItem.checked
 
@@ -21,6 +22,14 @@ ToolbarStyle {
     style: btnStyle
 
     menu: Menu {
+
+      MenuItem {
+          id: repeatedSweepItem
+          text: "Repeated sweep"
+          checkable: true
+          checked: true
+      }
+
       Menu {
         title: "Sample Rate"
         MenuItem { exclusiveGroup: rateGroup; checkable: true;
