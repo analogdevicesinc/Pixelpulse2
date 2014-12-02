@@ -14,6 +14,9 @@ MouseArea {
     var offset = Math.round((center + phase) / period);
     return offset * period - phase;
   }
+  function periodDivisor() {
+    return ( (signal.src.src == 'square' || signal.src.src == 'sawtooth') ? 1: 2)
+    }
 
   property var dragging: null
   property var relX: 0
@@ -45,7 +48,7 @@ MouseArea {
     if (dragging == 'd1') {
       var oldPeriod = signal.src.period;
       var newPeriod = (xaxis.pxToX(mouse.x) - relX) / sampleTick * 2
-      signal.src.period = (xaxis.pxToX(mouse.x) - relX) / sampleTick * ( (signal.src.src == 'square' || signal.src.src == 'sawtooth') ? 1: 2)
+      signal.src.period = (xaxis.pxToX(mouse.x) - relX) / sampleTick * periodDivisor()
       signal.src.phase = -relX/sampleTick
       signal.src.v1 = y;
     } else if (dragging == 'd2') {
@@ -54,7 +57,7 @@ MouseArea {
       signal.src.v2 = y;
     } else if (dragging == 'd3') {
       var duty = (xaxis.pxToX(mouse.x) - relX) / period
-	  signal.src.duty = duty;
+      signal.src.duty = duty;
       signal.src.v2 = y;
   }
   }
@@ -65,7 +68,7 @@ MouseArea {
     filled: signal.isOutput
     color: "blue"
 
-    x: xaxis.xToPx(phaseZeroNearCenter() +( (signal.src.src == 'square' || signal.src.src == 'sawtooth') ? period : period/2))
+    x: xaxis.xToPx(phaseZeroNearCenter() + period/periodDivisor())
     y: axes.yToPxClamped(value)
   }
 
@@ -84,7 +87,7 @@ MouseArea {
     value: signal.src.v2
     filled: signal.isOutput
     color: "blue"
-	visible: signal.src.src == 'square'
+    visible: signal.src.src == 'square'
     x: xaxis.xToPx(phaseZeroNearCenter() + signal.src.duty*period)
     y: axes.yToPxClamped(value)
   }
