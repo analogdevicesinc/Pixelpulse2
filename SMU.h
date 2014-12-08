@@ -59,6 +59,7 @@ public:
   DeviceItem(SessionItem*, Device*);
   QQmlListProperty<ChannelItem> getChannels() { return QQmlListProperty<ChannelItem>(this, m_channels); }
   QString getLabel() const { return QString(m_device->info()->label); }
+  Q_INVOKABLE void ctrl_transfer( int x, int y, int z) { m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);} 
 
 protected:
   Device* const m_device;
