@@ -11,8 +11,20 @@ ColumnLayout {
   }
 
   Rectangle {
-    Layout.fillHeight: true
     Layout.fillWidth: true
     color: '#ccc'
+    height: toolbarHeight
   }
+
+  TextInput {
+    Layout.fillWidth: true
+    height: toolbarHeight
+	cursorVisible: true
+	text: "type here."
+	color: "#FFF"
+    onAccepted: {
+	  console.log(eval(text))
+    }
+  }
+
 }

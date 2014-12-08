@@ -22,6 +22,7 @@ class SessionItem : public QObject {
 public:
   SessionItem();
   ~SessionItem();
+  QList<DeviceItem *> m_devices;
   Q_INVOKABLE void openAllDevices();
   Q_INVOKABLE void closeAllDevices();
 
@@ -47,7 +48,6 @@ protected:
   bool m_active;
   unsigned m_sample_rate;
   unsigned m_sample_count;
-  QList<DeviceItem *> m_devices;
 };
 
 class DeviceItem : public QObject {
@@ -56,12 +56,13 @@ class DeviceItem : public QObject {
   Q_PROPERTY(QString label READ getLabel CONSTANT);
 
 public:
+  Device* const m_device;
   DeviceItem(SessionItem*, Device*);
   QQmlListProperty<ChannelItem> getChannels() { return QQmlListProperty<ChannelItem>(this, m_channels); }
   QString getLabel() const { return QString(m_device->info()->label); }
+  Q_INVOKABLE void ctrl_transfer( int x, int y, int z) { m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);} 
 
 protected:
-  Device* const m_device;
   QList<ChannelItem*> m_channels;
   friend class SessionItem;
 };
@@ -73,6 +74,7 @@ class ChannelItem : public QObject {
   Q_PROPERTY(unsigned mode MEMBER m_mode NOTIFY modeChanged);
 
 public:
+  Device* const m_device;
   ChannelItem(DeviceItem*, Device*, unsigned index);
   QQmlListProperty<SignalItem> getSignals() { return QQmlListProperty<SignalItem>(this, m_signals); }
   QString getLabel() const { return QString(m_device->channel_info(m_index)->label); }
@@ -81,7 +83,6 @@ signals:
   void modeChanged(unsigned mode);
 
 protected:
-  Device* const m_device;
   const unsigned m_index;
   unsigned m_mode;
 
