@@ -13,7 +13,7 @@ Item {
     anchors.verticalCenter: parent.verticalCenter
     anchors.right: parent.left
     anchors.rightMargin: 12
-    text: value.toFixed(2)
+    text: value.toFixed(4)
     color: 'white'
   }
 
