@@ -14,7 +14,8 @@ int main(int argc, char *argv[])
     smu_session.openAllDevices();
     engine.rootContext()->setContextProperty("session", &smu_session);
 
-    engine.load("main.qml");
+	engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+
     int r = app.exec();
 
     smu_session.closeAllDevices();

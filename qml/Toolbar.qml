@@ -62,7 +62,7 @@ ToolbarStyle {
       MenuItem { text: "About" }
       MenuItem { text: "Exit"; onTriggered: Qt.quit() }
     }
-    iconSource: './icons/gear.png'
+    iconSource: 'qrc:/icons/gear.png'
   }
 
   Button {
@@ -70,7 +70,7 @@ ToolbarStyle {
     Layout.fillHeight: true
     Layout.alignment: Qt.AlignRight
     style: btnStyle
-    iconSource: controller.enabled ? './icons/pause.png' : './icons/play.png'
+    iconSource: controller.enabled ? 'qrc:/icons/pause.png' : 'qrc:/icons/play.png'
 
     onClicked: {
       controller.toggle()
