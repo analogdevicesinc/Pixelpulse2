@@ -1,0 +1,23 @@
+os: unstable 
+
+platform:
+ - x86
+ - Any CPU
+
+configuration:
+ - Debug
+ - Release
+
+install:
+  - ps: (new-object System.Net.WebClient).Downloadfile("https://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/4.9.2/threads-posix/dwarf/i686-4.9.2-release-posix-dwarf-rt_v3-rev0.7z", "c:\mingw.7z")
+  - 7z x -y "c:\mingw.7z" -o"C:\"
+  - set QTDIR=C:\Qt\Qt5.3.2\5.3\mingw482_32
+  - set PATH=C:\Program Files (x86)\MSBuild\12.0\bin\;C:\mingw32\bin;%QTDIR%\bin;%PATH%
+  - ps: (new-object System.Net.WebClient).Downloadfile("https://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-1.0.19/libusb-1.0.19.7z", "c:\libusb.7z")
+  - 7z x -y "c:\libusb.7z" -o"C:\libusb"
+
+build_script:
+  - git submodule update --init --recursive
+  - qmake LIBS+="C:\libusb\MinGW32\static\libusb-1.0.a" INCLUDEPATH+="C:\libusb\include" pixelpulse2.pro
+  - mingw32-make -j8
+  - appveyor PushArtifact release\pixelpulse2.exe
