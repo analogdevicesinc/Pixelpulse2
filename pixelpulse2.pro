@@ -2,6 +2,8 @@ TEMPLATE = app
 
 QT += qml quick widgets
 CONFIG += c++11
+CONFIG += debug
+CONFIG += release
 
 CFLAGS += -v -static -static-libgcc -static-libstdc++
 
@@ -15,7 +17,7 @@ SOURCES += main.cpp \
 
 RESOURCES += qml.qrc
 
-# Additional import path used to resolve QML modules in Qt Creator's code model
+# Additional import path used to resolve QML modules in the Qt Creator code model
 QML_IMPORT_PATH =
 
 OTHER_FILES += \
