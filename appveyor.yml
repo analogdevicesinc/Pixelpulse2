@@ -2,11 +2,6 @@ os: unstable
 
 platform:
  - x86
- - Any CPU
-
-configuration:
- - Debug
- - Release
 
 install:
   - ps: (new-object System.Net.WebClient).Downloadfile("https://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/4.9.2/threads-posix/dwarf/i686-4.9.2-release-posix-dwarf-rt_v3-rev0.7z", "c:\mingw.7z")

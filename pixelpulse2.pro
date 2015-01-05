@@ -3,7 +3,6 @@ TEMPLATE = app
 QT += qml quick widgets
 CONFIG += c++11
 CONFIG += debug
-CONFIG += release
 
 CFLAGS += -v -static -static-libgcc -static-libstdc++
 
@@ -48,6 +47,10 @@ HEADERS += \
     libsmu/libsmu.hpp \
     libsmu/device_cee.hpp \
     libsmu/internal.hpp
+
+win32:debug {
+	CONFIG += console
+}
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += libusb-1.0
