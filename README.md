@@ -16,11 +16,14 @@ Click and drag the X axis to pan in time.
 
 ### Getting Pixelpulse2
 
-To build from source on Linux / OSX:
+To build from source on Linux / OSX with an appropriate C++ compiler and libraries:
+
+* Install [LibUSB](http://libusb.info/) using the [appropriate branch](https://github.com/kevinmehall/libusb/tree/hp) if hotplug support on Windows is required.
+* Install Qt5.4 by downloading the proper release for your platform from [the Qt project](http://qtmirror.ics.com/pub/qtproject/development_releases/qt/5.4/5.4.0-rc/).
+
+Run the following commands from a console environment:
 
     git clone --recursive https://github.com/signalspec/pixelpulse2
-    git checkout qmake
-    git submodule update
     mkdir build
     qmake ..
     make -j4
