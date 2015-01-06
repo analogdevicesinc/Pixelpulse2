@@ -10,6 +10,10 @@ Zoom in and out  with your scroll wheel or multitouch gestures (on supported pla
 
 Click and drag the X axis to pan in time.
 
+### Screenshot
+
+![Screenshot of PP2 on Windows 7](http://itdaniher.com/static/pp2_win7.png "Pixelpulse on Windows 7")
+
 ### Getting Pixelpulse2
 
 To build from source on Linux / OSX:
