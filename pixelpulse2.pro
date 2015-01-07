@@ -52,5 +52,13 @@ win32:debug {
 	CONFIG += console
 }
 
+osx {
+	ICON = icons/pp2.icns
+}
+
+win32 {
+	RC_ICONS = icons/pp2.ico
+}
+
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += libusb-1.0
