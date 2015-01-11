@@ -15,7 +15,7 @@ Item {
 
   Timer {
     id: timer
-    interval: 100
+    interval: 1
     onTriggered: { trigger() }
   }
 

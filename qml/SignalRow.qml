@@ -32,7 +32,7 @@ Rectangle {
     width: timelinePane.hspacing
     height: timelinePane.hspacing
 
-    iconSource: 'icons/' + signal.src.src + '.png'
+    iconSource: 'qrc:/icons/' + signal.src.src + '.png'
 
     style: ButtonStyle {
       background: Rectangle {

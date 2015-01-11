@@ -20,7 +20,7 @@ Rectangle {
       'svmi',
       'simv',
     ]
-    iconSource: 'icons/' + icons[channel.mode] + '.png'
+    iconSource: 'qrc:/icons/' + icons[channel.mode] + '.png'
 
     style: ButtonStyle {
 
