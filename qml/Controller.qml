@@ -3,7 +3,7 @@ import QtQuick 2.0
 Item {
   property bool enabled: false
   property string mode: "repeat"
-  property real sampleRate: 10000
+  property real sampleRate: 100000
   property real sampleTime: 0.1
   readonly property int sampleCount: sampleTime * sampleRate
 
