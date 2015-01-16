@@ -31,9 +31,9 @@ Run the following commands from a console environment:
 
 To get an up-to-date binary build for Windows:
 
- * Navigate to the [AppVeyor](https://ci.appveyor.com/project/kevinmehall/pixelpulse2/build/artifacts) page, download the 'release' .exe.
  * Download the dependency package from [third-party hosting](https://kevinmehall.net/tmp/pixelpulse2_r3.zip)
- * Extract the dependency package and overwrite the included pixelpulse2.exe with the release image downloaded from AppVeyor.
+ * Navigate to the [AppVeyor](https://ci.appveyor.com/project/kevinmehall/pixelpulse2/build/artifacts) page, download the 'release' .exe.
+ * Extract the dependency package and overwrite the included pixelpulse2.exe with the latest build downloaded from AppVeyor.
  * With a M1K attached, double-click the executable to launch Pixelpulse.
 
 
