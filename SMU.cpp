@@ -21,7 +21,8 @@ SessionItem::SessionItem():
 m_session(new Session),
 m_sample_rate(0),
 m_sample_count(0),
-m_active(false)
+m_active(false),
+m_continuous(false)
 {
   connect(this, &SessionItem::progress, this, &SessionItem::onProgress, Qt::QueuedConnection);
   connect(this, &SessionItem::finished, this, &SessionItem::onFinished, Qt::QueuedConnection);
@@ -78,6 +79,7 @@ void SessionItem::start(bool continuous)
 {
   if (m_active) return;
   if (m_sample_rate == 0) return;
+  m_continuous = continuous;
 
   m_active = true;
   activeChanged();
@@ -90,7 +92,15 @@ void SessionItem::start(bool continuous)
       for (auto sig: chan->m_signals) {
         sig->m_buffer->setRate(1.0/m_sample_rate);
         sig->m_buffer->allocate(m_sample_count);
-        sig->m_signal->measure_callback([=](float d){ sig->m_buffer->shift(d); });
+
+        if (m_continuous) {
+          sig->m_signal->measure_callback([=](float d){
+            sig->m_buffer->shift(d);
+          });
+        } else {
+          sig->m_signal->measure_buffer(sig->m_buffer->data(), m_sample_count);
+        }
+
         sig->m_src->update();
       }
     }
@@ -112,8 +122,13 @@ void SessionItem::onAttached()
 
 void SessionItem::onDetached(){
   qDebug() << "detached\n";
-  qDebug() << m_devices; 
+  qDebug() << m_devices;
   closeAllDevices();
+}
+
+void SessionItem::cancel() {
+  if (!m_active) { return; }
+  m_session->cancel();
 }
 
 void SessionItem::onFinished()
@@ -122,13 +137,14 @@ void SessionItem::onFinished()
   m_active = false;
   activeChanged();
 
-  // Only in sweep-based modes
-  for (auto dev: m_devices) {
-    for (auto chan: dev->m_channels) {
-      for (auto sig: chan->m_signals) {
-        sig->updateMeasurement();
+  if (!m_continuous) {
+      for (auto dev: m_devices) {
+        for (auto chan: dev->m_channels) {
+          for (auto sig: chan->m_signals) {
+            sig->updateMeasurement();
+          }
+        }
       }
-    }
   }
 }
 
@@ -136,7 +152,11 @@ void SessionItem::onProgress(sample_t sample) {
   for (auto dev: m_devices) {
     for (auto chan: dev->m_channels) {
       for (auto sig: chan->m_signals) {
-        sig->m_buffer->incValid(sample);
+        if (m_continuous) {
+          sig->m_buffer->continuousProgress(sample);
+        } else {
+          sig->m_buffer->sweepProgress(sample);
+        }
       }
     }
   }

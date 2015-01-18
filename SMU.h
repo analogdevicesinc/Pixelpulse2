@@ -26,6 +26,7 @@ public:
   Q_INVOKABLE void closeAllDevices();
 
   Q_INVOKABLE void start(bool continuous);
+  Q_INVOKABLE void cancel();
 
   bool getActive() { return m_active; }
   QQmlListProperty<DeviceItem> getDevices() { return QQmlListProperty<DeviceItem>(this, m_devices); }
@@ -49,6 +50,7 @@ protected slots:
 protected:
   Session* m_session;
   bool m_active;
+  bool m_continuous;
   unsigned m_sample_rate;
   unsigned m_sample_count;
   QList<DeviceItem *> m_devices;
@@ -63,7 +65,7 @@ public:
   DeviceItem(SessionItem*, Device*);
   QQmlListProperty<ChannelItem> getChannels() { return QQmlListProperty<ChannelItem>(this, m_channels); }
   QString getLabel() const { return QString(m_device->info()->label); }
-  Q_INVOKABLE void ctrl_transfer( int x, int y, int z) { m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);} 
+  Q_INVOKABLE void ctrl_transfer( int x, int y, int z) { m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);}
 
 protected:
   Device* const m_device;

@@ -26,6 +26,9 @@ Item {
       enabled = true;
     } else {
       enabled = false;
+      if (continuous || sampleTime > 0.1) {
+        session.cancel();
+      }
     }
   }
 
