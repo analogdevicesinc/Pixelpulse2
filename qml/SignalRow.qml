@@ -12,12 +12,12 @@ Rectangle {
   color: '#444444'
 
   function switchToConstant() {
-	 channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
+     channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
      signal.src.src = 'constant'
   }
 
   function switchToPeriodic(type) {
-	channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
+    channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
     if (signal.src.src == 'constant') {
       signal.src.v2 = signal.src.v1
       signal.src.v1 = 0
@@ -88,14 +88,11 @@ Rectangle {
     gridColor: '#222'
     textColor: '#666'
 
-    // Shift + scroll for Y-axis zoom
     MouseArea {
       anchors.fill: parent
-      onPressed: {
-        mouse.accepted = false
-      }
 
       onWheel: {
+      // Shift + scroll for Y-axis zoom
         if (wheel.modifiers & Qt.ShiftModifier) {
           var s = Math.pow(1.15, -wheel.angleDelta.y/120);
           var y = axes.pxToY(wheel.y);
@@ -104,8 +101,22 @@ Rectangle {
 
           axes.ymin = Math.max(y - s * (y - axes.ymin), signal.min);
           axes.ymax = Math.min(y - s * (y - axes.ymax), signal.max);
-        } else {
-          wheel.accepted = false;
+        }
+        else {
+          wheel.accepted = false
+        }
+      }
+      onPositionChanged: {
+        // Shift + drag for Y-axis zoom
+        if (mouse.modifiers & Qt.ShiftModifier) {
+          var my = axes.pxToY(mouse.y);
+          var range = axes.ymax - axes.ymin;
+          var center = (axes.ymin + axes.ymax)/2
+          axes.ymin = (center*0.9+my*0.1) - range/2;
+          axes.ymax = (center*0.9+my*0.1) + range/2;
+        }
+        else {
+          mouse.accepted = false
         }
       }
     }
