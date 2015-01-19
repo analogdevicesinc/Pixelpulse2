@@ -25,6 +25,7 @@ ColumnLayout {
     onAccepted: {
 	  console.log(eval(text))
     }
+	selectByMouse: true
   }
 
 }
