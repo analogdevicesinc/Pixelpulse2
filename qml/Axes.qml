@@ -17,8 +17,8 @@ Item {
 
   property real textSpacing: 4
 
-  property int xgridticks: width  / 64
-  property int ygridticks: height / 32
+  property int xgridticks: width  / 16
+  property int ygridticks: height / 16
 
   property var gridColor: '#ccc'
   property var textColor: '#444'

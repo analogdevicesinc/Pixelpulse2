@@ -47,19 +47,48 @@ MouseArea {
     var y = Math.min(Math.max(axes.pxToY(mouse.y), signal.min), signal.max)
     if (dragging == 'd1') {
       var oldPeriod = signal.src.period;
-      var newPeriod = (xaxis.pxToX(mouse.x) - relX) / sampleTick * 2
-      signal.src.period = (xaxis.pxToX(mouse.x) - relX) / sampleTick * periodDivisor()
-      signal.src.phase = -relX/sampleTick
-      signal.src.v1 = y;
+      var newPeriod = (xaxis.pxToX(mouse.x) - relX) / sampleTick * periodDivisor()
+      if (mouse.modifiers & Qt.ControlModifier) {
+        signal.src.period = Math.round(newPeriod / (timeline_header.step/sampleTick)) * (timeline_header.step/sampleTick)
+      }
+      else {
+        signal.src.period = newPeriod;
+      }
+      if (mouse.modifiers & Qt.AltModifier) {
+        signal.src.v1 = Math.round(y/parent.ystep)*parent.ystep
+      }
+      else {
+        signal.src.v1 = y;
+      }
     } else if (dragging == 'd2') {
       relX = xaxis.pxToX(mouse.x)
-      signal.src.phase = -relX/sampleTick
-      signal.src.v2 = y;
+      if (mouse.modifiers & Qt.ControlModifier) {
+        signal.src.phase = Math.round((-relX/sampleTick) / (timeline_header.step/sampleTick)) * (timeline_header.step/sampleTick)
+      }
+      else {
+        signal.src.phase = -relX/sampleTick
+      }
+      if (mouse.modifiers & Qt.AltModifier) {
+        signal.src.v2 = Math.round(y/parent.ystep)*parent.ystep
+      }
+      else {
+        signal.src.v2 = y;
+      }
     } else if (dragging == 'd3') {
       var duty = (xaxis.pxToX(mouse.x) - relX) / period
-      signal.src.duty = duty;
-      signal.src.v2 = y;
-  }
+      if (mouse.modifiers & Qt.ControlModifier) {
+        signal.src.duty = Math.round(duty*20)/20
+      }
+      else {
+        signal.src.duty = duty;
+      }
+      if (mouse.modifiers & Qt.AltModifier) {
+        signal.src.v2 = Math.round(y/parent.ystep)*parent.ystep
+      }
+      else {
+        signal.src.v2 = y;
+      }
+    }
   }
 
   DragDot {
