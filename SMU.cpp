@@ -18,13 +18,15 @@ void registerTypes() {
 }
 
 SessionItem::SessionItem():
-m_session(std::unique_ptr<Session>(new Session)),
+m_session(new Session),
 m_sample_rate(0),
 m_sample_count(0),
 m_active(false)
 {
   connect(this, &SessionItem::progress, this, &SessionItem::onProgress, Qt::QueuedConnection);
   connect(this, &SessionItem::finished, this, &SessionItem::onFinished, Qt::QueuedConnection);
+  connect(this, &SessionItem::attached, this, &SessionItem::onAttached, Qt::QueuedConnection);
+  connect(this, &SessionItem::detached, this, &SessionItem::onDetached, Qt::QueuedConnection);
 
   m_session->m_completion_callback = [this](){
     emit finished();
@@ -33,6 +35,13 @@ m_active(false)
   m_session->m_progress_callback = [this](sample_t n) {
     emit progress(n);
   };
+  m_session->m_hotplug_attach_callback = [this](){
+    emit attached();
+  };
+  m_session->m_hotplug_detach_callback = [this](){
+    emit detached();
+  };
+
 }
 
 SessionItem::~SessionItem() {
@@ -55,11 +64,11 @@ void SessionItem::closeAllDevices()
     qDebug() << "Closing devices";
     m_session->cancel();
     m_session->end();
-    QList<DeviceItem *> devices;
-    m_devices.swap(devices);
+   // QList<DeviceItem *> devices;
+ //   m_devices.swap(devices);
     devicesChanged();
 
-    for (auto i: devices) {
+    for (auto i: m_devices) {
       m_session->remove_device(i->m_device);
       delete i;
     }
@@ -88,6 +97,23 @@ void SessionItem::start()
   }
 
   m_session->start(m_sample_count);
+}
+
+void SessionItem::onAttached()
+{
+  qDebug() << "attached\n";
+  qDebug() << m_devices;
+  for (auto i: m_session->m_available_devices) {
+    auto dev = m_session->add_device(&*i);
+    m_devices.append(new DeviceItem(this, dev));
+  }
+  devicesChanged();
+}
+
+void SessionItem::onDetached(){
+  qDebug() << "detached\n";
+  qDebug() << m_devices;
+  closeAllDevices();
 }
 
 void SessionItem::onFinished()

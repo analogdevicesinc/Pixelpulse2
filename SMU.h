@@ -37,13 +37,17 @@ signals:
   void sampleCountChanged();
   void progress(sample_t);
   void finished();
+  void attached();
+  void detached();
 
 protected slots:
   void onProgress(sample_t);
   void onFinished();
+  void onAttached();
+  void onDetached();
 
 protected:
-  const std::unique_ptr<Session> m_session;
+  Session* m_session;
   bool m_active;
   unsigned m_sample_rate;
   unsigned m_sample_count;
