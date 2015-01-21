@@ -64,11 +64,11 @@ void SessionItem::closeAllDevices()
     qDebug() << "Closing devices";
     m_session->cancel();
     m_session->end();
-   // QList<DeviceItem *> devices;
- //   m_devices.swap(devices);
+    QList<DeviceItem *> devices;
+    m_devices.swap(devices);
     devicesChanged();
 
-    for (auto i: m_devices) {
+    for (auto i: devices) {
       m_session->remove_device(i->m_device);
       delete i;
     }
@@ -112,7 +112,7 @@ void SessionItem::onAttached()
 
 void SessionItem::onDetached(){
   qDebug() << "detached\n";
-  qDebug() << m_devices;
+  qDebug() << m_devices; 
   closeAllDevices();
 }
 
