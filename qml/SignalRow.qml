@@ -88,9 +88,23 @@ Rectangle {
     gridColor: '#222'
     textColor: '#666'
 
+	states: [
+        State {
+            name: "floating"
+            PropertyChanges { target: axes; anchors.top: undefined }
+        },
+        State {
+            name: "notfloating"
+            PropertyChanges { target: axes; anchors.top: signalBlock.top}
+        }
+    ]
+
     MouseArea {
       anchors.fill: parent
-
+      drag.target: axes
+      drag.axis: Drag.YAxis
+      onDoubleClicked: {axes.state = "floating"}
+      onReleased: {axes.state = "notfloating"}
       onWheel: {
       // Shift + scroll for Y-axis zoom
         if (wheel.modifiers & Qt.ShiftModifier) {
@@ -112,8 +126,8 @@ Rectangle {
           var my = axes.pxToY(mouse.y);
           var range = axes.ymax - axes.ymin;
           var center = (axes.ymin + axes.ymax)/2
-          axes.ymin = (center*0.9+my*0.1) - range/2;
-          axes.ymax = (center*0.9+my*0.1) + range/2;
+          axes.ymin = Math.max( (center*0.9+my*0.1) - range/2, signal.min); // -(signal.min+1)*0.1);
+          axes.ymax = Math.min( (center*0.9+my*0.1) + range/2, signal.max); //+(signal.max+1)*0.1);
         }
         else {
           mouse.accepted = false
@@ -123,7 +137,7 @@ Rectangle {
 
     Rectangle {
       anchors.fill: parent
-      color: '#0c0c0c'
+      opacity: 0.0
       z: -1
     }
 
