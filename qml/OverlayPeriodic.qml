@@ -49,13 +49,13 @@ MouseArea {
       var oldPeriod = signal.src.period;
       var newPeriod = (xaxis.pxToX(mouse.x) - relX) / sampleTick * periodDivisor()
       if (mouse.modifiers & Qt.ControlModifier) {
-        signal.src.period = Math.round(newPeriod / (timeline_header.step/sampleTick)) * (timeline_header.step/sampleTick)
+        signal.src.period = axes.snapx(newPeriod)
       }
       else {
         signal.src.period = newPeriod;
       }
       if (mouse.modifiers & Qt.AltModifier) {
-        signal.src.v1 = Math.round(y/parent.ystep)*parent.ystep
+        signal.src.v1 = axes.snapy(y)
       }
       else {
         signal.src.v1 = y;
@@ -63,13 +63,13 @@ MouseArea {
     } else if (dragging == 'd2') {
       relX = xaxis.pxToX(mouse.x)
       if (mouse.modifiers & Qt.ControlModifier) {
-        signal.src.phase = Math.round((-relX/sampleTick) / (timeline_header.step/sampleTick)) * (timeline_header.step/sampleTick)
+        signal.src.phase = axes.snapx( -relX/sampleTick)
       }
       else {
         signal.src.phase = -relX/sampleTick
       }
       if (mouse.modifiers & Qt.AltModifier) {
-        signal.src.v2 = Math.round(y/parent.ystep)*parent.ystep
+        signal.src.v2 = axes.snapy(y)
       }
       else {
         signal.src.v2 = y;
@@ -83,7 +83,7 @@ MouseArea {
         signal.src.duty = duty;
       }
       if (mouse.modifiers & Qt.AltModifier) {
-        signal.src.v2 = Math.round(y/parent.ystep)*parent.ystep
+        signal.src.v2 = axes.snapy(y)
       }
       else {
         signal.src.v2 = y;

@@ -10,11 +10,12 @@ MouseArea {
 
   function set(mouse) {
     channel.mode = signal.label == 'Voltage' ? 1 : 2; // TODO: `sourceMode` in signalInfo
+	var out = Math.min(Math.max(axes.pxToY(mouse.y), signal.min), signal.max);
     if (mouse.modifiers & Qt.AltModifier) {
-      signal.src.v1 = Math.round((Math.min(Math.max(axes.pxToY(mouse.y), signal.min), signal.max)/parent.ystep))*parent.ystep
+      signal.src.v1 = axes.snapy(out)
     }
     else {
-      signal.src.v1 = Math.min(Math.max(axes.pxToY(mouse.y), signal.min), signal.max)
+      signal.src.v1 = out
     }
   }
 
