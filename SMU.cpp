@@ -97,11 +97,17 @@ void SessionItem::start(bool continuous)
           sig->m_signal->measure_callback([=](float d){
             sig->m_buffer->shift(d);
           });
+
+          connect(sig->m_src, &SrcItem::changed, [=] {
+            dev->m_device->lock();
+            sig->m_src->update();
+            dev->m_device->unlock();
+          });
         } else {
           sig->m_signal->measure_buffer(sig->m_buffer->data(), m_sample_count);
         }
-
         sig->m_src->update();
+
       }
     }
   }
@@ -137,14 +143,15 @@ void SessionItem::onFinished()
   m_active = false;
   activeChanged();
 
-  if (!m_continuous) {
-      for (auto dev: m_devices) {
-        for (auto chan: dev->m_channels) {
-          for (auto sig: chan->m_signals) {
-            sig->updateMeasurement();
-          }
+  for (auto dev: m_devices) {
+    for (auto chan: dev->m_channels) {
+      for (auto sig: chan->m_signals) {
+        disconnect(sig->m_src, &SrcItem::changed, 0, 0);
+        if (!m_continuous) {
+          sig->updateMeasurement();
         }
       }
+    }
   }
 }
 
@@ -217,6 +224,12 @@ m_period(0),
 m_phase(0),
 m_duty(0.5)
 {
+  connect(this, &SrcItem::srcChanged, [=]{ changed(); });
+  connect(this, &SrcItem::v1Changed, [=]{ changed(); });
+  connect(this, &SrcItem::v2Changed, [=]{ changed(); });
+  connect(this, &SrcItem::periodChanged, [=]{ changed(); });
+  connect(this, &SrcItem::phaseChanged, [=]{ changed(); });
+  connect(this, &SrcItem::dutyChanged, [=]{ changed(); });
 }
 
 void SrcItem::update() {

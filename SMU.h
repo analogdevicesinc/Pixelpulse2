@@ -183,6 +183,7 @@ signals:
   void periodChanged(double);
   void phaseChanged(double);
   void dutyChanged(double);
+  void changed();
 
 protected:
   QString m_src;
