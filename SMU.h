@@ -37,7 +37,7 @@ signals:
   void sampleRateChanged();
   void sampleCountChanged();
   void progress(sample_t);
-  void finished();
+  void finished(unsigned status);
   void attached();
   void detached();
 

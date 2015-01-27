@@ -29,8 +29,8 @@ m_continuous(false)
   connect(this, &SessionItem::attached, this, &SessionItem::onAttached, Qt::QueuedConnection);
   connect(this, &SessionItem::detached, this, &SessionItem::onDetached, Qt::QueuedConnection);
 
-  m_session->m_completion_callback = [this](){
-    emit finished();
+  m_session->m_completion_callback = [this](unsigned status){
+    emit finished(status);
   };
 
   m_session->m_progress_callback = [this](sample_t n) {
