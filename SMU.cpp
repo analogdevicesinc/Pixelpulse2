@@ -36,11 +36,11 @@ m_continuous(false)
   m_session->m_progress_callback = [this](sample_t n) {
     emit progress(n);
   };
-  m_session->m_hotplug_attach_callback = [this](){
-    emit attached();
+  m_session->m_hotplug_attach_callback = [this](Device* device){
+    emit attached(device);
   };
-  m_session->m_hotplug_detach_callback = [this](){
-    emit detached();
+  m_session->m_hotplug_detach_callback = [this](Device* device){
+    emit detached(device);
   };
 
 }
@@ -115,21 +115,24 @@ void SessionItem::start(bool continuous)
   m_session->start(continuous ? 0 : m_sample_count);
 }
 
-void SessionItem::onAttached()
+void SessionItem::onAttached(Device *device)
 {
   qDebug() << "attached\n";
-  qDebug() << m_devices;
-  for (auto i: m_session->m_available_devices) {
-    auto dev = m_session->add_device(&*i);
-    m_devices.append(new DeviceItem(this, dev));
-  }
+  auto dev = m_session->add_device(device);
+  m_devices.append(new DeviceItem(this, device));
   devicesChanged();
 }
 
-void SessionItem::onDetached(){
+void SessionItem::onDetached(Device* device){
   qDebug() << "detached\n";
   qDebug() << m_devices;
-  closeAllDevices();
+  m_session->cancel();
+  if (!m_active) {
+      qDebug() << "not active";
+      m_devices.removeOne(m_devices[0]);
+  }
+  qDebug() << m_devices;
+  devicesChanged();
 }
 
 void SessionItem::cancel() {
@@ -139,6 +142,7 @@ void SessionItem::cancel() {
 
 void SessionItem::onFinished()
 {
+  qDebug() << "finished\n";
   m_session->end();
   m_active = false;
   activeChanged();
