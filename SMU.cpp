@@ -56,7 +56,6 @@ void SessionItem::openAllDevices()
 		auto dev = m_session->add_device(&*i);
     m_devices.append(new DeviceItem(this, dev));
 	}
-
   devicesChanged();
 }
 
@@ -77,6 +76,7 @@ void SessionItem::closeAllDevices()
 
 void SessionItem::start(bool continuous)
 {
+  if (m_devices.size() == 0) return;
   if (m_active) return;
   if (m_sample_rate == 0) return;
   m_continuous = continuous;
@@ -126,12 +126,17 @@ void SessionItem::onAttached(Device *device)
 void SessionItem::onDetached(Device* device){
   qDebug() << "detached\n";
   qDebug() << m_devices;
-  m_session->cancel();
   if (!m_active) {
-      qDebug() << "not active";
-      m_devices.removeOne(m_devices[0]);
+      m_session->remove_device(device);
   }
-  qDebug() << m_devices;
+  else {
+      this->cancel();
+  }
+  if (m_session->m_devices.size() < m_devices.size()) {
+    QList<DeviceItem *> devices;
+    m_devices.swap(devices);
+    devicesChanged();
+  }
   devicesChanged();
 }
 
@@ -142,7 +147,6 @@ void SessionItem::cancel() {
 
 void SessionItem::onFinished()
 {
-  qDebug() << "finished\n";
   m_session->end();
   m_active = false;
   activeChanged();
