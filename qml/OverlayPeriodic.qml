@@ -60,6 +60,9 @@ MouseArea {
       else {
         signal.src.v1 = y;
       }
+
+      // Adjust phase so the signal stays in the same position relative to the other dot
+      signal.src.phase = -relX/sampleTick;
     } else if (dragging == 'd2') {
       relX = xaxis.pxToX(mouse.x)
       if (mouse.modifiers & Qt.ControlModifier) {
