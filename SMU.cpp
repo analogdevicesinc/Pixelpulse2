@@ -117,25 +117,23 @@ void SessionItem::start(bool continuous)
 
 void SessionItem::onAttached(Device *device)
 {
-  qDebug() << "attached\n";
   auto dev = m_session->add_device(device);
   m_devices.append(new DeviceItem(this, device));
   devicesChanged();
 }
 
 void SessionItem::onDetached(Device* device){
-  qDebug() << "detached\n";
-  qDebug() << m_devices;
-  if (!m_active) {
-      m_session->remove_device(device);
-  }
-  else {
+  if (m_active) {
       this->cancel();
   }
+  // wait for completion
+  m_session->end();
+  m_session->remove_device(device);
   if (m_session->m_devices.size() < m_devices.size()) {
-    QList<DeviceItem *> devices;
-    m_devices.swap(devices);
-    devicesChanged();
+    for (auto dev: m_devices) {
+       if (dev->m_device == device)
+          m_devices.removeOne(dev);
+    }
   }
   devicesChanged();
 }
