@@ -21,25 +21,26 @@ SessionItem::SessionItem():
 m_session(new Session),
 m_sample_rate(0),
 m_sample_count(0),
-m_active(false)
+m_active(false),
+m_continuous(false)
 {
   connect(this, &SessionItem::progress, this, &SessionItem::onProgress, Qt::QueuedConnection);
   connect(this, &SessionItem::finished, this, &SessionItem::onFinished, Qt::QueuedConnection);
   connect(this, &SessionItem::attached, this, &SessionItem::onAttached, Qt::QueuedConnection);
   connect(this, &SessionItem::detached, this, &SessionItem::onDetached, Qt::QueuedConnection);
 
-  m_session->m_completion_callback = [this](){
-    emit finished();
+  m_session->m_completion_callback = [this](unsigned status){
+    emit finished(status);
   };
 
   m_session->m_progress_callback = [this](sample_t n) {
     emit progress(n);
   };
-  m_session->m_hotplug_attach_callback = [this](){
-    emit attached();
+  m_session->m_hotplug_attach_callback = [this](Device* device){
+    emit attached(device);
   };
-  m_session->m_hotplug_detach_callback = [this](){
-    emit detached();
+  m_session->m_hotplug_detach_callback = [this](Device* device){
+    emit detached(device);
   };
 
 }
@@ -55,7 +56,6 @@ void SessionItem::openAllDevices()
 		auto dev = m_session->add_device(&*i);
     m_devices.append(new DeviceItem(this, dev));
 	}
-
   devicesChanged();
 }
 
@@ -74,10 +74,12 @@ void SessionItem::closeAllDevices()
     }
 }
 
-void SessionItem::start()
+void SessionItem::start(bool continuous)
 {
+  if (m_devices.size() == 0) return;
   if (m_active) return;
   if (m_sample_rate == 0) return;
+  m_continuous = continuous;
 
   m_active = true;
   activeChanged();
@@ -90,30 +92,55 @@ void SessionItem::start()
       for (auto sig: chan->m_signals) {
         sig->m_buffer->setRate(1.0/m_sample_rate);
         sig->m_buffer->allocate(m_sample_count);
-        sig->m_signal->measure_buffer(sig->m_buffer->data(), m_sample_count);
+
+        if (m_continuous) {
+          sig->m_signal->measure_callback([=](float d){
+            sig->m_buffer->shift(d);
+          });
+
+          connect(sig->m_src, &SrcItem::changed, [=] {
+            dev->m_device->lock();
+            sig->m_src->update();
+            dev->m_device->unlock();
+          });
+        } else {
+          sig->m_signal->measure_buffer(sig->m_buffer->data(), m_sample_count);
+        }
         sig->m_src->update();
+
       }
     }
   }
 
-  m_session->start(m_sample_count);
+  m_session->start(continuous ? 0 : m_sample_count);
 }
 
-void SessionItem::onAttached()
+void SessionItem::onAttached(Device *device)
 {
-  qDebug() << "attached\n";
-  qDebug() << m_devices;
-  for (auto i: m_session->m_available_devices) {
-    auto dev = m_session->add_device(&*i);
-    m_devices.append(new DeviceItem(this, dev));
+  auto dev = m_session->add_device(device);
+  m_devices.append(new DeviceItem(this, device));
+  devicesChanged();
+}
+
+void SessionItem::onDetached(Device* device){
+  if (m_active) {
+      this->cancel();
+  }
+  // wait for completion
+  m_session->end();
+  m_session->remove_device(device);
+  if (m_session->m_devices.size() < m_devices.size()) {
+    for (auto dev: m_devices) {
+       if (dev->m_device == device)
+          m_devices.removeOne(dev);
+    }
   }
   devicesChanged();
 }
 
-void SessionItem::onDetached(){
-  qDebug() << "detached\n";
-  qDebug() << m_devices; 
-  closeAllDevices();
+void SessionItem::cancel() {
+  if (!m_active) { return; }
+  m_session->cancel();
 }
 
 void SessionItem::onFinished()
@@ -122,11 +149,13 @@ void SessionItem::onFinished()
   m_active = false;
   activeChanged();
 
-  // Only in sweep-based modes
   for (auto dev: m_devices) {
     for (auto chan: dev->m_channels) {
       for (auto sig: chan->m_signals) {
-        sig->updateMeasurement();
+        disconnect(sig->m_src, &SrcItem::changed, 0, 0);
+        if (!m_continuous) {
+          sig->updateMeasurement();
+        }
       }
     }
   }
@@ -136,7 +165,11 @@ void SessionItem::onProgress(sample_t sample) {
   for (auto dev: m_devices) {
     for (auto chan: dev->m_channels) {
       for (auto sig: chan->m_signals) {
-        sig->m_buffer->incValid(sample);
+        if (m_continuous) {
+          sig->m_buffer->continuousProgress(sample);
+        } else {
+          sig->m_buffer->sweepProgress(sample);
+        }
       }
     }
   }
@@ -197,6 +230,12 @@ m_period(0),
 m_phase(0),
 m_duty(0.5)
 {
+  connect(this, &SrcItem::srcChanged, [=]{ changed(); });
+  connect(this, &SrcItem::v1Changed, [=]{ changed(); });
+  connect(this, &SrcItem::v2Changed, [=]{ changed(); });
+  connect(this, &SrcItem::periodChanged, [=]{ changed(); });
+  connect(this, &SrcItem::phaseChanged, [=]{ changed(); });
+  connect(this, &SrcItem::dutyChanged, [=]{ changed(); });
 }
 
 void SrcItem::update() {

@@ -11,11 +11,13 @@ ApplicationWindow {
 
 	property var toolbarHeight: 56
 
+    property alias repeatedSweep: toolbar.repeatedSweep
 	property alias plotsVisible: toolbar.plotsVisible
 	property alias contentVisible: toolbar.contentVisible
 
 	Controller {
 		id: controller
+        continuous: !repeatedSweep
 	}
 
 	Rectangle {

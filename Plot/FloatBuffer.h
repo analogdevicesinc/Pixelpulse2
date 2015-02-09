@@ -23,6 +23,16 @@ public:
 		return m_data[wrapIndex(i)];
 	}
 
+    void shift(float d) {
+        m_data[(m_start + m_length) % m_data.size()] = d;
+
+		if (m_length < m_data.size()) {
+        	m_length += 1;
+        } else {
+            m_start = (m_start + 1) % m_data.size();
+        }
+    }
+
 	void toVertexData(double start, double end, QSGGeometry::Point2D *vertices, unsigned n_verticies) {
 		unsigned i_min = timeToIndex(start);
 		unsigned i_max = timeToIndex(end);
@@ -55,10 +65,15 @@ public:
 		dataChanged();
 	}
 
-	void incValid(unsigned length) {
-		if (m_length < length) {
-			m_length = length;
+	void sweepProgress(unsigned sample) {
+		if (m_length < sample) {
+             m_length = sample;
 		}
+		dataChanged();
+	}
+
+	void continuousProgress(unsigned sample) {
+		// m_start and m_length are adjusted in shift()
 		dataChanged();
 	}
 

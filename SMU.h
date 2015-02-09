@@ -25,7 +25,8 @@ public:
   Q_INVOKABLE void openAllDevices();
   Q_INVOKABLE void closeAllDevices();
 
-  Q_INVOKABLE void start();
+  Q_INVOKABLE void start(bool continuous);
+  Q_INVOKABLE void cancel();
 
   bool getActive() { return m_active; }
   QQmlListProperty<DeviceItem> getDevices() { return QQmlListProperty<DeviceItem>(this, m_devices); }
@@ -36,19 +37,20 @@ signals:
   void sampleRateChanged();
   void sampleCountChanged();
   void progress(sample_t);
-  void finished();
-  void attached();
-  void detached();
+  void finished(unsigned status);
+  void attached(Device* device);
+  void detached(Device* device);
 
 protected slots:
   void onProgress(sample_t);
   void onFinished();
-  void onAttached();
-  void onDetached();
+  void onAttached(Device* device);
+  void onDetached(Device* device);
 
 protected:
   Session* m_session;
   bool m_active;
+  bool m_continuous;
   unsigned m_sample_rate;
   unsigned m_sample_count;
   QList<DeviceItem *> m_devices;
@@ -63,7 +65,7 @@ public:
   DeviceItem(SessionItem*, Device*);
   QQmlListProperty<ChannelItem> getChannels() { return QQmlListProperty<ChannelItem>(this, m_channels); }
   QString getLabel() const { return QString(m_device->info()->label); }
-  Q_INVOKABLE void ctrl_transfer( int x, int y, int z) { m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);} 
+  Q_INVOKABLE void ctrl_transfer( int x, int y, int z) { m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);}
 
 protected:
   Device* const m_device;
@@ -181,6 +183,7 @@ signals:
   void periodChanged(double);
   void phaseChanged(double);
   void dutyChanged(double);
+  void changed();
 
 protected:
   QString m_src;
