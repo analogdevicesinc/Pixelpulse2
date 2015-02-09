@@ -21,9 +21,10 @@ public:
         return
         "#version 120 \n"
         "uniform lowp float opacity;"
+        "uniform lowp vec4 color;"
         "void main() {"
         "    float dist = length(gl_PointCoord - vec2(0.5))*2;"
-        "    gl_FragColor = vec4(0.03, 0.3, 0.03, 1) * opacity * (1-dist);"
+        "    gl_FragColor = color * opacity * (1-dist);"
        //"    if(dist > 1)"
        //"        discard;"
         "}";
@@ -40,6 +41,7 @@ public:
         QSGMaterialShader::initialize();
         m_id_matrix = program()->uniformLocation("matrix");
         m_id_opacity = program()->uniformLocation("opacity");
+        m_id_color = program()->uniformLocation("color");
     }
 
     void updateState(const RenderState &state, QSGMaterial *newMaterial, QSGMaterial *oldMaterial);
@@ -52,6 +54,7 @@ public:
 private:
     int m_id_matrix;
     int m_id_opacity;
+    int m_id_color;
 };
 
 class Material : public QSGMaterial
@@ -63,6 +66,7 @@ public:
 
     QMatrix4x4 transformation;
     float pointSize;
+    QColor color;
 };
 
 void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSGMaterial *oldMaterial)
@@ -76,6 +80,8 @@ void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSG
         program()->setUniformValue(m_id_opacity, state.opacity());
     }
 
+    program()->setUniformValue(m_id_color, m->color);
+
     glBlendFunc(GL_ONE, GL_ONE);
     glEnable(GL_POINT_SPRITE);
     glPointSize(m->pointSize);
@@ -83,7 +89,8 @@ void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSG
 
 PhosphorRender::PhosphorRender(QQuickItem *parent)
     : QQuickItem(parent), m_ybuffer(NULL), m_xbuffer(NULL),
-    m_xmin(0), m_xmax(1), m_ymin(0), m_ymax(1), m_pointSize(0)
+    m_xmin(0), m_xmax(1), m_ymin(0), m_ymax(1), m_pointSize(0),
+    m_color(0.03*255, 0.3*255, 0.03*255, 1*255)
 {
     setFlag(ItemHasContents, true);
 }
@@ -135,6 +142,7 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     material->transformation.translate(-m_xmin, -m_ymax);
 
     material->pointSize = m_pointSize;
+    material->color = m_color;
 
     auto verticies = geometry->vertexDataAsPoint2D();
     if (m_xbuffer) {
