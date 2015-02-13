@@ -12,8 +12,8 @@ Rectangle {
   Button {
     anchors.top: parent.top
     anchors.left: parent.left
-    width: timelinePane.hspacing
-    height: timelinePane.hspacing
+    width: timelinePane.spacing
+    height: timelinePane.spacing
 
     property var icons: [
       'mv',
@@ -50,14 +50,14 @@ Rectangle {
     rotation: -90
     transformOrigin: Item.TopLeft
     font.pixelSize: 18
-    y: width + timelinePane.hspacing + 8
-    x: (timelinePane.hspacing - height) / 2
+    y: width + timelinePane.spacing + 8
+    x: (timelinePane.spacing - height) / 2
   }
 
   ColumnLayout {
     anchors.fill: parent
-    anchors.leftMargin: timelinePane.hspacing
-    spacing: timelinePane.vspacing
+    anchors.leftMargin: timelinePane.spacing
+    spacing: 0
 
     Repeater {
       model: modelData.signals

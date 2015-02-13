@@ -29,8 +29,8 @@ Rectangle {
   Button {
     anchors.top: parent.top
     anchors.left: parent.left
-    width: timelinePane.hspacing
-    height: timelinePane.hspacing
+    width: timelinePane.spacing
+    height: timelinePane.spacing
 
     iconSource: 'qrc:/icons/' + signal.src.src + '.png'
 
@@ -66,17 +66,19 @@ Rectangle {
     rotation: -90
     transformOrigin: Item.TopLeft
     font.pixelSize: 18
-    y: width + timelinePane.hspacing + 8
-    x: (timelinePane.hspacing - height) / 2
+    y: width + timelinePane.spacing + 8
+    x: (timelinePane.spacing - height) / 2
   }
 
   Axes {
     id: axes
 
     x: parent.width
-    y: 0
     width: xaxis.width
-    height: parent.height
+
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.topMargin: timelinePane.spacing
 
     ymin: signal.min
     ymax: signal.max
@@ -88,15 +90,11 @@ Rectangle {
     gridColor: '#222'
     textColor: '#666'
 
-	states: [
-        State {
-            name: "floating"
-            PropertyChanges { target: axes; anchors.top: undefined }
-        },
-        State {
-            name: "notfloating"
-            PropertyChanges { target: axes; anchors.top: signalBlock.top}
-        }
+    states: [
+      State {
+        name: "floating"
+        PropertyChanges { target: axes; anchors.top: undefined; anchors.bottom: undefined; }
+      }
     ]
 
     MouseArea {
