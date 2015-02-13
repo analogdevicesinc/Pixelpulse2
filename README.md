@@ -2,7 +2,7 @@
 
 Pixelpulse is a powerful user interface for visualizing and manipulating signals while exploring systems attached to affordable analog interface devices, such as Analog Devices' ADALM1000 or the Nonolith Labs' CEE.
 
-Fully cross-platform using the Qt5 graphics toolkit and OpenGL accelerated density-gradiated rendering, it provides a powerful and accessible tool for initial interactive explorations. 
+Fully cross-platform using the Qt5 graphics toolkit and OpenGL accelerated density-gradiated rendering, it provides a powerful and accessible tool for initial interactive explorations.
 
 Intuitive click-and-drag interfaces make exploring system behaviors across a wide range of signal amplitudes, frequencies, or phases a trivial exercise. Just click once to source a constant voltage or current and see what happens. Choose a function (sawtooth, triangle, sinusoidal, square) - adjust parameters, and make waves.
 
@@ -24,9 +24,10 @@ To build from source on Linux / OSX with an appropriate C++ compiler and librari
 Run the following commands from a console environment:
 
     git clone --recursive https://github.com/signalspec/pixelpulse2
+    cd pixelpulse2
     mkdir build
     qmake ..
-    make -j4
+    make
     ./pixelpulse2
 
 To get an up-to-date binary build for Windows:
