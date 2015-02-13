@@ -70,6 +70,21 @@ Rectangle {
     x: (timelinePane.spacing - height) / 2
   }
 
+  Rectangle {
+    z: -1
+
+    x: parent.width
+    width: xaxis.width
+
+    anchors.top: parent.top
+    height: timelinePane.spacing
+
+    gradient: Gradient {
+        GradientStop { position: 1.0; color: Qt.rgba(1,1,1,0.08) }
+        GradientStop { position: 0.0; color: Qt.rgba(0,0,0,0.0) }
+    }
+  }
+
   Axes {
     id: axes
 
@@ -134,9 +149,19 @@ Rectangle {
     }
 
     Rectangle {
-      anchors.fill: parent
-      opacity: 0.0
-      z: -1
+      anchors.top: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 2
+      color: "#282828"
+    }
+
+    Rectangle {
+      anchors.bottom: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 1
+      color: "#282828"
     }
 
     PhosphorRender {
