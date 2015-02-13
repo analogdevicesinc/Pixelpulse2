@@ -26,6 +26,7 @@ Run the following commands from a console environment:
     git clone --recursive https://github.com/signalspec/pixelpulse2
     cd pixelpulse2
     mkdir build
+    cd build
     qmake ..
     make
     ./pixelpulse2
