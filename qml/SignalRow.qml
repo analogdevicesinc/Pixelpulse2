@@ -109,6 +109,9 @@ Rectangle {
       State {
         name: "floating"
         PropertyChanges { target: axes; anchors.top: undefined; anchors.bottom: undefined; }
+        PropertyChanges { target: overlay_periodic; visible: false }
+        PropertyChanges { target: overlay_constant; visible: false }
+        PropertyChanges { target: axes; gridColor: '#111'; textColor: '#444' }
       }
     ]
 
@@ -179,10 +182,12 @@ Rectangle {
     }
 
     OverlayPeriodic {
+      id: overlay_periodic
       visible: (signal.src.src == 'sine' || signal.src.src == 'triangle' || signal.src.src == 'sawtooth' || signal.src.src == 'square') && (channel.mode == {'Voltage': 1, 'Current': 2}[signal.label])
     }
 
     OverlayConstant {
+      id: overlay_constant
       visible: signal.src.src == 'constant'
     }
 
