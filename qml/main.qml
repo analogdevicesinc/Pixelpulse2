@@ -34,28 +34,25 @@ ApplicationWindow {
 			Layout.fillHeight: true
 			Layout.fillWidth: true
 
-			// spacing between rows
-			property real vspacing: 20
-
 			// column width
-			property real hspacing: 40
+			property real spacing: 40
 
 			ColumnLayout {
 				anchors.fill: parent
 				id: signals_column
 
-				spacing: 2
+				spacing: 0
 
 				RowLayout {
 					Layout.fillWidth: true
 					Layout.minimumHeight: toolbarHeight
 					Layout.maximumHeight: toolbarHeight
 
-					spacing: 2
+					spacing: 0
 
 					Toolbar {
 						id: toolbar
-						width: timelinePane.hspacing * 3
+						width: timelinePane.spacing * 3
 						Layout.fillHeight: true
 					}
 
@@ -79,9 +76,8 @@ ApplicationWindow {
 
 					ColumnLayout {
 						anchors.fill: parent
-						anchors.topMargin: timelinePane.vspacing / 2
-						anchors.bottomMargin: timelinePane.vspacing / 2
-						spacing: timelinePane.vspacing
+						anchors.bottomMargin: 10
+						spacing: 0
 
 						Repeater {
 							model: session.devices

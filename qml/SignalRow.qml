@@ -29,8 +29,8 @@ Rectangle {
   Button {
     anchors.top: parent.top
     anchors.left: parent.left
-    width: timelinePane.hspacing
-    height: timelinePane.hspacing
+    width: timelinePane.spacing
+    height: timelinePane.spacing
 
     iconSource: 'qrc:/icons/' + signal.src.src + '.png'
 
@@ -66,17 +66,34 @@ Rectangle {
     rotation: -90
     transformOrigin: Item.TopLeft
     font.pixelSize: 18
-    y: width + timelinePane.hspacing + 8
-    x: (timelinePane.hspacing - height) / 2
+    y: width + timelinePane.spacing + 8
+    x: (timelinePane.spacing - height) / 2
+  }
+
+  Rectangle {
+    z: -1
+
+    x: parent.width
+    width: xaxis.width
+
+    anchors.top: parent.top
+    height: timelinePane.spacing
+
+    gradient: Gradient {
+        GradientStop { position: 1.0; color: Qt.rgba(1,1,1,0.08) }
+        GradientStop { position: 0.0; color: Qt.rgba(0,0,0,0.0) }
+    }
   }
 
   Axes {
     id: axes
 
     x: parent.width
-    y: 0
     width: xaxis.width
-    height: parent.height
+
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.topMargin: timelinePane.spacing
 
     ymin: signal.min
     ymax: signal.max
@@ -88,15 +105,14 @@ Rectangle {
     gridColor: '#222'
     textColor: '#666'
 
-	states: [
-        State {
-            name: "floating"
-            PropertyChanges { target: axes; anchors.top: undefined }
-        },
-        State {
-            name: "notfloating"
-            PropertyChanges { target: axes; anchors.top: signalBlock.top}
-        }
+    states: [
+      State {
+        name: "floating"
+        PropertyChanges { target: axes; anchors.top: undefined; anchors.bottom: undefined; }
+        PropertyChanges { target: overlay_periodic; visible: false }
+        PropertyChanges { target: overlay_constant; visible: false }
+        PropertyChanges { target: axes; gridColor: '#111'; textColor: '#444' }
+      }
     ]
 
     MouseArea {
@@ -136,9 +152,19 @@ Rectangle {
     }
 
     Rectangle {
-      anchors.fill: parent
-      opacity: 0.0
-      z: -1
+      anchors.top: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 2
+      color: "#282828"
+    }
+
+    Rectangle {
+      anchors.bottom: parent.top
+      anchors.left: parent.left
+      anchors.right: parent.right
+      height: 1
+      color: "#282828"
     }
 
     PhosphorRender {
@@ -157,10 +183,12 @@ Rectangle {
     }
 
     OverlayPeriodic {
+      id: overlay_periodic
       visible: (signal.src.src == 'sine' || signal.src.src == 'triangle' || signal.src.src == 'sawtooth' || signal.src.src == 'square') && (channel.mode == {'Voltage': 1, 'Current': 2}[signal.label])
     }
 
     OverlayConstant {
+      id: overlay_constant
       visible: signal.src.src == 'constant'
     }
 
