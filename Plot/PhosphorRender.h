@@ -16,6 +16,7 @@ class PhosphorRender : public QQuickItem
     Q_PROPERTY(double ymax READ ymax WRITE setYmax NOTIFY ymaxChanged)
 
     Q_PROPERTY(double pointSize READ pointSize WRITE setPointSize NOTIFY pointSizeChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
 
 
 public:
@@ -74,6 +75,9 @@ public:
     double pointSize() const { return m_pointSize; }
     void setPointSize(double pointSize) { SETTER(pointSize) }
 
+    QColor color() const { return m_color; }
+    void setColor(QColor color) { SETTER(color) }
+
 signals:
     void xBufferChanged(FloatBuffer* b);
     void yBufferChanged(FloatBuffer* b);
@@ -82,6 +86,7 @@ signals:
     void yminChanged(double v);
     void ymaxChanged(double v);
     void pointSizeChanged(double v);
+    void colorChanged(QColor v);
 
 private:
     FloatBuffer* m_ybuffer;
@@ -92,4 +97,5 @@ private:
     double m_ymin;
     double m_ymax;
     double m_pointSize;
+    QColor m_color;
 };

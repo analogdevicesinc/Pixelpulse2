@@ -148,6 +148,7 @@ Rectangle {
 
         buffer: signal.buffer
         pointSize: Math.max(2, Math.min(xaxis.xscale/session.sampleRate*3, 20))
+        color: signal.label == 'Current' ? Qt.rgba(0.2, 0.2, 0.03, 1) : Qt.rgba(0.03, 0.3, 0.03, 1)
 
         xmin: xaxis.visibleMin
         xmax: xaxis.visibleMax
