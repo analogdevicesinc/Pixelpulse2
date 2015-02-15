@@ -108,10 +108,14 @@ Rectangle {
     states: [
       State {
         name: "floating"
-        PropertyChanges { target: axes; anchors.top: undefined; anchors.bottom: undefined; }
+        PropertyChanges { target: axes
+          anchors.top: undefined
+          anchors.bottom: undefined
+          gridColor: '#111'
+          textColor: '#444'
+        }
         PropertyChanges { target: overlay_periodic; visible: false }
         PropertyChanges { target: overlay_constant; visible: false }
-        PropertyChanges { target: axes; gridColor: '#111'; textColor: '#444' }
       }
     ]
 
