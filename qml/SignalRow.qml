@@ -108,21 +108,56 @@ Rectangle {
     states: [
       State {
         name: "floating"
-        PropertyChanges { target: axes; anchors.top: undefined; anchors.bottom: undefined; }
+        PropertyChanges { target: axes
+          anchors.top: undefined
+          anchors.bottom: undefined
+          gridColor: '#111'
+          textColor: '#444'
+        }
+        PropertyChanges { target: axes_mouse_area
+          drag.target: axes
+          drag.axis: Drag.YAxis
+        }
         PropertyChanges { target: overlay_periodic; visible: false }
         PropertyChanges { target: overlay_constant; visible: false }
-        PropertyChanges { target: axes; gridColor: '#111'; textColor: '#444' }
       }
     ]
 
     MouseArea {
+      id: axes_mouse_area
       anchors.fill: parent
-      drag.target: axes
-      drag.axis: Drag.YAxis
-      onDoubleClicked: {axes.state = "floating"}
-      onReleased: {axes.state = "notfloating"}
+
+      acceptedButtons: Qt.LeftButton | Qt.MiddleButton
+      property var panStart
+      onPressed: {
+        if (mouse.button == Qt.MiddleButton) {
+          axes.state = "floating"
+        } else if (mouse.button == Qt.LeftButton && mouse.modifiers & Qt.ShiftModifier) {
+          panStart = {
+            y: mouse.y,
+            ymin: axes.ymin,
+            ymax: axes.ymax,
+          }
+        } else {
+          mouse.accepted = false;
+        }
+      }
+      onReleased: {
+        axes.state = ""
+        panStart = null
+      }
+      onPositionChanged: {
+        // Shift + drag for Y-axis pan
+        if (panStart) {
+          var delta = (mouse.y - panStart.y) / axes.yscale
+          delta = Math.max(delta, signal.min - panStart.ymin)
+          delta = Math.min(delta, signal.max - panStart.ymax)
+          axes.ymin = panStart.ymin + delta
+          axes.ymax = panStart.ymax + delta
+        }
+      }
       onWheel: {
-      // Shift + scroll for Y-axis zoom
+        // Shift + scroll for Y-axis zoom
         if (wheel.modifiers & Qt.ShiftModifier) {
           var s = Math.pow(1.15, -wheel.angleDelta.y/120);
           var y = axes.pxToY(wheel.y);
@@ -134,19 +169,6 @@ Rectangle {
         }
         else {
           wheel.accepted = false
-        }
-      }
-      onPositionChanged: {
-        // Shift + drag for Y-axis zoom
-        if (mouse.modifiers & Qt.ShiftModifier) {
-          var my = axes.pxToY(mouse.y);
-          var range = axes.ymax - axes.ymin;
-          var center = (axes.ymin + axes.ymax)/2
-          axes.ymin = Math.max( (center*0.9+my*0.1) - range/2, signal.min); // -(signal.min+1)*0.1);
-          axes.ymax = Math.min( (center*0.9+my*0.1) + range/2, signal.max); //+(signal.max+1)*0.1);
-        }
-        else {
-          mouse.accepted = false
         }
       }
     }
