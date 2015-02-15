@@ -114,17 +114,28 @@ Rectangle {
           gridColor: '#111'
           textColor: '#444'
         }
+        PropertyChanges { target: axes_mouse_area
+          drag.target: axes
+          drag.axis: Drag.YAxis
+        }
         PropertyChanges { target: overlay_periodic; visible: false }
         PropertyChanges { target: overlay_constant; visible: false }
       }
     ]
 
     MouseArea {
+      id: axes_mouse_area
       anchors.fill: parent
-      drag.target: axes
-      drag.axis: Drag.YAxis
-      onDoubleClicked: {axes.state = "floating"}
-      onReleased: {axes.state = "notfloating"}
+
+      acceptedButtons: Qt.LeftButton | Qt.MiddleButton
+      onPressed: {
+        if (mouse.button == Qt.MiddleButton) {
+          axes.state = "floating"
+        } else {
+          mouse.accepted = false;
+        }
+      }
+      onReleased: {axes.state = ""}
       onWheel: {
       // Shift + scroll for Y-axis zoom
         if (wheel.modifiers & Qt.ShiftModifier) {
