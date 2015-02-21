@@ -245,6 +245,7 @@ void SrcItem::update() {
   else if (m_src == "callback") v = SRC_CALLBACK;
   else if (m_src == "square")   v = SRC_SQUARE;
   else if (m_src == "sawtooth") v = SRC_SAWTOOTH;
+  else if (m_src == "stairstep") v = SRC_STAIRSTEP;
   else if (m_src == "sine")     v = SRC_SINE;
   else if (m_src == "triangle") v = SRC_TRIANGLE;
   else return;
