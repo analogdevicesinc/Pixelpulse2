@@ -38,4 +38,11 @@ To get an up-to-date binary build for Windows:
  * Extract the dependency package and overwrite the included pixelpulse2.exe with the latest build downloaded from AppVeyor.
  * With a M1K attached, double-click the executable to launch Pixelpulse.
 
+To get build dependencies easily on Ubuntu/Debian derived Linux distributions:
 
+ * sudo apt-get install qtdeclarative5-dev mesa-common-dev libusb-1.0-dev build-essential pkg-config qt5-default qtbase5-dev qml-module-qtquick-controls
+
+To properly set up permissions on Linux distributions using udev:
+
+ * sudo cp ./linux/70-smu.rules /etc/udev/rules.d/
+ * sudo udevadm control --reload-rules
