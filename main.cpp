@@ -102,7 +102,7 @@ void signalHandler( int signum )
 int main(int argc, char *argv[])
 {
 
-    signal(SIGINT, signalHandler);
+    signal(SIGUSR1, signalHandler);
     signal(SIGSEGV, signalHandler);
 
     QGuiApplication app(argc, argv);
