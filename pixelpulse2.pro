@@ -63,3 +63,12 @@ win32 {
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += libusb-1.0
+
+unix {
+INSTALLS+=target
+isEmpty(PREFIX) {
+    PREFIX = /usr
+  }
+  BINDIR = $$PREFIX/bin
+  target.path=$$BINDIR
+}
