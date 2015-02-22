@@ -1,0 +1,14 @@
+Source: pixelpulse2
+Section: unknown
+Priority: optional
+Maintainer: Ian Daniher <it.daniher@itdaniher.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.4
+Homepage: https://github.com/analogdevicesinc/pixelpulse2
+#Vcs-Git: git://git.debian.org/collab-maint/pixelpulse2.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/pixelpulse2.git;a=summary
+
+Package: pixelpulse2
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libusb-1.0-0, libqt5quick5, qtdeclarative5-controls-plugin
+Description: User interface for analog systems exploration.
