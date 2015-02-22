@@ -8,10 +8,6 @@ ToolbarStyle {
     id: timeGroup
   }
 
-  ExclusiveGroup {
-    id: rateGroup
-  }
-
   property alias repeatedSweep: repeatedSweepItem.checked
   property alias plotsVisible: plotsVisibleItem.checked
   property alias contentVisible: contentVisibleItem.checked
