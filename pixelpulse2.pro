@@ -55,6 +55,7 @@ win32:debug {
 
 osx {
 	ICON = icons/pp2.icns
+	PKGCONFIG += libusb-1.0
 }
 
 win32 {
