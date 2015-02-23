@@ -1,6 +1,7 @@
 #pragma once
 #include <QObject>
 #include <vector>
+#include <numeric>
 #include <math.h>
 #include <QtQuick/qsgnode.h>
 
