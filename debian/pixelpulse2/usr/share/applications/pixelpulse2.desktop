@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=0.1
-Name=Pixelpulse2
-Comment=Digital frontend for the ADALM1000
-Exec=/usr/bin/pixelpulse2
-Icon=/usr/share/icons/pp2.png
-Terminal=false
-Type=Application
-Categories=Utility;Application;Development;
