@@ -1,12 +1,12 @@
 Source: pixelpulse2
-Section: unknown
-Priority: optional
+Section: electronics
+Priority: extra
 Maintainer: Ian Daniher <it.daniher@itdaniher.com>
-Build-Depends: debhelper (>= 8.0.0)
+Build-Depends: libudev-dev, libusb-1.0-0-dev, debhelper (>= 8.0.0), libqt5quick5-dev, qtdeclarative5-controls-plugin
 Standards-Version: 3.9.4
-Homepage: https://github.com/analogdevicesinc/pixelpulse2
-#Vcs-Git: git://git.debian.org/collab-maint/pixelpulse2.git
-#Vcs-Browser: http://git.debian.org/?p=collab-maint/pixelpulse2.git;a=summary
+Homepage: https://analog.com
+Vcs-Git: https://github.com/analogdevicesinc/pixelpulse2.git
+Vcs-Browser: https://github.com/analogdevicesinc/pixelpulse2
 
 Package: pixelpulse2
 Architecture: any
