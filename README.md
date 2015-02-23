@@ -38,4 +38,8 @@ To get an up-to-date binary build for Windows:
  * Extract the dependency package and overwrite the included pixelpulse2.exe with the latest build downloaded from AppVeyor.
  * With a M1K attached, double-click the executable to launch Pixelpulse.
 
+To build / install for Debian:
+
+    dh_make -p pixelpulse2_0.1 -s -c apache -e <email> --createorig
+    dpkg-buildpackage
 
