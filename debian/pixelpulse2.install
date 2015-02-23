@@ -1,3 +1,2 @@
-debian/70-smus.rules lib/udev/rules.d/
 debian/pixelpulse2.desktop usr/share/applications
 debian/pp2.png usr/share/icons/

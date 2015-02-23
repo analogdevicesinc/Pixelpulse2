@@ -29,6 +29,7 @@ binary-arch: build install
 	dh_installdocs
 	dh_installexamples
 	dh_installman
+	dh_installudev
 	dh_link
 	dh_compress
 	dh_fixperms
