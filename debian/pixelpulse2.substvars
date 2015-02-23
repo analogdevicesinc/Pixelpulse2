@@ -1,2 +1,0 @@
-shlibs:Depends=libc6 (>= 2.14), libgcc1 (>= 1:4.1.1), libgl1-mesa-glx | libgl1, libqt5core5a (>= 5.0.2), libqt5gui5 (>= 5.0.2) | libqt5gui5-gles (>= 5.0.2), libqt5qml5 (>= 5.1.0), libqt5quick5 (>= 5.2.0~rc1) | libqt5quick5-gles (>= 5.2.0~rc1), libstdc++6 (>= 4.5), libusb-1.0-0 (>= 2:1.0.16)
-misc:Depends=
