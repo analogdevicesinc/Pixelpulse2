@@ -59,6 +59,7 @@ osx {
 
 win32 {
 	RC_ICONS = icons/pp2.ico
+	LIBS += -limagehlp -ldbghelp
 }
 
 unix: CONFIG += link_pkgconfig
