@@ -148,6 +148,18 @@ LONG WINAPI windows_exception_handler(EXCEPTION_POINTERS * ExceptionInfo)
   return EXCEPTION_EXECUTE_HANDLER;
 }
 
+BOOL WINAPI consoleHandler(DWORD dwCtrlType)
+{
+	CONTEXT context;
+	
+	if (dwCtrlType == CTRL_C_EVENT) {
+		RtlCaptureContext(&context);
+		windows_print_stacktrace(&context);
+	}
+	
+	return FALSE;
+}
+
 #else
 void signalHandler( int signum )
 {
@@ -241,6 +253,9 @@ void init_signal_handlers(void)
 {
 #if _WIN32
     SetUnhandledExceptionFilter(windows_exception_handler);
+    if (!SetConsoleCtrlHandler(consoleHandler, TRUE)) {
+		printf("Could not add handler to console");
+	}
 #else
     signal(SIGUSR1, signalHandler);
     signal(SIGSEGV, signalHandler);
