@@ -12,53 +12,80 @@
     #include <unistd.h>
     #include <execinfo.h>
     #include <cxxabi.h>
-    
+
     using namespace std;
 #endif
 
 #ifdef _WIN32
 
+static const STACKFRAME EmptySTACKFRAME;
+static const IMAGEHLP_LINE EmptyIMAGEHLP_LINE;
+static const IMAGEHLP_MODULE EmptyIMAGEHLP_MODULE;
+
 void windows_print_stacktrace(CONTEXT* context)
 {
-  SymInitialize(GetCurrentProcess(), 0, TRUE);
- 
-  STACKFRAME frame;
- 
-  frame.AddrPC.Offset         = context->Eip;
-  frame.AddrPC.Mode           = AddrModeFlat;
-  frame.AddrStack.Offset      = context->Esp;
-  frame.AddrStack.Mode        = AddrModeFlat;
-  frame.AddrFrame.Offset      = context->Ebp;
-  frame.AddrFrame.Mode        = AddrModeFlat;
- 
-  while (StackWalk(IMAGE_FILE_MACHINE_I386 ,
-                   GetCurrentProcess(),
-                   GetCurrentThread(),
-                   &frame,
-                   context,
-                   0,
-                   SymFunctionTableAccess,
-                   SymGetModuleBase,
-                   0 ) )
-  {
-          static char symbolBuffer[ sizeof(IMAGEHLP_SYMBOL) + 255 ];
-          memset( symbolBuffer , 0 , sizeof(IMAGEHLP_SYMBOL) + 255 );
-          IMAGEHLP_SYMBOL * symbol = (IMAGEHLP_SYMBOL*) symbolBuffer;
-          symbol->SizeOfStruct    = sizeof(IMAGEHLP_SYMBOL) + 255;
-          symbol->MaxNameLength   = 254;
-          DWORD displacement = 0;
-          if (SymGetSymFromAddr(GetCurrentProcess(), frame.AddrPC.Offset,
-                        &displacement, symbol))
-                        {
-                                printf("FrameAddr: 0x%lX symbol: %s\n", frame.AddrPC.Offset , symbol->Name);
-            }
-            else
-            {
-                                printf("FrameAddr: 0x%lX\n", frame.AddrPC.Offset);
-            }
-  }
-  
-  SymCleanup(GetCurrentProcess());
+    SymInitialize(GetCurrentProcess(), 0, TRUE);
+
+    STACKFRAME frame = EmptySTACKFRAME;
+
+    frame.AddrPC.Offset         = context->Eip;
+    frame.AddrPC.Mode           = AddrModeFlat;
+    frame.AddrStack.Offset      = context->Esp;
+    frame.AddrStack.Mode        = AddrModeFlat;
+    frame.AddrFrame.Offset      = context->Ebp;
+    frame.AddrFrame.Mode        = AddrModeFlat;
+
+    static char symbolBuffer[sizeof(IMAGEHLP_SYMBOL) + 255];
+    memset(symbolBuffer, 0, sizeof(IMAGEHLP_SYMBOL) + 255);
+
+    IMAGEHLP_SYMBOL *symbol = (IMAGEHLP_SYMBOL*) symbolBuffer;
+    symbol->SizeOfStruct    = sizeof(IMAGEHLP_SYMBOL) + 255;
+    symbol->MaxNameLength   = 254;
+
+    IMAGEHLP_LINE line = EmptyIMAGEHLP_LINE;
+    line.SizeOfStruct = sizeof(IMAGEHLP_LINE);
+
+    IMAGEHLP_MODULE module = EmptyIMAGEHLP_MODULE;
+    module.SizeOfStruct = sizeof(IMAGEHLP_MODULE);
+
+    while (StackWalk(IMAGE_FILE_MACHINE_I386,
+           GetCurrentProcess(),
+           GetCurrentThread(),
+           &frame,
+           context,
+           0,
+           SymFunctionTableAccess,
+           SymGetModuleBase,
+           0 ) )
+    {
+        DWORD displacement = 0;
+
+        if (SymGetModuleInfo(GetCurrentProcess(), frame.AddrPC.Offset,
+                &module))
+        {
+            printf("%s: ", module.ModuleName);
+        }
+
+        if (SymGetLineFromAddr(GetCurrentProcess(), frame.AddrPC.Offset,
+                &displacement, &line))
+        {
+            printf("%s (line:%lu): ", line.FileName, line.LineNumber);
+        }
+
+        if (SymGetSymFromAddr(GetCurrentProcess(), frame.AddrPC.Offset,
+                &displacement, symbol))
+        {
+            printf("FrameAddr: 0x%lX symbol: %s\n", frame.AddrPC.Offset,
+                    symbol->Name);
+        }
+        else
+        {
+            printf("FrameAddr: 0x%lX\n", frame.AddrPC.Offset);
+        }
+
+    }
+
+    SymCleanup(GetCurrentProcess());
 }
 
 /* Code from
@@ -144,20 +171,20 @@ LONG WINAPI windows_exception_handler(EXCEPTION_POINTERS * ExceptionInfo)
   {
       printf("Stack Overflow!\n");
   }
- 
+
   return EXCEPTION_EXECUTE_HANDLER;
 }
 
 BOOL WINAPI consoleHandler(DWORD dwCtrlType)
 {
-	CONTEXT context;
-	
-	if (dwCtrlType == CTRL_C_EVENT) {
-		RtlCaptureContext(&context);
-		windows_print_stacktrace(&context);
-	}
-	
-	return FALSE;
+    CONTEXT context;
+
+    if (dwCtrlType == CTRL_C_EVENT) {
+        RtlCaptureContext(&context);
+        windows_print_stacktrace(&context);
+    }
+
+    return FALSE;
 }
 
 #else
@@ -175,7 +202,7 @@ void signalHandler( int signum )
           printf("  <empty, possibly corrupt>\n");
           return;
     }
-    
+
     // Code is based from an on-line example at:
     // Timo Bingmann from http://idlebox.net/
     // http://panthema.net/2008/0901-stacktrace-demangled/
@@ -241,9 +268,9 @@ void signalHandler( int signum )
 
     free(funcname);
     free(symbollist);
-    
+
     cout << "Call Stack:\n" << bktrace_buf;
-    
+
     exit(signum);
 }
 
@@ -254,8 +281,8 @@ void init_signal_handlers(void)
 #if _WIN32
     SetUnhandledExceptionFilter(windows_exception_handler);
     if (!SetConsoleCtrlHandler(consoleHandler, TRUE)) {
-		printf("Could not add handler to console");
-	}
+        printf("Could not add handler to console");
+    }
 #else
     signal(SIGUSR1, signalHandler);
     signal(SIGSEGV, signalHandler);
