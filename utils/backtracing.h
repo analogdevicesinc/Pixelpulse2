@@ -18,15 +18,11 @@
 
 #ifdef _WIN32
 
-static const STACKFRAME EmptySTACKFRAME;
-static const IMAGEHLP_LINE EmptyIMAGEHLP_LINE;
-static const IMAGEHLP_MODULE EmptyIMAGEHLP_MODULE;
-
 void windows_print_stacktrace(CONTEXT* context)
 {
     SymInitialize(GetCurrentProcess(), 0, TRUE);
 
-    STACKFRAME frame = EmptySTACKFRAME;
+    STACKFRAME frame = {0};
 
     frame.AddrPC.Offset         = context->Eip;
     frame.AddrPC.Mode           = AddrModeFlat;
@@ -42,10 +38,10 @@ void windows_print_stacktrace(CONTEXT* context)
     symbol->SizeOfStruct    = sizeof(IMAGEHLP_SYMBOL) + 255;
     symbol->MaxNameLength   = 254;
 
-    IMAGEHLP_LINE line = EmptyIMAGEHLP_LINE;
+    IMAGEHLP_LINE line = {0};
     line.SizeOfStruct = sizeof(IMAGEHLP_LINE);
 
-    IMAGEHLP_MODULE module = EmptyIMAGEHLP_MODULE;
+    IMAGEHLP_MODULE module = {0};
     module.SizeOfStruct = sizeof(IMAGEHLP_MODULE);
 
     while (StackWalk(IMAGE_FILE_MACHINE_I386,
