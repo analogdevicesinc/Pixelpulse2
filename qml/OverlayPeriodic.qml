@@ -1,7 +1,7 @@
 import QtQuick 2.1
 
-MouseArea {
-  id: plotArea
+Item {
+  id: overlay
   anchors.fill: parent
 
   property real sampleTick: 1/controller.sampleRate
@@ -9,89 +9,34 @@ MouseArea {
   property real phase: (signal.src.phase % signal.src.period) * sampleTick
 
   function phaseZeroNearCenter() {
-    if (pressed &&  relX != null) return relX
+    if (dragging && relX != null) return relX
     var center = (xaxis.visibleMin + xaxis.visibleMax) / 2;
     var offset = Math.round((center + phase) / period);
     return offset * period - phase;
   }
   function periodDivisor() {
     return ( (signal.src.src == 'square' || signal.src.src == 'sawtooth') ? 1: 2)
-    }
+  }
 
   property var dragging: null
   property var relX: 0
 
-  function near(s,t,r) {
-    return (s.x > t.x - r
-         && s.x < t.x + r
-         && s.y > t.y - r
-         && s.y < t.y + r);
-  }
-
-  onPressed: {
-    if (near(mouse, d1, 10)) {
-      dragging = 'd1'
-    } else if (near(mouse, d2, 10)) {
-      dragging = 'd2'
-    } else if (near(mouse, d3, 10)) {
-      dragging = 'd3'
-    } else {
-      mouse.accepted = false
-      return;
-    }
+  function dragStart(id) {
+    dragging = id
     relX = null
     relX = phaseZeroNearCenter()
   }
 
-  onPositionChanged: {
-    var y = Math.min(Math.max(axes.pxToY(mouse.y), signal.min), signal.max)
-    if (dragging == 'd1') {
-      var oldPeriod = signal.src.period;
-      var newPeriod = (xaxis.pxToX(mouse.x) - relX) / sampleTick * periodDivisor()
-      if (mouse.modifiers & Qt.ControlModifier) {
-        signal.src.period = axes.snapx(newPeriod)
-      }
-      else {
-        signal.src.period = newPeriod;
-      }
-      if (mouse.modifiers & Qt.AltModifier) {
-        signal.src.v1 = axes.snapy(y)
-      }
-      else {
-        signal.src.v1 = y;
-      }
+  function dragEnd() {
+    dragging = null;
+  }
 
-      // Adjust phase so the signal stays in the same position relative to the other dot
-      signal.src.phase = -relX/sampleTick;
-    } else if (dragging == 'd2') {
-      relX = xaxis.pxToX(mouse.x)
-      if (mouse.modifiers & Qt.ControlModifier) {
-        signal.src.phase = axes.snapx( -relX/sampleTick)
-      }
-      else {
-        signal.src.phase = -relX/sampleTick
-      }
-      if (mouse.modifiers & Qt.AltModifier) {
-        signal.src.v2 = axes.snapy(y)
-      }
-      else {
-        signal.src.v2 = y;
-      }
-    } else if (dragging == 'd3') {
-      var duty = (xaxis.pxToX(mouse.x) - relX) / period
-      if (mouse.modifiers & Qt.ControlModifier) {
-        signal.src.duty = Math.round(duty*20)/20
-      }
-      else {
-        signal.src.duty = duty;
-      }
-      if (mouse.modifiers & Qt.AltModifier) {
-        signal.src.v2 = axes.snapy(y)
-      }
-      else {
-        signal.src.v2 = y;
-      }
+  function mapY(pos) {
+    var y = Math.min(Math.max(axes.pxToY(pos.y), signal.min), signal.max);
+    if (pos.modifiers & Qt.AltModifier) {
+      y = axes.snapy(y);
     }
+    return y;
   }
 
   DragDot {
@@ -102,6 +47,21 @@ MouseArea {
 
     x: xaxis.xToPx(phaseZeroNearCenter() + period/periodDivisor())
     y: axes.yToPxClamped(value)
+
+    dragOn: overlay
+    onPressed: overlay.dragStart('d1')
+    onReleased: overlay.dragEnd()
+    onDrag: {
+      var oldPeriod = signal.src.period;
+      var newPeriod = (xaxis.pxToX(pos.x) - relX) / sampleTick * periodDivisor();
+      if (pos.modifiers & Qt.ControlModifier) {
+        newPeriod = axes.snapx(newPeriod)
+      }
+      signal.src.period = newPeriod;
+      signal.src.v1 = overlay.mapY(pos);
+      // Adjust phase so the signal stays in the same position relative to the other dot
+      signal.src.phase = -relX/sampleTick;
+    }
   }
 
   DragDot {
@@ -112,16 +72,41 @@ MouseArea {
 
     x: xaxis.xToPx(phaseZeroNearCenter())
     y: axes.yToPxClamped(value)
+
+    dragOn: overlay
+    onPressed: overlay.dragStart('d2')
+    onReleased: overlay.dragEnd()
+    onDrag: {
+      relX = xaxis.pxToX(pos.x)
+      if (pos.modifiers & Qt.ControlModifier) {
+        signal.src.phase = axes.snapx(-relX/sampleTick)
+      } else {
+        signal.src.phase = -relX/sampleTick
+      }
+      signal.src.v2 = overlay.mapY(pos)
+    }
   }
 
   DragDot {
     id: d3
-    value: signal.src.v2
+    value: signal.src.duty
     filled: signal.isOutput
     color: "blue"
     visible: signal.src.src == 'square'
     x: xaxis.xToPx(phaseZeroNearCenter() + signal.src.duty*period)
-    y: axes.yToPxClamped(value)
+    y: axes.yToPxClamped((signal.src.v2 + signal.src.v1)/2)
+    z: -1
+
+    dragOn: overlay
+    onPressed: overlay.dragStart('d3')
+    onReleased: overlay.dragEnd()
+    onDrag: {
+      var duty = (xaxis.pxToX(pos.x) - relX) / period
+      if (pos.modifiers & Qt.ControlModifier) {
+        duty = Math.round(duty*20)/20
+      }
+      signal.src.duty = Math.min(Math.max(duty, 0), 1);
+    }
   }
 
 }

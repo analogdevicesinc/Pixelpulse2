@@ -1,6 +1,7 @@
 import QtQuick 2.1
 
 Item {
+  id: dot
   width: 0
   height: 0
   default property alias content: rect.children
@@ -8,6 +9,11 @@ Item {
   property real value
   property var color
   property bool filled
+
+  property var dragOn
+  signal drag(variant pos)
+  signal pressed(variant mouse)
+  signal released()
 
   Text {
     anchors.verticalCenter: parent.verticalCenter
@@ -27,5 +33,21 @@ Item {
     border.color: parent.color
     x: -height/2
     y: -width/2
+
+    MouseArea {
+      id: mouse_area
+      visible: !!dragOn
+      anchors.fill: parent
+      anchors.margins: -4
+      onPressed: {
+        dot.pressed(mouse)
+      }
+      onPositionChanged: {
+        var pos = this.mapToItem(dragOn, mouse.x, mouse.y)
+        pos.modifiers = mouse.modifiers
+        dot.drag(pos, x, y)
+      }
+      onReleased: { dot.released() }
+    }
   }
 }
