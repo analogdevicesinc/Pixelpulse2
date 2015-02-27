@@ -4,7 +4,7 @@ QT += qml quick widgets
 CONFIG += c++11
 CONFIG += debug_and_release
 
-CFLAGS += -v -static -static-libgcc -static-libstdc++ -rdynamic
+CFLAGS += -v -static -static-libgcc -static-libstdc++ -g -rdynamic
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
 DEFINES += BUILD_DATE='"\\\"$(shell date)\\\""'
 
