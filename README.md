@@ -18,7 +18,7 @@ Click and drag the X axis to pan in time.
 
 To build from source on Linux / OSX with an appropriate C++ compiler and libraries:
 
-* Install [LibUSB](http://libusb.info/) using the [appropriate branch](https://github.com/kevinmehall/libusb/tree/hp) if hotplug support on Windows is required.
+* Install [LibUSB](http://libusb.info/) using the [appropriate branch](https://github.com/kevinmehall/libusb/tree/hp) if hotplug support on Windows is required or if building for Debian Wheezy based Linux distributions.
 * Install Qt5.4 by downloading the proper release for your platform from [the Qt project](http://qtmirror.ics.com/pub/qtproject/development_releases/qt/5.4/5.4.0-rc/).
 
 Run the following commands from a console environment:
@@ -38,8 +38,9 @@ To get an up-to-date binary build for Windows:
  * Extract the dependency package and overwrite the included pixelpulse2.exe with the latest build downloaded from AppVeyor.
  * With a M1K attached, double-click the executable to launch Pixelpulse.
 
-To build / install for Debian:
+To build / install for Debian, from the `pixelpulse2` directory:
 
     dh_make -p pixelpulse2_0.1 -s -c apache -e <email> --createorig
     dpkg-buildpackage
+
 

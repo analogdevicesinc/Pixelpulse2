@@ -2,7 +2,7 @@ Source: pixelpulse2
 Section: electronics
 Priority: extra
 Maintainer: Ian Daniher <it.daniher@itdaniher.com>
-Build-Depends: libudev-dev, libusb-1.0-0-dev, debhelper (>= 8.0.0), libqt5quick5, qt5-qmake, pkg-config, cdbs
+Build-Depends: libudev-dev, libusb-1.0-0-dev (>=1.0.10), debhelper (>= 8.0.0), libqt5quick5, qt5-qmake, pkg-config, cdbs, qtdeclarative5-dev, qtbase5-dev
 Standards-Version: 3.9.4
 Homepage: https://analog.com
 Vcs-Git: https://github.com/analogdevicesinc/pixelpulse2.git
