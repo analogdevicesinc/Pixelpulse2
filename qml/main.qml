@@ -6,9 +6,8 @@ import QtQuick.Controls 1.0
 ApplicationWindow {
 	width: 1024
 	height: 768
-	title: "Pixelpulse"
+	title: "Pixelpulse" + "        " + "Built: " + versions.build_date + "    " + "Hash: " + versions.git_version
 	visible: true
-
 	property var toolbarHeight: 56
 
     property alias repeatedSweep: toolbar.repeatedSweep

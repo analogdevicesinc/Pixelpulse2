@@ -6,7 +6,7 @@ CONFIG += debug_and_release
 
 CFLAGS += -v -static -static-libgcc -static-libstdc++ 
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
-DEFINES += BUILD_DATE='"\\\"$(shell date)\\\""'
+DEFINES += BUILD_DATE='"\\\"$(shell date +%F)\\\""'
 
 SOURCES += main.cpp \
     SMU.cpp \
