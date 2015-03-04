@@ -13,6 +13,6 @@ install:
 
 build_script:
   - git submodule update --init --recursive
-  - qmake LIBS+="C:\libusb\MinGW32\static\libusb-1.0.a" INCLUDEPATH+="C:\libusb\include\libusb-1.0" pixelpulse2.pro
+  - qmake pixelpulse2.pro
   - mingw32-make -j8
   - appveyor PushArtifact release\pixelpulse2.exe

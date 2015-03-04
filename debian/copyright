@@ -1,0 +1,42 @@
+This work was packaged for Debian by:
+
+    Ian Daniher and Ezra Varady
+
+It was downloaded from:
+
+    https://github.com/analogdevicesinc/pixelpulse2
+
+Copyright:
+
+    Copyright (C) 2012 Nonolith Labs, LLC
+
+License:
+
+	Licensed under the Mozilla Public License, Version 2.0
+	<LICENSE-MPL2 https://www.mozilla.org/MPL/2.0/index.txt>
+	files in the project carrying such
+	notice may not be copied, modified, or distributed except
+	according to those terms.
+
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+The Debian packaging is:
+
+    Copyright (C) 2015 Ezra Varady <ez@sloth.life>
+    Copyright (C) 2015 Ian Daniher <it.daniher@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.

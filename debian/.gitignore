@@ -1,0 +1,8 @@
+pixelpulse2.debhelper.log
+pixelpulse2.postinst.debhelper
+pixelpulse2.preinst.debhelper
+pixelpulse2.substvars
+pixelpulse2
+files
+stamp-makefile-build
+stamp-makefile-install
