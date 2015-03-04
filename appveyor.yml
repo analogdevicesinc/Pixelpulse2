@@ -14,6 +14,6 @@ install:
 build_script:
   - git submodule update --init --recursive
   - dir
-  - qmake pixelpulse.pro
+  - qmake pixelpulse2.pro
   - mingw32-make -j8
   - appveyor PushArtifact release\pixelpulse2.exe
