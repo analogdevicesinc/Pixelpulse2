@@ -54,6 +54,9 @@ Rectangle {
       MenuItem { text: "Sawtooth"
         onTriggered: signalBlock.switchToPeriodic('sawtooth')
       }
+      MenuItem { text: "Stairstep"
+        onTriggered: signalBlock.switchToPeriodic('stairstep')
+      }
       MenuItem { text: "Square"
         onTriggered: signalBlock.switchToPeriodic('square')
       }
@@ -206,7 +209,7 @@ Rectangle {
 
     OverlayPeriodic {
       id: overlay_periodic
-      visible: (signal.src.src == 'sine' || signal.src.src == 'triangle' || signal.src.src == 'sawtooth' || signal.src.src == 'square') && (channel.mode == {'Voltage': 1, 'Current': 2}[signal.label])
+      visible: (signal.src.src == 'sine' || signal.src.src == 'triangle' || signal.src.src == 'sawtooth' || signal.src.src == 'stairstep' || signal.src.src == 'square') && (channel.mode == {'Voltage': 1, 'Current': 2}[signal.label])
     }
 
     OverlayConstant {

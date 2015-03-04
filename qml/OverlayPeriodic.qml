@@ -15,8 +15,8 @@ Item {
     return offset * period - phase;
   }
   function periodDivisor() {
-    return ( (signal.src.src == 'square' || signal.src.src == 'sawtooth') ? 1: 2)
-  }
+    return ( (signal.src.src == 'square' || signal.src.src == 'sawtooth' || signal.src.src == 'stairstep') ? 1: 2)
+    }
 
   property var dragging: null
   property var relX: 0
