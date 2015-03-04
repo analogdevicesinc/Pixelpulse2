@@ -63,7 +63,7 @@ win32 {
 # use the statically compiled archive when possible
 	exists(/C/libusb/MinGW32/static/libusb-1.0.a) {
 		LIBS += "C:\libusb\MinGW32\static\libusb-1.0.a"
-		INCLUDEPATH+="C:\libusb\include"
+		INCLUDEPATH+="C:\libusb\include\libusb-1.0"
 	}
 }
 
@@ -85,7 +85,6 @@ unix | osx {
 	}
 # if we do have a locally compiled static version of libusb-1.0 installed, use it
 	exists(/usr/local/lib/libusb-1.0.a) {
-		LIBS += /usr/local/lib/libusb-1.0.a
-		INCLUDEPATH += "/usr/local/include/libusb-1.0"
+		LIBS += /usr/local/lib/libusb-1.0.a INCLUDEPATH += "/usr/local/include/libusb-1.0"
 	}
 }
