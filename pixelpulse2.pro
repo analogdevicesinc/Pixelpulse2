@@ -61,8 +61,8 @@ osx {
 win32 {
 	RC_ICONS = icons/pp2.ico
 # use the statically compiled archive when possible
-    - dir "C:\libusb\MinGW32\static"
 	exists(/C/libusb/MinGW32/static/libusb-1.0.a) {
+		message(libusb-1.0.a found)
 		LIBS += "C:\libusb\MinGW32\static\libusb-1.0.a"
 		INCLUDEPATH += "C:\libusb\include\libusb-1.0"
 	}
