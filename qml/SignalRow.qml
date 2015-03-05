@@ -106,7 +106,7 @@ Rectangle {
     xbottom: false
 
     gridColor: '#222'
-    textColor: '#666'
+    textColor: '#fff'
 
     states: [
       State {

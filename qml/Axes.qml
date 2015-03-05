@@ -21,7 +21,7 @@ Item {
   property int ygridticks: height / 16
 
   property var gridColor: '#ccc'
-  property var textColor: '#444'
+  property var textColor: '#fff'
   property var textSize: 14
 
   function step(min, max, count) {

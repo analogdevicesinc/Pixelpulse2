@@ -53,7 +53,7 @@ Item {
       }
     }
     gridColor: '#222'
-    textColor: '#666'
+    textColor: '#fff'
 
     Rectangle {
       anchors.fill: parent
