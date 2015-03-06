@@ -4,6 +4,8 @@ QT += qml quick widgets
 CONFIG += c++11
 CONFIG += debug_and_release
 
+LIBS += `curl-config --libs` -ljansson
+
 CFLAGS += -v -static -static-libgcc -static-libstdc++ 
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
 DEFINES += BUILD_DATE='"\\\"$(shell date)\\\""'
