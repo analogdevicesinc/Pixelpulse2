@@ -71,6 +71,7 @@ public:
 
 void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSGMaterial *oldMaterial)
 {
+    Q_UNUSED(oldMaterial);
     Q_ASSERT(program()->isLinked());
 
     Material* m = static_cast<Material*>(newMaterial);
@@ -146,7 +147,7 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
 
     auto verticies = geometry->vertexDataAsPoint2D();
     if (m_xbuffer) {
-        for (int i=0; i<n_points; i++) {
+        for (unsigned i=0; i<n_points; i++) {
             verticies[i].set(m_xbuffer->get(i), m_ybuffer->get(i));
         }
     } else {
