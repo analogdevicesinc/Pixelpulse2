@@ -5,7 +5,6 @@
     #include <windows.h>
     #include <imagehlp.h>
     #include <dbghelp.h>
-    #include <conio.h>
 #else
     #include <iostream>
     #include <string>
@@ -168,12 +167,6 @@ LONG WINAPI windows_exception_handler(EXCEPTION_POINTERS * ExceptionInfo)
   {
       printf("Stack Overflow!\n");
   }
-
-    printf("Press 'q' to close.");
-    while (!_kbhit()) {
-        if (_getch() == 'q');
-            break;
-    }
 
   return EXCEPTION_EXECUTE_HANDLER;
 }
