@@ -4,6 +4,9 @@ QT += qml quick widgets
 CONFIG += c++11
 CONFIG += debug_and_release
 
+QMAKE_CFLAGS_DEBUG += -ggdb
+QMAKE_CXXFLAGS_DEBUG += -ggdb
+
 CFLAGS += -v -static -static-libgcc -static-libstdc++ -g -rdynamic
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
 DEFINES += BUILD_DATE='"\\\"$(shell date)\\\""'
@@ -64,3 +67,5 @@ win32 {
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += libusb-1.0
+unix: QMAKE_CFLAGS_DEBUG += -rdynamic
+unix: QMAKE_CXXFLAGS_DEBUG += -rdynamic
