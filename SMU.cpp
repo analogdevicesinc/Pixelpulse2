@@ -19,10 +19,10 @@ void registerTypes() {
 
 SessionItem::SessionItem():
 m_session(new Session),
-m_sample_rate(0),
-m_sample_count(0),
 m_active(false),
-m_continuous(false)
+m_continuous(false),
+m_sample_rate(0),
+m_sample_count(0)
 {
     connect(this, &SessionItem::progress, this, &SessionItem::onProgress, Qt::QueuedConnection);
     connect(this, &SessionItem::finished, this, &SessionItem::onFinished, Qt::QueuedConnection);
@@ -118,6 +118,7 @@ void SessionItem::start(bool continuous)
 void SessionItem::onAttached(Device *device)
 {
     auto dev = m_session->add_device(device);
+    Q_UNUSED(dev);
     m_devices.append(new DeviceItem(this, device));
     devicesChanged();
 }
@@ -129,7 +130,7 @@ void SessionItem::onDetached(Device* device){
     // wait for completion
     m_session->end();
     m_session->remove_device(device);
-    if (m_session->m_devices.size() < m_devices.size()) {
+    if ((int) m_session->m_devices.size() < m_devices.size()) {
         for (auto dev: m_devices) {
              if (dev->m_device == device)
                     m_devices.removeOne(dev);
@@ -207,6 +208,7 @@ m_src(new SrcItem(this)),
 m_measurement(0.0)
 {
     auto sig_info = sig->info();
+    Q_UNUSED(sig_info);
     connect(m_channel, &ChannelItem::modeChanged, this, &SignalItem::onParentModeChanged);
 }
 
@@ -222,13 +224,13 @@ void SignalItem::updateMeasurement(){
 
 SrcItem::SrcItem(SignalItem* parent):
 QObject(parent),
-m_parent(parent),
 m_src("constant"),
 m_v1(0),
 m_v2(0),
 m_period(0),
 m_phase(0),
-m_duty(0.5)
+m_duty(0.5),
+m_parent(parent)
 {
     connect(this, &SrcItem::srcChanged, [=]{ changed(); });
     connect(this, &SrcItem::v1Changed, [=]{ changed(); });

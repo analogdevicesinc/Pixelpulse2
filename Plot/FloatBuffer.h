@@ -74,6 +74,7 @@ public:
     }
 
     void continuousProgress(unsigned sample) {
+        Q_UNUSED(sample);
         // m_start and m_length are adjusted in shift()
         dataChanged();
     }
