@@ -18,6 +18,6 @@ install:
 
 build_script:
   - git submodule update --init --recursive
-  - qmake LIBS+="C:\libusb\MinGW32\static\libusb-1.0.a" INCLUDEPATH+="C:\libusb\include" INCLUDEPATH+="C:\libcurl\include" INCLUDEPATH+="C:\libjansson\include" pixelpulse2.pro
+  - qmake LIBS+="C:\libusb\MinGW32\static\libusb-1.0.a" LIBS+="C:\libcurl\lib\libcurl.a" LIBS+="C:\libjansson\lib\libjansson.dll.a" INCLUDEPATH+="C:\libusb\include" INCLUDEPATH+="C:\libcurl\include" INCLUDEPATH+="C:\libjansson\include" pixelpulse2.pro
   - mingw32-make -j8
   - appveyor PushArtifact release\pixelpulse2.exe
