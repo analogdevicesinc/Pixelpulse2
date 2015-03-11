@@ -3,8 +3,13 @@ TEMPLATE = app
 QT += qml quick widgets
 CONFIG += c++11
 CONFIG += debug_and_release
+<<<<<<< HEAD
 CONFIG += static
 CFLAGS += -v -static-libgcc -static-libstdc++
+=======
+
+CFLAGS += -v -static -static-libgcc -static-libstdc++ -rdynamic
+>>>>>>> backtracking
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
 DEFINES += BUILD_DATE='"\\\"$(shell date +%F)\\\""'
 
@@ -61,11 +66,8 @@ osx {
 win32 {
 	RC_ICONS = icons/pp2.ico
 # use the statically compiled archive when possible
-	#exists(/C/libusb/MinGW32/static/libusb-1.0.a) {
-		message(libusb-1.0.a found)
-		LIBS += "C:\libusb\MinGW32\static\libusb-1.0.a"
-		INCLUDEPATH += "C:\libusb\include\libusb-1.0"
-	#}
+	LIBS += "C:\libusb\MinGW32\static\libusb-1.0.a"
+	INCLUDEPATH += "C:\libusb\include\libusb-1.0"
 }
 
 unix {
@@ -77,6 +79,7 @@ unix {
 	}
 	BINDIR = $$PREFIX/bin
 	target.path=$$BINDIR
+	LIBS += -limagehlp -ldbghelp
 }
 
 unix | osx {
