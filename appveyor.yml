@@ -11,13 +11,15 @@ install:
   - ps: (new-object System.Net.WebClient).Downloadfile("http://itdaniher.com/static/libusb-1.0-hp.7z", "c:\libusb.7z")
   - 7z x -y "c:\libusb.7z" -o"C:\libusb" > nul
   - ps: (new-object System.Net.WebClient).Downloadfile("http://curl.haxx.se/gknw.net/7.40.0/dist-w32/curl-7.40.0-devel-mingw32.zip", "c:\libcurl.zip")
-  - 7z x -y "c:\libcurl.zip" -o"C:\libcurl" > nul
+  - 7z x -y "c:\libcurl.zip" -o"C:\" > nul
+  - mv "c:\curl-7.40.0-devel-mingw32" "c:\libcurl" 
   - ps: (new-object System.Net.WebClient).Downloadfile("http://win-builds.org/1.5.0/packages/windows_32/jansson-2.6-1-i686-w64-mingw32.txz", "c:\libjansson.txz")
   - 7z x -y "c:\libjansson.txz" -o"C:\libjansson.tar" > nul
-  - 7z x -y "c:\libjansson.tar" -o"C:\libjansson" > nul
+  - 7z x -y "c:\libjansson.tar" -o"C:\" > nul
+  - mv "c:\windows_32" "c:\libjansson"
 
 build_script:
   - git submodule update --init --recursive
-  - qmake LIBS+="C:\libusb\MinGW32\static\libusb-1.0.a" LIBS+="C:\libcurl\lib\libcurl.a" LIBS+="C:\libjansson\lib\libjansson.dll.a" INCLUDEPATH+="C:\libusb\include" INCLUDEPATH+="C:\libcurl\include" INCLUDEPATH+="C:\libjansson\include" pixelpulse2.pro
+  - qmake pixelpulse2.pro
   - mingw32-make -j8
   - appveyor PushArtifact release\pixelpulse2.exe
