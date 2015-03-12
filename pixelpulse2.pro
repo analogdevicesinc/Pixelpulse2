@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     Plot/FloatBuffer.cpp \
     libsmu/device_m1000.cpp \
     libsmu/session.cpp \
-    libsmu/device_cee.cpp
+    libsmu/device_cee.cpp \
+    phonehome/phonehome.cpp
 
 RESOURCES += qml.qrc
 
@@ -47,7 +48,8 @@ HEADERS += \
     libsmu/libsmu.h \
     libsmu/libsmu.hpp \
     libsmu/device_cee.hpp \
-    libsmu/internal.hpp
+    libsmu/internal.hpp \
+    phonehome/phonehome.hpp
 
 win32:debug {
 	CONFIG += console

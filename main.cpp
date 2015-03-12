@@ -3,6 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "SMU.h"
+#include "phonehome/phonehome.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -10,10 +11,17 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     registerTypes();
+    phonehome_registerTypes();
 
     SessionItem smu_session;
     smu_session.openAllDevices();
+    
+    PhoneHome *phoneHome = new PhoneHome(
+        QUrl("https://api.github.com/repos/analogdevicesinc/pixelpulse2/releases"));
+    phoneHome->setClientBuild(BUILD_DATE);
+    
     engine.rootContext()->setContextProperty("session", &smu_session);
+    engine.rootContext()->setContextProperty("phonehome", phoneHome);
 
 	QVariantMap versions;
 	versions.insert("build_date", BUILD_DATE);
@@ -33,6 +41,7 @@ int main(int argc, char *argv[])
 
     int r = app.exec();
     smu_session.closeAllDevices();
+    delete phoneHome;
 
     return r;
 }

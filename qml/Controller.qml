@@ -19,6 +19,14 @@ Item {
     interval: 100
     onTriggered: { trigger() }
   }
+  
+  Timer {
+    id: timer_callhome
+    interval: 100
+    running: true
+    repeat: false
+    onTriggered: { phonehome.callHome(); }
+  }
 
   function toggle() {
     if (!enabled) {
