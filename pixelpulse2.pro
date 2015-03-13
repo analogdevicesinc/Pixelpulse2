@@ -2,7 +2,7 @@ TEMPLATE = app
 
 QT += qml quick widgets
 CONFIG += c++11
-CONFIG += debug_and_release
+CONFIG += debug
 CONFIG += static
 CFLAGS += -v -static-libgcc -static-libstdc++
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
