@@ -4,6 +4,7 @@ Item {
   property bool enabled: false
   property bool continuous: false
   property bool repeat: true
+  // TODO: should be queried from libsmu / device
   property real sampleRate: 100000
   property real sampleTime: 0.1
   readonly property int sampleCount: sampleTime * sampleRate
