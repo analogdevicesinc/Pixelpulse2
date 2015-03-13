@@ -3,13 +3,19 @@ TEMPLATE = app
 QT += qml quick widgets
 CONFIG += c++11
 CONFIG += debug_and_release
+<<<<<<< HEAD
 
 QMAKE_CFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -ggdb
 
 CFLAGS += -v -static -static-libgcc -static-libstdc++ -g -rdynamic
+=======
+CONFIG += static
+CFLAGS += -v -static -static-libgcc -static-libstdc++ -rdynamic
+
+>>>>>>> backtracking2
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
-DEFINES += BUILD_DATE='"\\\"$(shell date)\\\""'
+DEFINES += BUILD_DATE='"\\\"$(shell date +%F)\\\""'
 
 SOURCES += main.cpp \
     SMU.cpp \
@@ -58,14 +64,38 @@ win32:debug {
 
 osx {
 	ICON = icons/pp2.icns
+	LIBS += -lobjc -framework IOKit -framework CoreFoundation
 }
 
 win32 {
 	RC_ICONS = icons/pp2.ico
-	LIBS += -limagehlp -ldbghelp
+# use the statically compiled archive when possible
+	LIBS += "C:\libusb\MinGW32\static\libusb-1.0.a"
+	INCLUDEPATH += "C:\libusb\include\libusb-1.0"
 }
 
-unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += libusb-1.0
-unix: QMAKE_CFLAGS_DEBUG += -rdynamic
-unix: QMAKE_CXXFLAGS_DEBUG += -rdynamic
+unix {
+	CONFIG += link_pkgconfig
+	PKGCONFIG += libudev
+	INSTALLS+=target
+	isEmpty(PREFIX) {
+		PREFIX = /usr
+	}
+	BINDIR = $$PREFIX/bin
+	target.path=$$BINDIR
+	LIBS += -limagehlp -ldbghelp
+	QMAKE_CFLAGS_DEBUG += -rdynamic
+	QMAKE_CXXFLAGS_DEBUG += -rdynamic
+}
+
+unix | osx {
+# if we do not have a locally compiled static version of libusb-1.0 installed, use pkg-config
+	!exists(/usr/local/lib/libusb-1.0.a) {
+		PKGCONFIG += libusb-1.0
+	}
+# if we do have a locally compiled static version of libusb-1.0 installed, use it
+	exists(/usr/local/lib/libusb-1.0.a) {
+		LIBS += /usr/local/lib/libusb-1.0.a
+		INCLUDEPATH += "/usr/local/include/libusb-1.0"
+	}
+}

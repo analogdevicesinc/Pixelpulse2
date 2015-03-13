@@ -18,6 +18,11 @@ int main(int argc, char *argv[])
     smu_session.openAllDevices();
     engine.rootContext()->setContextProperty("session", &smu_session);
 
+	QVariantMap versions;
+	versions.insert("build_date", BUILD_DATE);
+	versions.insert("git_version", GIT_VERSION);
+	engine.rootContext()->setContextProperty("versions", versions);
+
     if (argc > 1) {
         if (strcmp(argv[1], "-v") || strcmp(argv[1], "--version")) {
             std::cout << GIT_VERSION << ": Built on " << BUILD_DATE << std::endl;
@@ -28,8 +33,8 @@ int main(int argc, char *argv[])
         engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     }
 
-    int r = app.exec();
 
+    int r = app.exec();
     smu_session.closeAllDevices();
 
     return r;
