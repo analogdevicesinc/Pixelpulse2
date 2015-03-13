@@ -7,7 +7,7 @@ CONFIG += debug_and_release
 QMAKE_CFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -ggdb
 
-CFLAGS += -v -static -static-libgcc -static-libstdc++ -g -rdynamic
+CFLAGS += -v -static -static-libgcc -static-libstdc++ -g
 CONFIG += static
 
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
@@ -56,7 +56,9 @@ HEADERS += \
 
 win32:debug {
 	CONFIG += console
+	LIBS += -limagehlp -ldbghelp
 }
+
 
 osx {
 	ICON = icons/pp2.icns
@@ -79,7 +81,6 @@ unix {
 	}
 	BINDIR = $$PREFIX/bin
 	target.path=$$BINDIR
-	LIBS += -limagehlp -ldbghelp
 	QMAKE_CFLAGS_DEBUG += -rdynamic
 	QMAKE_CXXFLAGS_DEBUG += -rdynamic
 }
