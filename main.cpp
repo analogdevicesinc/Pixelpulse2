@@ -8,7 +8,7 @@
 int main(int argc, char *argv[])
 {
     
-    /* Usage Example */
+    // preliminary update checking
     Release release;
     
     phone_home_init();
@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
         release.dispose(&release);
     }
     phone_home_terminate();
-    
+    // back to your regularly scheduled Qt-a-thon
+ 
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
