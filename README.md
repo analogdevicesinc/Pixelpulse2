@@ -19,7 +19,7 @@ Click and drag the X axis to pan in time.
 #### Easy
 
 * OSX - Navigate to the [releases](https://github.com/analogdevicesinc/pixelpulse2/releases) and collect the latest `pixelpulse2-bundled.dmg.zip` package.
-* Windows - Download the [dependency package](https:/kevinmehall.net/tmp/pixelpulse2_r3.zip) and [the latest binary build](https://ci.appveyor.com/project/itdaniher/pixelpulse2/build/artifacts). Extract the dependency package and overwrite the included pixelpulse2.exe with the latest build downloaded from AppVeyor.
+* Windows - Download the [dependency package](https:/kevinmehall.net/tmp/pixelpulse2_r3.zip) and [the latest binary build](https://ci.appveyor.com/project/analogdevicesinc/pixelpulse2/build/artifacts). Extract the dependency package and overwrite the included pixelpulse2.exe with the latest build downloaded from AppVeyor.
 * Linux - Either build from source (below) or navigate to the releases and collect the latest .deb or .tgz file for your architecture. Install or extract as appropriate.
 
 #### Advanced
