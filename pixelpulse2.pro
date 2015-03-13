@@ -3,17 +3,13 @@ TEMPLATE = app
 QT += qml quick widgets
 CONFIG += c++11
 CONFIG += debug_and_release
-<<<<<<< HEAD
 
 QMAKE_CFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -ggdb
 
 CFLAGS += -v -static -static-libgcc -static-libstdc++ -g -rdynamic
-=======
 CONFIG += static
-CFLAGS += -v -static -static-libgcc -static-libstdc++ -rdynamic
 
->>>>>>> backtracking2
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
 DEFINES += BUILD_DATE='"\\\"$(shell date +%F)\\\""'
 
