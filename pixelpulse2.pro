@@ -2,7 +2,7 @@ TEMPLATE = app
 
 QT += qml quick widgets
 CONFIG += c++11
-CONFIG += debug_and_release
+CONFIG += debug
 
 QMAKE_CFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -ggdb
