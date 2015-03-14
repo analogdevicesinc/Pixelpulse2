@@ -3,9 +3,12 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "SMU.h"
+#include "utils/backtracing.h"
 
 int main(int argc, char *argv[])
 {
+    init_signal_handlers();
+    
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 

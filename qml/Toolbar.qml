@@ -8,10 +8,6 @@ ToolbarStyle {
     id: timeGroup
   }
 
-  ExclusiveGroup {
-    id: rateGroup
-  }
-
   property alias repeatedSweep: repeatedSweepItem.checked
   property alias plotsVisible: plotsVisibleItem.checked
   property alias contentVisible: contentVisibleItem.checked
@@ -30,19 +26,6 @@ ToolbarStyle {
           checked: true
       }
 
-      Menu {
-        title: "Sample Rate"
-        MenuItem { exclusiveGroup: rateGroup; checkable: true;
-          onTriggered: controller.sampleRate = 1000; text: '1 kHz' }
-        MenuItem { exclusiveGroup: rateGroup; checkable: true;
-          onTriggered: controller.sampleRate = 4000; text: '4 kHz' }
-        MenuItem { exclusiveGroup: rateGroup; checkable: true;
-          onTriggered: controller.sampleRate = 10000; text: '10 kHz' }
-        MenuItem { exclusiveGroup: rateGroup; checkable: true;
-          onTriggered: controller.sampleRate = 40000; text: '40 kHz' }
-        MenuItem { exclusiveGroup: rateGroup; checkable: true;
-          onTriggered: controller.sampleRate = 100000; text: '100 kHz' }
-      }
       Menu {
         title: "Sample Time"
         MenuItem { exclusiveGroup: timeGroup; checkable: true;
