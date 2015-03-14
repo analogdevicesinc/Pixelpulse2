@@ -17,5 +17,5 @@ build_script:
   - mingw32-make -j8
   - appveyor PushArtifact debug\pixelpulse2.exe
   - windeployqt --qmldir qml debug\pixelpulse2.exe --debug --dir distrib
-  - dir distrib
   - 7z a -y distrib.zip distrib 
+  - appveyor PushArtifact distrib.zip
