@@ -46,7 +46,7 @@ To build / run on a generic POSIX platform
 
 To build / install for Debian, from the `pixelpulse2` directory:
 
-    dh_make -p pixelpulse2_0.1 -s -c gplv3 --createorig
+    dh_make -p pixelpulse2_0.8 -s -c blank --createorig
     dpkg-buildpackage
     sudo dpkg -i ../pixelpulse2_0.1-1_i386.deb
 

@@ -1,5 +1,5 @@
-pixelpulse2 (0.1-1) unstable; urgency=low
+pixelpulse2 (0.8-1~precise) precise; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Version 0.8 initial public release.
 
- -- Ian Daniher <it.daniher@gmail.com>  Fri, 20 Feb 2015 11:24:24 -0500
+ -- Ian Daniher <it.daniher@gmail.com>  Fri, 13 Mar 2015 21:08:02 -0400
