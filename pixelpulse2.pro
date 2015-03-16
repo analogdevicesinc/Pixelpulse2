@@ -2,6 +2,7 @@ TEMPLATE = app
 
 QT += qml quick widgets
 CONFIG += c++11
+
 CONFIG += debug
 
 QMAKE_CFLAGS_DEBUG += -ggdb
@@ -47,6 +48,7 @@ HEADERS += \
     SMU.h \
     Plot/PhosphorRender.h \
     Plot/FloatBuffer.h \
+    utils/phone_home.h \
     libsmu/device_m1000.hpp \
     libsmu/libsmu.h \
     libsmu/libsmu.hpp \
@@ -66,14 +68,20 @@ osx {
 
 win32 {
 	RC_ICONS = icons/pp2.ico
-# use the statically compiled archive when possible
 	LIBS += "C:\libusb\MinGW32\static\libusb-1.0.a"
 	INCLUDEPATH += "C:\libusb\include\libusb-1.0"
+	LIBS += "C:\libcurl\lib\libcurl.a"
+	LIBS += "C:\libcurl\lib\libcurldll.a"
+	INCLUDEPATH += "C:\libcurl\include"
+	LIBS += "C:\libjansson\lib\libjansson.dll.a"
+	INCLUDEPATH += "C:\libjansson\include"
 }
 
 unix {
 	CONFIG += link_pkgconfig
 	PKGCONFIG += libudev
+	PKGCONFIG += libcurl
+	PKGCONFIG += jansson
 	INSTALLS+=target
 	isEmpty(PREFIX) {
 		PREFIX = /usr

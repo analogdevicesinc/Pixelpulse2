@@ -3,12 +3,28 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "SMU.h"
-#include "utils/backtracing.h"
+#include "utils/phone_home.h"
 
 int main(int argc, char *argv[])
 {
-    init_signal_handlers();
     
+    // preliminary update checking
+    Release release;
+    
+    phone_home_init();
+    if (release_is_up_to_date("1980-01-01", &release)) {
+        printf("up-to-date\n");
+    } else {
+        printf("A new release is avaliable:\n %s(%s)\n SHA: %s\n URL: %s\n",
+                release.name,
+                release.build_date,
+                release.commit,
+                release.url);
+        release.dispose(&release);
+    }
+    phone_home_terminate();
+    // back to your regularly scheduled Qt-a-thon
+ 
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
