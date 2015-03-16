@@ -8,7 +8,6 @@ QMAKE_CFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -ggdb
 
 CFLAGS += -v -static -static-libgcc -static-libstdc++ -g
-CONFIG += static
 
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
 DEFINES += BUILD_DATE='"\\\"$(shell date +%F)\\\""'
