@@ -61,4 +61,30 @@ Rectangle {
         }
     }
   }
+
+  MouseArea {
+    id: timelineheader_mouse_area
+    anchors.fill: parent
+
+    property real prevX;
+    acceptedButtons: Qt.RightButton
+    onPressed: {
+      if (mouse.button == Qt.RightButton) {
+        prevX = mouse.x;
+      } else {
+        mouse.accepted = false;
+      }
+    }
+    onPositionChanged: {
+      var delta = (mouse.x - prevX);
+      prevX = mouse.x;
+      var s = Math.pow(1.005, delta)
+      var oldScale = xaxis.xscale
+      var minScale = xaxis.timelineflickable.width/(xaxis.boundMax - xaxis.boundMin)
+      xaxis.xscale = Math.min(Math.max(xaxis.xscale*s, minScale), xaxis.maxScale)
+
+      xaxis.timelineflickable.contentX = (xaxis.xscale / oldScale) * (xaxis.timelineflickable.contentX + mouse.x) - mouse.x
+      xaxis.timelineflickable.returnToBounds()
+    }
+  }
 }
