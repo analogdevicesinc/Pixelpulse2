@@ -73,8 +73,8 @@ win32 {
 	LIBS += "C:\libcurl\lib\libcurl.a"
 	LIBS += "C:\libcurl\lib\libcurldll.a"
 	INCLUDEPATH += "C:\libcurl\include"
-	LIBS += "C:\libjansson\lib\libjansson.dll.a"
-	INCLUDEPATH += "C:\libjansson\include"
+	LIBS += "C:\mingw32\lib\libjansson.dll.a"
+	INCLUDEPATH += "C:\mingw32\include"
 }
 
 unix {
