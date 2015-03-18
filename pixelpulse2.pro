@@ -7,8 +7,7 @@ CONFIG += debug
 
 QMAKE_CFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -ggdb
-
-CFLAGS += -v -static -static-libgcc -static-libstdc++ -g
+QMAKE_LFLAGS_DEBUG += -static -static-libgcc -static-libstdc++
 
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
 DEFINES += BUILD_DATE='"\\\"$(shell date +%F)\\\""'
@@ -73,8 +72,8 @@ win32 {
 	LIBS += "C:\libcurl\lib\libcurl.a"
 	LIBS += "C:\libcurl\lib\libcurldll.a"
 	INCLUDEPATH += "C:\libcurl\include"
-	LIBS += "C:\libjansson\lib\libjansson.dll.a"
-	INCLUDEPATH += "C:\libjansson\include"
+	LIBS += "C:\mingw32\lib\libjansson.dll.a"
+	INCLUDEPATH += "C:\mingw32\include"
 }
 
 unix {

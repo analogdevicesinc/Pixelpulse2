@@ -6,23 +6,28 @@ platform:
 install:
   - ps: (new-object System.Net.WebClient).Downloadfile("https://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/4.9.2/threads-posix/dwarf/i686-4.9.2-release-posix-dwarf-rt_v3-rev0.7z", "c:\mingw.7z")
   - 7z x -y "c:\mingw.7z" -o"C:\" > nul
+  - ps: (new-object System.Net.WebClient).Downloadfile("http://sourceforge.net/projects/mingw-w64/files/External%20binary%20packages%20%28Win64%20hosted%29/MSYS%20%2832-bit%29/MSYS-20111123.zip", "c:\msys.zip")
+  - 7z x -y "c:\msys.zip" -o"C:\" > nul
   - set QTDIR=C:\Qt\5.4\mingw491_32
-  - set PATH=C:\Program Files (x86)\MSBuild\12.0\bin\;C:\mingw32\bin;%QTDIR%\bin;%PATH%
+  - set PATH=C:\Program Files (x86)\MSBuild\12.0\bin\;C:\mingw32\bin;C:\msys\bin\;%QTDIR%\bin;%PATH%
   - ps: (new-object System.Net.WebClient).Downloadfile("http://itdaniher.com/static/libusb-1.0-hp.7z", "c:\libusb.7z")
   - 7z x -y "c:\libusb.7z" -o"C:\libusb" > nul
   - ps: (new-object System.Net.WebClient).Downloadfile("http://curl.haxx.se/gknw.net/7.40.0/dist-w32/curl-7.40.0-devel-mingw32.zip", "c:\libcurl.zip")
   - 7z x -y "c:\libcurl.zip" -o"C:\" > nul
   - mv "c:\curl-7.40.0-devel-mingw32" "c:\libcurl" 
-  - ps: (new-object System.Net.WebClient).Downloadfile("http://win-builds.org/1.5.0/packages/windows_32/jansson-2.6-1-i686-w64-mingw32.txz", "c:\libjansson.txz")
-  - 7z x -y "c:\libjansson.txz" -o"C:\libjansson.tar" > nul
+  - ps: (new-object System.Net.WebClient).Downloadfile("http://www.digip.org/jansson/releases/jansson-2.7.tar.gz", "c:\libjansson.tar.gz")
+  - 7z x -y "c:\libjansson.tar.gz" -o"C:\libjansson.tar" > nul
   - 7z x -y "c:\libjansson.tar" -o"C:\" > nul
-  - mv "c:\windows_32" "c:\libjansson"
+  - mv "c:\jansson-2.7" "c:\libjansson"
 
 build_script:
   - git submodule update --init --recursive
   - qmake pixelpulse2.pro
+  - sh.exe scripts/libjansson_build.sh
   - mingw32-make -j8
   - appveyor PushArtifact debug\pixelpulse2.exe
   - windeployqt --qmldir qml debug\pixelpulse2.exe --debug --dir distrib
+  - copy C:\libcurl\bin\*.dll distrib
+  - copy C:\mingw32\bin\libjansson-4.dll distrib
   - 7z a -y distrib.zip distrib 
   - appveyor PushArtifact distrib.zip
