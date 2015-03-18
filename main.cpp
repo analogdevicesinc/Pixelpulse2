@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     if (release_is_up_to_date("1980-01-01", &release)) {
         printf("up-to-date\n");
     } else {
-        printf("A new release is avaliable:\n %s(%s)\n SHA: %s\n URL: %s\n",
+        printf("A new release is available:\n %s(%s)\n SHA: %s\n URL: %s\n",
                 release.name,
                 release.build_date,
                 release.commit,
