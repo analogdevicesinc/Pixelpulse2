@@ -2,27 +2,50 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QRunnable>
+#include <QThreadPool>
 #include "SMU.h"
 #include "utils/phone_home.h"
 
-int main(int argc, char *argv[])
+void new_release_check(void)
 {
-    
-    // preliminary update checking
     Release release;
-    
+    int upToDate;
+
     phone_home_init();
-    if (release_is_up_to_date("1980-01-01", &release)) {
-        printf("up-to-date\n");
+    if (!release_is_up_to_date("1980-01-01", &release, &upToDate)) {
+        printf("Failed to check if this build is up-to-date\n");
     } else {
-        printf("A new release is available:\n %s(%s)\n SHA: %s\n URL: %s\n",
-                release.name,
-                release.build_date,
-                release.commit,
-                release.url);
-        release.dispose(&release);
+        if (upToDate) {
+            printf("up-to-date\n");
+        } else {
+            printf("A new release is available:\n %s(%s)\n SHA: %s\n URL: %s\n",
+                    release.name,
+                    release.build_date,
+                    release.commit,
+                    release.url);
+            release.dispose(&release);
+        }
     }
     phone_home_terminate();
+}
+
+class ReleaseCheck : public QRunnable
+{
+public:
+    void run()
+    {
+        new_release_check();
+    }
+};
+
+int main(int argc, char *argv[])
+{
+    // preliminary update checking
+    ReleaseCheck rCheck;
+    rCheck.setAutoDelete(false);
+    QThreadPool *threadPool = QThreadPool::globalInstance();
+    threadPool->start(&rCheck);
     // back to your regularly scheduled Qt-a-thon
  
     QGuiApplication app(argc, argv);
@@ -52,6 +75,7 @@ int main(int argc, char *argv[])
 
     int r = app.exec();
     smu_session.closeAllDevices();
+    threadPool->waitForDone();
 
     return r;
 }

@@ -56,7 +56,7 @@ static size_t git_data_write_cb(char *ptr, size_t size, size_t nmemb, void *user
     return new_buf_size;
 }
 
-static int git_request(const char *url, char **out_data)
+static CURLcode git_request(const char *url, char **out_data)
 {
     CURL *c_handle;
     CURLcode c_ret = CURLE_OK;
@@ -73,6 +73,13 @@ static int git_request(const char *url, char **out_data)
     c_ret = curl_easy_setopt(c_handle, CURLOPT_URL, url);
     if (c_ret != CURLE_OK) {
         printf("curl_easy_setop(with CURLOPT_URL) failed: %s\n",
+               curl_easy_strerror(c_ret));
+        goto cleanup;
+    }
+
+    c_ret = curl_easy_setopt(c_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
+    if (c_ret != CURLE_OK) {
+        printf("curl_easy_setop(with CURLOPT_SSL_VERIFYPEER) failed: %s\n",
                curl_easy_strerror(c_ret));
         goto cleanup;
     }
@@ -106,7 +113,7 @@ static int git_request(const char *url, char **out_data)
 
     c_ret = curl_easy_getinfo(c_handle, CURLINFO_RESPONSE_CODE, &resp_code);
     if (c_ret != CURLE_OK) {
-        printf("curl_easy_perform() failed: %s\n", curl_easy_strerror(c_ret));
+        printf("curl_easy_getinfo() failed: %s\n", curl_easy_strerror(c_ret));
         goto cleanup;
     }
 
@@ -199,20 +206,28 @@ static json_t * get_latest_release(json_t *root)
     return latest_release;
 }
 
-int release_is_up_to_date(const char *cur_build_date, Release *out_release)
+int release_is_up_to_date(const char *cur_build_date, Release *out_release, int *up_to_date)
 {
+    const char *SERVER_URL = "https://api.github.com/repos/analogdevicesinc/pixelpulse2/releases";
     json_t *j_root, *j_release;
     char *data = NULL;
     const char *release_build_date;
+    CURLcode c_ret;
 
-    if (!cur_build_date || !cur_build_date[0])
+    if (!cur_build_date || !cur_build_date[0] || !up_to_date) {
+        printf("release_is_up_to_date has invalid parameters\n");
         goto fail;
+    }
 
-    git_request("https://api.github.com/repos/analogdevicesinc/pixelpulse2/releases", &data);
+    *up_to_date = 0;
 
+    c_ret = git_request(SERVER_URL, &data);
+    if (c_ret != CURLE_OK) {
+        printf("git_request from %s failed\n", SERVER_URL);
+        goto fail;
+    }
     if (!data) {
-        printf("Could not get data from"
-            "https://api.github.com/repos/analogdevicesinc/pixelpulse2/releases");
+        printf("Could not get data from %s", SERVER_URL);
         goto fail;
     }
 
@@ -250,8 +265,8 @@ int release_is_up_to_date(const char *cur_build_date, Release *out_release)
             out_release->url = strdup(json_string_value(json_object_get(j_release, "html_url")));
             out_release->dispose = &release_dispose;
         }
-
-        goto cleanup_and_fail;
+    } else {
+        *up_to_date = 1;
     }
 
     json_decref(j_root);
