@@ -7,7 +7,8 @@ CONFIG += debug
 
 QMAKE_CFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -ggdb
-QMAKE_LFLAGS_DEBUG += -static -static-libgcc -static-libstdc++
+
+CFLAGS += -v -static -static-libgcc -static-libstdc++ -g
 
 DEFINES += GIT_VERSION='"\\\"$(shell git describe --always)\\\""'
 DEFINES += BUILD_DATE='"\\\"$(shell date +%F)\\\""'
