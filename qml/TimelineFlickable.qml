@@ -11,6 +11,8 @@ MouseArea {
     readonly property real visibleMin: boundMin + timeline_flickable.contentX / xscale
     readonly property real visibleMax: boundMin + (timeline_flickable.contentX + timeline_flickable.width) / xscale
 
+    property alias timelineflickable: timeline_flickable
+
     function xToPx(x) {
       return xscale * (x - boundMin) - timeline_flickable.contentX
     }
