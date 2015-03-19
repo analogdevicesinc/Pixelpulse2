@@ -88,6 +88,50 @@ Rectangle {
     }
   }
 
+  Item {
+      id: vertAxes
+
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.left: axes.right
+      anchors.topMargin: timelinePane.spacing
+      width: timelinePane.width - xaxis.width - signalsPane.width
+
+      MouseArea {
+        anchors.fill: parent
+
+        property var zoomParams
+        acceptedButtons: Qt.RightButton
+        onPressed: {
+          if (mouse.button == Qt.RightButton) {
+            zoomParams = {
+              firstY : mouse.y,
+              prevY : mouse.y,
+            }
+          } else {
+            mouse.accepted = false;
+          }
+        }
+        onReleased: {
+          zoomParams = null
+        }
+        onPositionChanged: {
+          if (zoomParams) {
+            var delta = (mouse.y - zoomParams.prevY)
+            zoomParams.prevY = mouse.y
+            var s = Math.pow(1.01, delta)
+            var y = axes.pxToY(zoomParams.firstY);
+
+            if (axes.ymax - axes.ymin < signal.resolution * 8 && s < 1) return;
+
+            axes.ymin = Math.max(y - s * (y - axes.ymin), signal.min);
+            axes.ymax = Math.min(y - s * (y - axes.ymax), signal.max);
+
+          }
+        }
+      }
+  }
+
   Axes {
     id: axes
 
