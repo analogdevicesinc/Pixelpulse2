@@ -52,10 +52,14 @@ Item {
     onPressed: overlay.dragStart('d1')
     onReleased: overlay.dragEnd()
     onDrag: {
+      var lx = xaxis.pxToX(Math.max(0, Math.min(pos.x, xaxis.width)));
       var oldPeriod = signal.src.period;
-      var newPeriod = (xaxis.pxToX(pos.x) - relX) / sampleTick * periodDivisor();
+      var newPeriod = (lx - relX) / sampleTick * periodDivisor();
       if (pos.modifiers & Qt.ControlModifier) {
         newPeriod = axes.snapx(newPeriod)
+        if ( newPeriod == 0 ) {
+          newPeriod = 1
+        }
       }
       signal.src.period = newPeriod;
       signal.src.v1 = overlay.mapY(pos);
@@ -77,7 +81,8 @@ Item {
     onPressed: overlay.dragStart('d2')
     onReleased: overlay.dragEnd()
     onDrag: {
-      relX = xaxis.pxToX(pos.x)
+      var lx = xaxis.pxToX(Math.max(0, Math.min(pos.x, xaxis.width)));
+      relX = lx;
       if (pos.modifiers & Qt.ControlModifier) {
         signal.src.phase = axes.snapx(-relX/sampleTick)
       } else {
@@ -101,7 +106,8 @@ Item {
     onPressed: overlay.dragStart('d3')
     onReleased: overlay.dragEnd()
     onDrag: {
-      var duty = (xaxis.pxToX(pos.x) - relX) / period
+      var lx = xaxis.pxToX(Math.max(0, Math.min(pos.x, xaxis.width)));
+      var duty = (lx - relX) / period
       if (pos.modifiers & Qt.ControlModifier) {
         duty = Math.round(duty*20)/20
       }
