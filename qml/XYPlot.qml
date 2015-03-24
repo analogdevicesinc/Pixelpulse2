@@ -8,14 +8,19 @@ Item {
   Layout.fillWidth: true
   Layout.fillHeight: true
 
-  property var xsignal
-  property var ysignal
+  property var vsignal
+  property var isignal
+  property var xsignal: vsignal;
+  property var ysignal: isignal;
 
   Axes {
     id: axes
 
     anchors.fill: parent
-    anchors.margins: 30
+    anchors.leftMargin: 64
+    anchors.rightMargin: 32
+    anchors.topMargin: 32
+    anchors.bottomMargin: 32
 
     xmin: xsignal.min
     xmax: xsignal.max

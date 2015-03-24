@@ -15,12 +15,12 @@ Item {
   property real ymin: 0
   property real ymax: 1
 
-  property real textSpacing: 4
+  property real textSpacing: 12
 
-  property int xgridticks: width  / 16
-  property int ygridticks: height / 16
+  property int xgridticks: width  / 12
+  property int ygridticks: height / 12
 
-  property var gridColor: '#ccc'
+  property var gridColor: '#fff'
   property var textColor: '#fff'
   property var textSize: 14
 
@@ -69,7 +69,8 @@ Item {
       Text {
         visible: yleft
         anchors.right: parent.left
-        anchors.rightMargin: textSpacing
+        anchors.rightMargin: textSpacing*2
+        anchors.leftMargin: textSpacing
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: textSize
         color: textColor
@@ -79,6 +80,7 @@ Item {
       Text {
         visible: yright
         anchors.left: parent.right
+        anchors.rightMargin: textSpacing*2
         anchors.leftMargin: textSpacing
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: textSize
@@ -104,10 +106,12 @@ Item {
         visible: xbottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.bottom
+        anchors.bottomMargin: textSpacing*2
         anchors.topMargin: textSpacing
         font.pixelSize: textSize
         color: textColor
         text: xval
+        rotation: -90
       }
     }
   }

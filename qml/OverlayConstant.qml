@@ -9,8 +9,8 @@ MouseArea {
   cursorShape: Qt.SizeVerCursor
 
   function set(mouse) {
-    channel.mode = signal.label == 'Voltage' ? 1 : 2; // TODO: `sourceMode` in signalInfo
-	var out = Math.min(Math.max(axes.pxToY(mouse.y), signal.min), signal.max);
+    parent.parent.updateMode()
+    var out = Math.min(Math.max(axes.pxToY(mouse.y), signal.min), signal.max);
     if (mouse.modifiers & Qt.AltModifier) {
       signal.src.v1 = axes.snapy(out)
     }

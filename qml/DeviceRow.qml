@@ -22,6 +22,7 @@ Rectangle {
     spacing: 0
 
     Repeater {
+      id: channelRepeater
       model: device.channels
 
       ChannelRow {

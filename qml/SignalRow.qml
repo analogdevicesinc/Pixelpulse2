@@ -9,17 +9,28 @@ Rectangle {
   property var xaxis
   property var signal
 
-  color: '#444444'
+  color: '#444'
+
+  function updateMode() {
+    channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
+    var target = parent.parent.parent;
+    for (var sig in target.children)
+        if (target.children[sig].children[0])
+           target.children[sig].children[0].updateMode();
+  }
 
   function switchToConstant() {
-     channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
+     signalBlock.updateMode()
      signal.src.src = 'constant'
   }
 
   function switchToPeriodic(type) {
-    channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
+    signalBlock.updateMode()
     if (signal.src.src == 'constant') {
-      signal.src.v2 = signal.src.v1
+      if ((signal.src.v1 == 0) || (signal.src.v2 == 0))
+          signal.src.v2 = (channel.mode == 1) ? 2.5 : 0.050;
+      else
+          signal.src.v2 = 0;
       signal.src.v1 = 0
       signal.src.period = 100
     }

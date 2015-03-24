@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
 
-
 Rectangle {
   property var channel
   color: '#333'
@@ -23,11 +22,16 @@ Rectangle {
     iconSource: 'qrc:/icons/' + icons[channel.mode] + '.png'
 
     style: ButtonStyle {
-
       background: Rectangle {
         opacity: control.pressed ? 0.3 : control.checked ? 0.2 : 0.1
         color: 'black'
       }
+    }
+
+    function updateMode() {
+       var chIdx = {A: 1, B: 2}[channel.label];
+       xyPane.children[2+chIdx].ysignal = (channel.mode == 1) ? xyPane.children[2+chIdx].isignal : xyPane.children[2+chIdx].vsignal;
+       xyPane.children[2+chIdx].xsignal = (channel.mode == 1) ? xyPane.children[2+chIdx].vsignal : xyPane.children[2+chIdx].isignal;
     }
 
     menu: Menu {
