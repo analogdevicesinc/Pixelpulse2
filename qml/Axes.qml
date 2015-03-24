@@ -15,12 +15,12 @@ Item {
   property real ymin: 0
   property real ymax: 1
 
-  property real textSpacing: 4
+  property real textSpacing: 16
 
-  property int xgridticks: width  / 16
-  property int ygridticks: height / 16
+  property int xgridticks: width  / 12
+  property int ygridticks: height / 12
 
-  property var gridColor: '#ccc'
+  property var gridColor: '#eee'
   property var textColor: '#fff'
   property var textSize: 14
 
@@ -108,6 +108,7 @@ Item {
         font.pixelSize: textSize
         color: textColor
         text: xval
+        rotation: -45
       }
     }
   }
