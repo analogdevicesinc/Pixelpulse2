@@ -31,3 +31,7 @@ build_script:
   - copy C:\mingw32\bin\libjansson-4.dll distrib
   - 7z a -y distrib.zip distrib 
   - appveyor PushArtifact distrib.zip
+
+cache:
+ - distrib -> pixelpulse2.pro
+ - distrib.zip -> pixelpulse2.pro
