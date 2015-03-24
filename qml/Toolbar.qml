@@ -40,7 +40,7 @@ ToolbarStyle {
 
       MenuItem {
         id: plotsVisibleItem
-        text: "Plots"
+        text: "X-Y Plots"
         checkable: true
       }
 
