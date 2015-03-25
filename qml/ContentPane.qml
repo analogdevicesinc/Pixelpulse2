@@ -3,29 +3,40 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.1
 
 ColumnLayout {
-  spacing: 0
-  
+  spacing: 12
+  width: contentPane.width
+
   ToolbarStyle {
-    Layout.fillWidth: true
+    width: parent.width
     height: toolbarHeight
   }
 
-  Rectangle {
+  TextArea {
+    id: outField
+    readOnly: true
+    width: parent.width
     Layout.fillWidth: true
-    color: '#ccc'
-    height: toolbarHeight
+    Layout.fillHeight: true
+    selectByKeyboard: true
+    selectByMouse: true
+    backgroundVisible: false
+	textColor: "#FFF"
   }
 
   TextInput {
+    id: inField
+    width: parent.width
     Layout.fillWidth: true
-    height: toolbarHeight
 	cursorVisible: true
 	text: "type here."
 	color: "#FFF"
     onAccepted: {
-	  console.log(eval(text))
+	  outField.text = JSON.stringify(eval(text), null, 2)
     }
 	selectByMouse: true
   }
-
+  MouseArea {
+    anchors.fill: inField
+    onPressed: { mouse.accepted = false; inField.text = "" }
+  }
 }
