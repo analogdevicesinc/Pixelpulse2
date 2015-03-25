@@ -1,9 +1,11 @@
 import QtQuick 2.0
 
 Item {
+  id: controlItem
   property bool enabled: false
   property bool continuous: false
   property bool repeat: true
+  property bool changingMode: false
   // TODO: should be queried from libsmu / device
   // property real sampleRate: 100000 // presently invalid
   property real sampleRate: 125000/2 // current default
@@ -44,6 +46,16 @@ Item {
             } else {
                 enabled = false;
             }
+        }
+      }
+      else {
+        if (changingMode) {
+            trigger();
+            changingMode = false;
+            console.log("changing mode");
+        }
+        else {
+          enabled = false
         }
       }
     }
