@@ -97,6 +97,45 @@ Rectangle {
         GradientStop { position: 1.0; color: Qt.rgba(1,1,1,0.08) }
         GradientStop { position: 0.0; color: Qt.rgba(0,0,0,0.0) }
     }
+
+    RowLayout {
+      id: editWaveform
+      visible: signal.isOutput
+      anchors.fill: parent
+		TextInput {
+		  id: v1TextBox
+		  text: signal.src.v1.toFixed(4) + (channel.mode == 1 ? " Volts" : " Amperes")
+		  color: "#FFF"
+		  onAccepted: {
+			signal.src.v1 = text
+		  }
+		  validator: DoubleValidator{bottom: axes.ymin; top: axes.ymax;}
+          anchors.left: parent.left
+          anchors.leftMargin: 80
+		}
+		TextInput {
+		  id: v2TextBox
+		  text: overlay_periodic.visible ? signal.src.v2.toFixed(4) + (channel.mode == 1 ? " Volts" : " Amperes") : ""
+		  color: "#FFF"
+		  onAccepted: {
+			signal.src.v2 = text
+		  }
+		  validator: DoubleValidator{bottom: axes.ymin; top: axes.ymax;}
+          anchors.left: v1TextBox.right
+          anchors.leftMargin: 80
+		}
+		TextInput {
+		  id: perTextBox
+		  text: overlay_periodic.visible ? (controller.sampleRate / signal.src.period).toFixed(2)  + " Hertz": ""
+		  color: "#FFF"
+		  onAccepted: {
+			signal.src.period = controller.sampleRate / text
+		  }
+		  validator: DoubleValidator{bottom: 0; top: controller.sampleRate/2;}
+          anchors.left: v2TextBox.right
+          anchors.leftMargin: 80
+        }
+     }
   }
 
   Item {
