@@ -105,10 +105,14 @@ ApplicationWindow {
 			id: xyPane
 			visible: plotsVisible
 			width: 360
+			Layout.minimumWidth: 0.3*parent.width
+			Layout.maximumWidth: 0.6*parent.width
 		}
 
 		ContentPane {
 			id: contentPane
+			Layout.minimumWidth: 0.3*parent.width
+			Layout.maximumWidth: 0.6*parent.width
 			visible: contentVisible
 			width: 360
 		}
