@@ -7,7 +7,7 @@ ColumnLayout {
   width: contentPane.width
 
   ToolbarStyle {
-    width: parent.width
+    Layout.fillWidth: true
     height: toolbarHeight
   }
 
