@@ -1,6 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.1
+import "prunedjson.js" as PrunedJSON
 
 ColumnLayout {
   spacing: 12
@@ -31,7 +32,7 @@ ColumnLayout {
 	text: "type here."
 	color: "#FFF"
     onAccepted: {
-	  outField.text = JSON.stringify(eval(text), null, 2)
+	  outField.text = PrunedJSON.toJSON(eval(text), 5, 10, "  ");
     }
 	selectByMouse: true
   }
