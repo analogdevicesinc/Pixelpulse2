@@ -26,7 +26,7 @@ MouseArea {
     id: dragDot
     anchors.horizontalCenter: parent.horizontalCenter
     y: axes.yToPxClamped(value)
-
+    label: false
     value: signal.isOutput ? signal.src.v1 : signal.measurement
     filled: signal.isOutput
     color: "blue"

@@ -100,11 +100,11 @@ Rectangle {
 
     RowLayout {
       id: editWaveform
-      visible: signal.isOutput
+      //visible: signal.isOutput
       anchors.fill: parent
 		TextInput {
 		  id: v1TextBox
-		  text: signal.src.v1.toFixed(4)
+		  text: signal.isOutput ? signal.src.v1.toFixed(4) : signal.measurement.toFixed(4)
 		  color: "#FFF"
 		  onAccepted: {
 			signal.src.v1 = text
@@ -114,9 +114,18 @@ Rectangle {
           anchors.leftMargin: 80
 		}
         Text {
+           id: v1UnitLabel
            color: 'white'
-           text: (channel.mode == 1 ? " Volts" : " Amperes")
+           text: (signal.label == "Voltage" ? " Volts" : " Amperes")
            anchors.left: v1TextBox.right
+        }
+        Text {
+          color: 'white'
+          text: if ( (signal.label == "Voltage") && !overlay_periodic.visible) {
+             var r = Math.abs((channel.signals[0].measurement / channel.signals[1].measurement)).toFixed();
+             (Math.abs(channel.signals[1].measurement) > 0.001) ? "    " + r + " Ohms" : ""
+          } else { }
+          anchors.left: v1UnitLabel.right
         }
 		TextInput {
 		  id: v2TextBox
@@ -131,12 +140,13 @@ Rectangle {
 		}
         Text {
            color: 'white'
-           text: overlay_periodic.visible ? (channel.mode == 1 ? " Volts" : " Amperes") : ""
+           text: overlay_periodic.visible ? (signal.label == "Voltage" ? " Volts" : " Amperes") : ""
+           //text: overlay_periodic.visible ? (channel.mode == 1 ? " Volts" : " Amperes") : ""
            anchors.left: v2TextBox.right
         }
 		TextInput {
 		  id: perTextBox
-		  text: overlay_periodic.visible ? (controller.sampleRate / signal.src.period).toFixed(2).toExponential() : ""
+		  text: overlay_periodic.visible ? Math.round((controller.sampleRate / signal.src.period)).toExponential(): ""
 		  color: "#FFF"
 		  onAccepted: {
             text = parseFloat(text).toExponential()
