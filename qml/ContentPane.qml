@@ -38,6 +38,6 @@ ColumnLayout {
   }
   MouseArea {
     anchors.fill: inField
-    onPressed: { mouse.accepted = false; inField.text = "" }
+    onPressed: { mouse.accepted = false; if (inField.text == "type here.") {inField.text = "" }}
   }
 }
