@@ -121,7 +121,7 @@ Rectangle {
         }
         Text {
           color: 'white'
-          text: if ( (signal.label == "Voltage") && !overlay_periodic.visible) {
+          text: if ( (signal.label == "Voltage") && (overlay_periodic.visible != true)) {
              var r = Math.abs((channel.signals[0].measurement / channel.signals[1].measurement)).toFixed();
              (Math.abs(channel.signals[1].measurement) > 0.001) ? "    " + r + " Ohms" : ""
           } else { }
