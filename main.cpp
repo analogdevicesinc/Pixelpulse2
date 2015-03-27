@@ -6,6 +6,7 @@
 #include <QThreadPool>
 #include "SMU.h"
 #include "utils/phone_home.h"
+#include "utils/backtracing.h"
 
 void new_release_check(void)
 {
@@ -41,6 +42,8 @@ public:
 
 int main(int argc, char *argv[])
 {
+    init_signal_handlers();
+
     // preliminary update checking
     ReleaseCheck rCheck;
     rCheck.setAutoDelete(false);
