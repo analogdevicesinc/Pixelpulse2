@@ -23,7 +23,9 @@ void windows_print_stacktrace(CONTEXT* context)
 {
     SymInitialize(GetCurrentProcess(), 0, TRUE);
 
-    STACKFRAME frame = {0};
+    STACKFRAME frame;
+
+    memset(&frame, 0, sizeof(STACKFRAME));
 
     frame.AddrPC.Offset         = context->Eip;
     frame.AddrPC.Mode           = AddrModeFlat;
@@ -39,10 +41,12 @@ void windows_print_stacktrace(CONTEXT* context)
     symbol->SizeOfStruct    = sizeof(IMAGEHLP_SYMBOL) + 255;
     symbol->MaxNameLength   = 254;
 
-    IMAGEHLP_LINE line = {0};
+    IMAGEHLP_LINE line;
+    memset(&line, 0, sizeof(IMAGEHLP_LINE));
     line.SizeOfStruct = sizeof(IMAGEHLP_LINE);
 
-    IMAGEHLP_MODULE module = {0};
+    IMAGEHLP_MODULE module;
+    memset(&module, 0, sizeof(IMAGEHLP_MODULE));
     module.SizeOfStruct = sizeof(IMAGEHLP_MODULE);
 
     while (StackWalk(IMAGE_FILE_MACHINE_I386,
