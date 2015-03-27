@@ -5,6 +5,7 @@
     #include <windows.h>
     #include <imagehlp.h>
     #include <dbghelp.h>
+	#include <conio.h>
 #else
     #include <iostream>
     #include <string>
@@ -168,7 +169,29 @@ LONG WINAPI windows_exception_handler(EXCEPTION_POINTERS * ExceptionInfo)
       printf("Stack Overflow!\n");
   }
 
+  printf("Press 'q' to close.");
+  while (!_kbhit()) {
+    if (_getch() == 'q')
+      break;
+  }
+
   return EXCEPTION_EXECUTE_HANDLER;
+}
+
+BOOL WINAPI consoleHandler(DWORD dwCtrlType)
+{
+    CONTEXT context;
+    if (dwCtrlType == CTRL_C_EVENT) {
+        RtlCaptureContext(&context);
+        windows_print_stacktrace(&context);
+		printf("Press 'q' to close.");
+        while (!_kbhit()) {
+            if (_getch() == 'q')
+                break;
+        }
+    }
+
+    return FALSE;
 }
 
 #else
@@ -264,6 +287,9 @@ void init_signal_handlers(void)
 {
 #if _WIN32
     SetUnhandledExceptionFilter(windows_exception_handler);
+    if (!SetConsoleCtrlHandler(consoleHandler, TRUE)) {
+        printf("Could not add handler to console");
+    }
 #else
     signal(SIGUSR1, signalHandler);
     signal(SIGSEGV, signalHandler);
