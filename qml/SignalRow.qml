@@ -104,7 +104,7 @@ Rectangle {
       anchors.fill: parent
 		TextInput {
 		  id: v1TextBox
-		  text: signal.src.v1.toFixed(4) + (channel.mode == 1 ? " Volts" : " Amperes")
+		  text: signal.src.v1.toFixed(4)
 		  color: "#FFF"
 		  onAccepted: {
 			signal.src.v1 = text
@@ -113,9 +113,14 @@ Rectangle {
           anchors.left: parent.left
           anchors.leftMargin: 80
 		}
+        Text {
+           color: 'white'
+           text: (channel.mode == 1 ? " Volts" : " Amperes")
+           anchors.left: v1TextBox.right
+        }
 		TextInput {
 		  id: v2TextBox
-		  text: overlay_periodic.visible ? signal.src.v2.toFixed(4) + (channel.mode == 1 ? " Volts" : " Amperes") : ""
+		  text: overlay_periodic.visible ? signal.src.v2.toFixed(4) : ""
 		  color: "#FFF"
 		  onAccepted: {
 			signal.src.v2 = text
@@ -124,16 +129,27 @@ Rectangle {
           anchors.left: v1TextBox.right
           anchors.leftMargin: 80
 		}
+        Text {
+           color: 'white'
+           text: overlay_periodic.visible ? (channel.mode == 1 ? " Volts" : " Amperes") : ""
+           anchors.left: v2TextBox.right
+        }
 		TextInput {
 		  id: perTextBox
-		  text: overlay_periodic.visible ? (controller.sampleRate / signal.src.period).toFixed(2)  + " Hertz": ""
+		  text: overlay_periodic.visible ? (controller.sampleRate / signal.src.period).toFixed(2).toExponential() : ""
 		  color: "#FFF"
 		  onAccepted: {
+            text = parseFloat(text).toExponential()
 			signal.src.period = controller.sampleRate / text
 		  }
 		  validator: DoubleValidator{bottom: 0; top: controller.sampleRate/2;}
           anchors.left: v2TextBox.right
           anchors.leftMargin: 80
+        }
+        Text {
+           color: 'white'
+           text: overlay_periodic.visible ? "Hertz" : ""
+           anchors.left: perTextBox.right
         }
      }
   }
