@@ -81,4 +81,89 @@ Item {
         ymax: axes.ymax
     }
   }
+
+  Item {
+      id: vertAxisScale
+
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.left: parent.lefts
+      anchors.bottomMargin: axes.anchors.bottomMargin
+      width: axes.anchors.leftMargin
+
+      MouseArea {
+        anchors.fill: parent
+        property var zoomParams
+        acceptedButtons: Qt.RightButton
+        onPressed: {
+          if (mouse.button == Qt.RightButton) {
+            zoomParams = {
+              firstY : mouse.y,
+              prevY : mouse.y,
+            }
+          } else {
+            mouse.accepted = false
+          }
+        }
+        onReleased: {
+          zoomParams = null;
+        }
+        onPositionChanged: {
+          if (zoomParams) {
+            var delta = (mouse.y - zoomParams.prevY)
+            zoomParams.prevY = mouse.y
+            var s = Math.pow(1.01, delta)
+            var y = axes.pxToY((zoomParams.firstY))
+
+            if (axes.ymax - axes.ymin < ysignal.resolution * 8 && s < 1) return;
+
+            axes.ymin = Math.max(y - s * (y - axes.ymin), ysignal.min);
+            axes.ymax = Math.min(y - s * (y - axes.ymax), ysignal.max);
+          }
+        }
+      }
+  }
+
+  Item {
+      id: horizAxisScale
+
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.leftMargin: axes.anchors.leftMargin
+      anchors.rightMargin: axes.anchors.rightMargin
+      height: axes.anchors.bottomMargin
+
+      MouseArea {
+        anchors.fill: parent
+        property var zoomParams
+        acceptedButtons: Qt.RightButton
+        onPressed: {
+          if (mouse.button == Qt.RightButton) {
+            zoomParams = {
+              firstX : mouse.x,
+              prevX : mouse.x,
+            }
+          } else {
+            mouse.accepted = false
+          }
+        }
+        onReleased: {
+          zoomParams = null;
+        }
+        onPositionChanged: {
+          if (zoomParams) {
+            var delta = -(mouse.x - zoomParams.prevX)
+            zoomParams.prevX = mouse.x
+            var s = Math.pow(1.01, delta)
+            var x = axes.pxToX((zoomParams.firstX))
+
+            if (axes.xmax - axes.xmin < xsignal.resolution * 8 && s < 1) return;
+
+            axes.xmin = Math.max(x - s * (x - axes.xmin), xsignal.min);
+            axes.xmax = Math.min(x - s * (x - axes.xmax), xsignal.max);
+          }
+        }
+      }
+  }
 }
