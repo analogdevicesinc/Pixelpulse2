@@ -5,6 +5,7 @@
     #include <windows.h>
     #include <imagehlp.h>
     #include <dbghelp.h>
+	#include <conio.h>
 #else
     #include <iostream>
     #include <string>
@@ -16,13 +17,24 @@
     using namespace std;
 #endif
 
+static char *glbProgramName;
+
 #ifdef _WIN32
 
 void windows_print_stacktrace(CONTEXT* context)
 {
+    int addr2line_available = 0;
+    char system_cmd[1024];
+
+    printf("Checking for \"addr2line\" utility:\n");
+    if (system("addr2line -v") == 0)
+        addr2line_available = 1;
+
     SymInitialize(GetCurrentProcess(), 0, TRUE);
 
-    STACKFRAME frame = {0};
+    STACKFRAME frame;
+
+    memset(&frame, 0, sizeof(STACKFRAME));
 
     frame.AddrPC.Offset         = context->Eip;
     frame.AddrPC.Mode           = AddrModeFlat;
@@ -38,12 +50,15 @@ void windows_print_stacktrace(CONTEXT* context)
     symbol->SizeOfStruct    = sizeof(IMAGEHLP_SYMBOL) + 255;
     symbol->MaxNameLength   = 254;
 
-    IMAGEHLP_LINE line = {0};
+    IMAGEHLP_LINE line;
+    memset(&line, 0, sizeof(IMAGEHLP_LINE));
     line.SizeOfStruct = sizeof(IMAGEHLP_LINE);
 
-    IMAGEHLP_MODULE module = {0};
+    IMAGEHLP_MODULE module;
+    memset(&module, 0, sizeof(IMAGEHLP_MODULE));
     module.SizeOfStruct = sizeof(IMAGEHLP_MODULE);
 
+    printf("\nBacktrace:\n");
     while (StackWalk(IMAGE_FILE_MACHINE_I386,
            GetCurrentProcess(),
            GetCurrentThread(),
@@ -79,6 +94,13 @@ void windows_print_stacktrace(CONTEXT* context)
             printf("FrameAddr: 0x%lX\n", frame.AddrPC.Offset);
         }
 
+        if (addr2line_available)
+        {
+            printf("addr2line(0x%lX)=", frame.AddrPC.Offset);
+            snprintf(system_cmd, sizeof(system_cmd),
+                "addr2line -f -p -e %s %lu", glbProgramName, frame.AddrPC.Offset);
+            system(system_cmd);
+        }
     }
 
     SymCleanup(GetCurrentProcess());
@@ -168,7 +190,29 @@ LONG WINAPI windows_exception_handler(EXCEPTION_POINTERS * ExceptionInfo)
       printf("Stack Overflow!\n");
   }
 
+  printf("Press 'q' to close.");
+  while (!_kbhit()) {
+    if (_getch() == 'q')
+      break;
+  }
+
   return EXCEPTION_EXECUTE_HANDLER;
+}
+
+BOOL WINAPI consoleHandler(DWORD dwCtrlType)
+{
+    CONTEXT context;
+    if (dwCtrlType == CTRL_C_EVENT) {
+        RtlCaptureContext(&context);
+        windows_print_stacktrace(&context);
+		printf("Press 'q' to close.");
+        while (!_kbhit()) {
+            if (_getch() == 'q')
+                break;
+        }
+    }
+
+    return FALSE;
 }
 
 #else
@@ -260,10 +304,14 @@ void signalHandler( int signum )
 
 #endif
 
-void init_signal_handlers(void)
+void init_signal_handlers(char *program_name)
 {
+    glbProgramName = program_name;
 #if _WIN32
     SetUnhandledExceptionFilter(windows_exception_handler);
+    if (!SetConsoleCtrlHandler(consoleHandler, TRUE)) {
+        printf("Could not add handler to console");
+    }
 #else
     signal(SIGUSR1, signalHandler);
     signal(SIGSEGV, signalHandler);
