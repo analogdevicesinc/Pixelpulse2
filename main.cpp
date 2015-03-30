@@ -42,7 +42,7 @@ public:
 
 int main(int argc, char *argv[])
 {
-    init_signal_handlers();
+    init_signal_handlers(argv[0]);
 
     // preliminary update checking
     ReleaseCheck rCheck;

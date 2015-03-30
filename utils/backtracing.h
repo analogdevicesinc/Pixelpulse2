@@ -17,10 +17,19 @@
     using namespace std;
 #endif
 
+static char *glbProgramName;
+
 #ifdef _WIN32
 
 void windows_print_stacktrace(CONTEXT* context)
 {
+    int addr2line_available = 0;
+    char system_cmd[1024];
+
+    printf("Checking for \"addr2line\" utility:\n");
+    if (system("addr2line -v") == 0)
+        addr2line_available = 1;
+
     SymInitialize(GetCurrentProcess(), 0, TRUE);
 
     STACKFRAME frame;
@@ -49,6 +58,7 @@ void windows_print_stacktrace(CONTEXT* context)
     memset(&module, 0, sizeof(IMAGEHLP_MODULE));
     module.SizeOfStruct = sizeof(IMAGEHLP_MODULE);
 
+    printf("\nBacktrace:\n");
     while (StackWalk(IMAGE_FILE_MACHINE_I386,
            GetCurrentProcess(),
            GetCurrentThread(),
@@ -84,6 +94,13 @@ void windows_print_stacktrace(CONTEXT* context)
             printf("FrameAddr: 0x%lX\n", frame.AddrPC.Offset);
         }
 
+        if (addr2line_available)
+        {
+            printf("addr2line(0x%lX)=", frame.AddrPC.Offset);
+            snprintf(system_cmd, sizeof(system_cmd),
+                "addr2line -f -p -e %s %lu", glbProgramName, frame.AddrPC.Offset);
+            system(system_cmd);
+        }
     }
 
     SymCleanup(GetCurrentProcess());
@@ -287,8 +304,9 @@ void signalHandler( int signum )
 
 #endif
 
-void init_signal_handlers(void)
+void init_signal_handlers(char *program_name)
 {
+    glbProgramName = program_name;
 #if _WIN32
     SetUnhandledExceptionFilter(windows_exception_handler);
     if (!SetConsoleCtrlHandler(consoleHandler, TRUE)) {
