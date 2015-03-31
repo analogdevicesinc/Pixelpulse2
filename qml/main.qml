@@ -9,6 +9,7 @@ ApplicationWindow {
 	title: "Pixelpulse" + "        " + "Built: " + versions.build_date + "    " + "Hash: " + versions.git_version
 	visible: true
 	property var toolbarHeight: 56
+	id: window
 
     property alias repeatedSweep: toolbar.repeatedSweep
 	property alias plotsVisible: toolbar.plotsVisible
@@ -105,16 +106,16 @@ ApplicationWindow {
 			id: xyPane
 			visible: plotsVisible
 			width: 360
-			Layout.minimumWidth: 0.3*parent.width
-			Layout.maximumWidth: 0.6*parent.width
+			Layout.minimumWidth: 0.2*window.width
+			Layout.maximumWidth: 0.4*window.width
 		}
 
 		ContentPane {
 			id: contentPane
-			Layout.minimumWidth: 0.3*parent.width
-			Layout.maximumWidth: 0.6*parent.width
 			visible: contentVisible
 			width: 360
+			Layout.minimumWidth: 0.2*window.width
+			Layout.maximumWidth: 0.4*window.width
 		}
 	}
 }

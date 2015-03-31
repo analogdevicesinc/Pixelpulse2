@@ -5,7 +5,6 @@ import "prunedjson.js" as PrunedJSON
 
 ColumnLayout {
   spacing: 12
-  width: contentPane.width
 
   ToolbarStyle {
     Layout.fillWidth: true

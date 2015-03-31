@@ -5,7 +5,6 @@ import Plot 1.0
 
 
 Item {
-  Layout.fillWidth: true
   // keep plots slightly smaller than half the height
   Layout.preferredHeight: (parent.parent.height/2)-80
   property var vsignal
