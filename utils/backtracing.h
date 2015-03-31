@@ -96,9 +96,8 @@ void windows_print_stacktrace(CONTEXT* context)
 
         if (addr2line_available)
         {
-            printf("addr2line(0x%lX)=", frame.AddrPC.Offset);
             snprintf(system_cmd, sizeof(system_cmd),
-                "addr2line -f -p -e %s %lu", glbProgramName, frame.AddrPC.Offset);
+                "addr2line -f -p -s -a -e %s 0x%lX", glbProgramName, frame.AddrPC.Offset);
             system(system_cmd);
         }
     }
