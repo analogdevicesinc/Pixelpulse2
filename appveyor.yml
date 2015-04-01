@@ -25,13 +25,16 @@ build_script:
   - qmake pixelpulse2.pro
   - sh.exe scripts/libjansson_build.sh
   - mingw32-make -j8
-  - appveyor PushArtifact debug\pixelpulse2.exe
-  - windeployqt --qmldir qml debug\pixelpulse2.exe --debug --dir distrib
-  - copy C:\libcurl\bin\*.dll distrib
-  - copy C:\mingw32\bin\libjansson-4.dll distrib
-  - 7z a -y distrib.zip distrib 
-  - appveyor PushArtifact distrib.zip
+
+after_build:
+- ps: |
+    If (!(Test-Path -Path "distrib.zip")) {
+      windeployqt --qmldir qml debug\pixelpulse2.exe --debug --dir distrib
+      cp C:\libcurl\bin\*.dll distrib
+      cp C:\mingw32\bin\libjansson-4.dll distrib
+      7z a -y distrib.zip distrib
+      appveyor PushArtifact distrib.zip
+    }
 
 cache:
- - distrib -> pixelpulse2.pro
  - distrib.zip -> pixelpulse2.pro
