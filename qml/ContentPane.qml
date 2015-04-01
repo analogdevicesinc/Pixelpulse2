@@ -1,6 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.1
+import QtQuick.Controls.Styles 1.3
 import "prunedjson.js" as PrunedJSON
 
 ColumnLayout {
@@ -20,7 +21,12 @@ ColumnLayout {
     selectByKeyboard: true
     selectByMouse: true
     backgroundVisible: false
-	textColor: "#FFF"
+    style: TextAreaStyle {
+        textColor: "#fff"
+        selectionColor: "steelblue"
+        selectedTextColor: "#eee"
+        backgroundColor: "#eee"
+    }
   }
 
   TextInput {
@@ -31,7 +37,16 @@ ColumnLayout {
 	text: "type here."
 	color: "#FFF"
     onAccepted: {
-	  outField.text = PrunedJSON.toJSON(eval(text), 5, 10, "  ");
+    // wow, javascript.
+    var out;
+    try {
+      out = PrunedJSON.toJSON(eval(text), 5, 10, "  ");
+      outField.textColor = "#fff";
+    } catch (e) {
+      out = e.message;
+      outField.textColor = "#f77";
+    };
+    outField.text = out;
     }
 	selectByMouse: true
   }
