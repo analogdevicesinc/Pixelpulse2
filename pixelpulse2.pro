@@ -109,3 +109,4 @@ unix:!osx {
 	QMAKE_CFLAGS_DEBUG += -rdynamic
 	QMAKE_CXXFLAGS_DEBUG += -rdynamic
 }
+ 
