@@ -94,7 +94,7 @@ Item {
 
   DragDot {
     id: d3
-    value: signal.src.duty
+    value: Math.round(100*signal.src.duty)
     filled: signal.isOutput
     color: "blue"
     visible: signal.src.src == 'square'
