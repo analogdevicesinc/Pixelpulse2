@@ -4,6 +4,7 @@ import QtQuick.Controls 1.1
 import "prunedjson.js" as PrunedJSON
 
 ColumnLayout {
+  id: cLayout
   spacing: 12
 
   ToolbarStyle {
@@ -20,6 +21,7 @@ ColumnLayout {
     selectByKeyboard: true
     selectByMouse: true
     backgroundVisible: false
+	text: "Built: " + versions.build_date + "    " + "Version: " + versions.git_version
 	textColor: "#FFF"
   }
 
