@@ -122,7 +122,8 @@ Rectangle {
 		// Resistance
         Text {
           color: 'white'
-          text: if ( (signal.isOutput == true) & (overlay_periodic.visible == false)) {
+          visible: signal.src.src == 'constant' && signal.isOutput == true
+          text: {
              var r = Math.abs((channel.signals[0].measurement / channel.signals[1].measurement)).toFixed();
              (Math.abs(channel.signals[1].measurement) > 0.001) ? "    " + r + " Ohms" : ""
           }
