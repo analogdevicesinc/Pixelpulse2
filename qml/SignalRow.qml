@@ -161,7 +161,7 @@ Rectangle {
         }
         Text {
            color: 'white'
-           text: overlay_periodic.visible ? "Hertz" : ""
+           text: overlay_periodic.visible ? " Hertz" : ""
            anchors.left: perTextBox.right
         }
      }
