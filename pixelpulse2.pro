@@ -4,7 +4,7 @@ QT += qml quick widgets
 CONFIG += c++11
 
 win32 {
-	CONFIG += debug
+	CONFIG += release
 }
 unix {
 	CONFIG += release
