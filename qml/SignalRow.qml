@@ -101,25 +101,25 @@ Rectangle {
     RowLayout {
       id: editWaveform
       anchors.fill: parent
-		// V1
-		TextInput {
-		  id: v1TextBox
-		  text: signal.isOutput ? signal.src.v1.toFixed(4) : signal.measurement.toFixed(4)
-		  color: "#FFF"
-		  onAccepted: {
-			signal.src.v1 = text
-		  }
-		  validator: DoubleValidator{bottom: axes.ymin; top: axes.ymax;}
+        // V1
+        TextInput {
+          id: v1TextBox
+          text: signal.isOutput ? signal.src.v1.toFixed(4) : signal.measurement.toFixed(4)
+          color: "#FFF"
+          onAccepted: {
+            signal.src.v1 = text
+          }
+          validator: DoubleValidator{bottom: axes.ymin; top: axes.ymax;}
           anchors.left: parent.left
           anchors.leftMargin: 80
-		}
+        }
         Text {
            id: v1UnitLabel
            color: 'white'
            text: (signal.label == "Voltage" ? " Volts" : " Amperes")
            anchors.left: v1TextBox.right
         }
-		// Resistance
+        // Resistance
         Text {
           color: 'white'
           visible: signal.src.src == 'constant' && signal.isOutput == true
@@ -129,34 +129,34 @@ Rectangle {
           }
           anchors.left: v1UnitLabel.right
         }
-		// V2
-		TextInput {
-		  id: v2TextBox
-		  text: overlay_periodic.visible ? signal.src.v2.toFixed(4) : ""
-		  color: "#FFF"
-		  onAccepted: {
-			signal.src.v2 = text
-		  }
-		  validator: DoubleValidator{bottom: axes.ymin; top: axes.ymax;}
+        // V2
+        TextInput {
+          id: v2TextBox
+          text: overlay_periodic.visible ? signal.src.v2.toFixed(4) : ""
+          color: "#FFF"
+          onAccepted: {
+            signal.src.v2 = text
+          }
+          validator: DoubleValidator{bottom: axes.ymin; top: axes.ymax;}
           anchors.left: v1TextBox.right
           anchors.leftMargin: 80
-		}
+        }
         Text {
            color: 'white'
            text: overlay_periodic.visible ? (signal.label == "Voltage" ? " Volts" : " Amperes") : ""
            anchors.left: v2TextBox.right
         }
-		// Freq
-		TextInput {
-		  id: perTextBox
+        // Freq
+        TextInput {
+          id: perTextBox
           visible: signal.src.src != 'constant' && signal.isOutput == true
-		  text: Math.abs(Math.round((controller.sampleRate / signal.src.period)).toExponential())
-		  color: "#FFF"
-		  onAccepted: {
+          text: Math.abs(Math.round((controller.sampleRate / signal.src.period)).toExponential())
+          color: "#FFF"
+          onAccepted: {
             text = parseFloat(text).toExponential()
-			signal.src.period = controller.sampleRate / text
-		  }
-		  validator: DoubleValidator{bottom: 0; top: controller.sampleRate/2;}
+            signal.src.period = controller.sampleRate / text
+          }
+          validator: DoubleValidator{bottom: 0; top: controller.sampleRate/2;}
           anchors.left: v2TextBox.right
           anchors.leftMargin: 80
         }
