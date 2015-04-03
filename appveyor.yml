@@ -29,12 +29,12 @@ build_script:
 after_build:
 - ps: |
     If (!(Test-Path -Path "distrib.zip")) {
-      windeployqt --qmldir qml debug\pixelpulse2.exe --debug --dir distrib
+      windeployqt --qmldir qml release\pixelpulse2.exe --dir distrib
       cp C:\libcurl\bin\*.dll distrib
       cp C:\mingw32\bin\libjansson-4.dll distrib
       7z a -y distrib.zip distrib
     }
-    appveyor PushArtifact debug\pixelpulse2.exe
+    appveyor PushArtifact release\pixelpulse2.exe
     appveyor PushArtifact distrib.zip
 
 cache:
