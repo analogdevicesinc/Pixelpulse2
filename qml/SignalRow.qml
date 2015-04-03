@@ -149,7 +149,8 @@ Rectangle {
 		// Freq
 		TextInput {
 		  id: perTextBox
-		  text: overlay_periodic.visible ? Math.abs(Math.round((controller.sampleRate / signal.src.period)).toExponential()): ""
+          visible: signal.src.src != 'constant' && signal.isOutput == true
+		  text: Math.abs(Math.round((controller.sampleRate / signal.src.period)).toExponential())
 		  color: "#FFF"
 		  onAccepted: {
             text = parseFloat(text).toExponential()
@@ -161,8 +162,9 @@ Rectangle {
         }
         Text {
            color: 'white'
-           text: overlay_periodic.visible ? " Hertz" : ""
+           visible: signal.src.src != 'constant' && signal.isOutput == true
            anchors.left: perTextBox.right
+           text: " Hertz"
         }
      }
   }
