@@ -110,3 +110,4 @@ unix:!osx {
 	QMAKE_CXXFLAGS_DEBUG += -rdynamic
 }
  
+
