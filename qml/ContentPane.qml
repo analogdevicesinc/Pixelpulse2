@@ -2,7 +2,7 @@ import QtQuick 2.1
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.3
-import "prunedjson.js" as PrunedJSON
+import "jsutils.js" as JSUtils
 
 ColumnLayout {
   id: cLayout
@@ -22,7 +22,7 @@ ColumnLayout {
     selectByKeyboard: true
     selectByMouse: true
     backgroundVisible: false
-	text: "Built: " + versions.build_date + "    " + "Version: " + versions.git_version
+	text: "Built: " + versions.build_date + "    " + "Version: " + versions.git_version + JSUtils.checkLatest(outField);
     style: TextAreaStyle {
         textColor: "#fff"
         selectionColor: "steelblue"
@@ -42,7 +42,7 @@ ColumnLayout {
     // wow, javascript.
     var out;
     try {
-      out = PrunedJSON.toJSON(eval(text), 5, 10, "  ");
+      out = JSUtils.toJSON(eval(text), 5, 10, "  ");
       outField.textColor = "#fff";
     } catch (e) {
       out = e.message;

@@ -53,7 +53,6 @@ HEADERS += \
     SMU.h \
     Plot/PhosphorRender.h \
     Plot/FloatBuffer.h \
-    utils/phone_home.h \
     libsmu/device_m1000.hpp \
     libsmu/libsmu.h \
     libsmu/libsmu.hpp \
@@ -76,18 +75,12 @@ win32 {
 	RC_ICONS = icons/pp2.ico
 	LIBS += "C:\libusb\MinGW32\static\libusb-1.0.a"
 	INCLUDEPATH += "C:\libusb\include\libusb-1.0"
-	LIBS += "C:\libcurl\lib\libcurl.a"
-	LIBS += "C:\libcurl\lib\libcurldll.a"
-	INCLUDEPATH += "C:\libcurl\include"
-	LIBS += "C:\mingw32\lib\libjansson.dll.a"
 	INCLUDEPATH += "C:\mingw32\include"
 }
 
 unix {
 	CONFIG += link_pkgconfig
 	PKGCONFIG += libudev
-	PKGCONFIG += libcurl
-	PKGCONFIG += jansson
 # if we do not have a locally compiled static version of libusb-1.0 installed, use pkg-config
 	!exists(/usr/local/lib/libusb-1.0.a) {
 		PKGCONFIG += libusb-1.0
