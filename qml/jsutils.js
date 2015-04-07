@@ -24,7 +24,7 @@ var checkLatest = function (target) {
 	var text;
     request("https://api.github.com/repos/analogdevicesinc/pixelpulse2/releases", function(t) {
         var d = JSON.parse(t.responseText)[0];
-        text = "The most recent release is" + d.tag_name + ", published at " + d.published_at + "." + '\n\n' + "It is available for download at " + d.html_url + ".";
+        text = "The most recent release is " + d.tag_name + ", published at " + (new Date(d.published_at)).toString() + "." + '\n\n' + "It is available for download at " + d.html_url + ".";
 		target.text += text;
     });
 	return '\n\n\n'
