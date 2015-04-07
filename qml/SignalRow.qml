@@ -79,7 +79,7 @@ Rectangle {
     text: signal.label
     rotation: -90
     transformOrigin: Item.TopLeft
-    font.pixelSize: 18
+    font.pixelSize: 18 / session.devices.length
     y: width + timelinePane.spacing + 8
     x: (timelinePane.spacing - height) / 2
   }
