@@ -60,12 +60,18 @@ class DeviceItem : public QObject {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<ChannelItem> channels READ getChannels CONSTANT);
     Q_PROPERTY(QString label READ getLabel CONSTANT);
+    Q_PROPERTY(QString FWVer READ getFWVer CONSTANT);
+    Q_PROPERTY(QString HWVer READ getHWVer CONSTANT);
+    Q_PROPERTY(QString UUID READ getDevSN CONSTANT);
 
 public:
     DeviceItem(SessionItem*, Device*);
     QQmlListProperty<ChannelItem> getChannels() { return QQmlListProperty<ChannelItem>(this, m_channels); }
-    QString getLabel() const { return QString(m_device->info()->label); }
-    Q_INVOKABLE void ctrl_transfer( int x, int y, int z) { m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);}
+    QString getLabel() { return QString(m_device->info()->label); }
+    QString getFWVer() { return QString(m_device->fwver()); }
+    QString getHWVer() { return QString(m_device->hwver()); }
+    QString getDevSN() { return QString(m_device->serial()); }
+    Q_INVOKABLE int ctrl_transfer( int x, int y, int z) { return m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);}
 
 protected:
     Device* const m_device;
