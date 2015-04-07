@@ -46,12 +46,11 @@ ToolbarStyle {
 
       MenuItem {
         id: contentVisibleItem
-        text: "Documentation"
+        text: "About"
         checkable: true
       }
 
       MenuSeparator{}
-      MenuItem { text: "About" }
       MenuItem { text: "Exit"; onTriggered: Qt.quit() }
     }
     iconSource: 'qrc:/icons/gear.png'
