@@ -62,6 +62,7 @@ class DeviceItem : public QObject {
     Q_PROPERTY(QString label READ getLabel CONSTANT);
     Q_PROPERTY(QString FWVer READ getFWVer CONSTANT);
     Q_PROPERTY(QString HWVer READ getHWVer CONSTANT);
+    Q_PROPERTY(int DefaultRate READ getDefaultRate CONSTANT);
     Q_PROPERTY(QString UUID READ getDevSN CONSTANT);
 
 public:
@@ -71,6 +72,7 @@ public:
     QString getFWVer() { return QString(m_device->fwver()); }
     QString getHWVer() { return QString(m_device->hwver()); }
     QString getDevSN() { return QString(m_device->serial()); }
+    int getDefaultRate() { return m_device->get_default_rate(); }
     Q_INVOKABLE int ctrl_transfer( int x, int y, int z) { return m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);}
 
 protected:
