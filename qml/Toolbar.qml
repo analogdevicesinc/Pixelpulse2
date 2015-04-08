@@ -61,10 +61,12 @@ ToolbarStyle {
     Layout.fillHeight: true
     Layout.alignment: Qt.AlignRight
     style: btnStyle
-    iconSource: controller.enabled ? 'qrc:/icons/pause.png' : 'qrc:/icons/play.png'
+    iconSource: (controller.enabled & (session.availableDevices > 0)) ? 'qrc:/icons/pause.png' : 'qrc:/icons/play.png'
 
     onClicked: {
-      controller.toggle()
+      if (session.availableDevices > 0) {
+        controller.toggle()
+      }
     }
   }
 }

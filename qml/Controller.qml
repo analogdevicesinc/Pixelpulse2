@@ -6,7 +6,9 @@ Item {
   property bool continuous: false
   property bool repeat: true
   property bool changingMode: false
-  property real sampleRate: session.devices[0].DefaultRate
+  // TODO: should be queried from libsmu / device
+  // property real sampleRate: 100000 // presently invalid
+  property real sampleRate: 125000/2 // current default
   property real sampleTime: 0.1
   readonly property int sampleCount: sampleTime * sampleRate
 
@@ -56,6 +58,10 @@ Item {
           enabled = false
         }
       }
+    }
+    onDetached: {
+      enabled = false;
+      continuous = false;
     }
   }
 }
