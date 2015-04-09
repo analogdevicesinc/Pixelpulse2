@@ -15,7 +15,7 @@ QMAKE_CXXFLAGS_DEBUG += -ggdb
 
 CFLAGS += -v -static -static-libgcc -static-libstdc++ -g
 
-DEFINES += GIT_VERSION='"\\\"$(shell git describe --always --tags --abbrev)\\\""'
+DEFINES += GIT_VERSION='"\\\"$(shell git -C $$PWD describe --always --tags --abbrev)\\\""'
 DEFINES += BUILD_DATE='"\\\"$(shell date +%F)\\\""'
 
 SOURCES += main.cpp \
