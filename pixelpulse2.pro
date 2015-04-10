@@ -15,7 +15,7 @@ QMAKE_CXXFLAGS_DEBUG += -ggdb
 
 CFLAGS += -v -static -static-libgcc -static-libstdc++ -g
 
-DEFINES += GIT_VERSION='"\\\"$(shell git describe --always --tags --abbrev)\\\""'
+DEFINES += GIT_VERSION='"\\\"$(shell git -C $$PWD describe --always --tags --abbrev)\\\""'
 DEFINES += BUILD_DATE='"\\\"$(shell date +%F)\\\""'
 
 SOURCES += main.cpp \
@@ -80,7 +80,6 @@ win32 {
 
 unix {
 	CONFIG += link_pkgconfig
-	PKGCONFIG += libudev
 # if we do not have a locally compiled static version of libusb-1.0 installed, use pkg-config
 	!exists(/usr/local/lib/libusb-1.0.a) {
 		PKGCONFIG += libusb-1.0
@@ -93,6 +92,7 @@ unix {
 }
 
 unix:!osx {
+	PKGCONFIG += libudev
 	INSTALLS+=target
 	isEmpty(PREFIX) {
 		PREFIX = /usr
