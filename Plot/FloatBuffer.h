@@ -11,7 +11,8 @@ class FloatBuffer : public QObject
 
 public:
     FloatBuffer(QObject *parent = 0);
-
+	// this access mechanism is slow
+	//Q_PROPERTY( QList<qreal> qData READ getData NOTIFY dataChanged );
     unsigned countPointsBetween(double start, double end) {
         return timeToIndex(end) - timeToIndex(start);
     }
@@ -20,7 +21,7 @@ public:
         return m_length;
     }
 
-    float get(unsigned i) {
+    Q_INVOKABLE float get(unsigned i) {
         return m_data[wrapIndex(i)];
     }
 
@@ -59,6 +60,17 @@ public:
     float* data() {
         return m_data.data();
     }
+
+	Q_INVOKABLE QList<qreal> getData() {
+		QList<qreal> qData;
+		qData.reserve(m_length);
+		for (unsigned i=0; i < m_length; i++) {
+			qreal d = get(i);
+			qData.append(d);
+		}
+		return qData;
+	}
+			
 
     void setValid(unsigned start, unsigned length) {
         m_start = start;
