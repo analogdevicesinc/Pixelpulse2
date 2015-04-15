@@ -128,7 +128,7 @@ void SessionItem::onDetached(Device* device){
             this->cancel();
     }
     // wait for completion
-    m_session->end();
+    m_session->wait_for_completion();
     m_session->remove_device(device);
     if ((int) m_session->m_devices.size() < m_devices.size()) {
         for (auto dev: m_devices) {
