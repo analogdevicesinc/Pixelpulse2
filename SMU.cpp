@@ -146,6 +146,8 @@ void SessionItem::onDetached(Device* device){
                     m_devices.removeOne(dev);
         }
     }
+    // remove from list of available devices
+    m_session->destroy_available(device);
     devicesChanged();
 }
 
