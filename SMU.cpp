@@ -49,6 +49,8 @@ SessionItem::~SessionItem() {
         Q_ASSERT(m_devices.size() == 0);
 }
 
+
+/// called on initialisation
 void SessionItem::openAllDevices()
 {
     m_session->update_available_devices();
@@ -59,6 +61,7 @@ void SessionItem::openAllDevices()
     devicesChanged();
 }
 
+/// called at exit
 void SessionItem::closeAllDevices()
 {
         qDebug() << "Closing devices";
@@ -74,6 +77,7 @@ void SessionItem::closeAllDevices()
         }
 }
 
+/// configure device, datapaths, and start streaming
 void SessionItem::start(bool continuous)
 {
     if (m_devices.size() == 0) return;
@@ -115,6 +119,9 @@ void SessionItem::start(bool continuous)
     m_session->start(continuous ? 0 : m_sample_count);
 }
 
+/// handles hotplug attach condition
+/// runs on UI thread
+/// triggered by libUSB callback over Queue
 void SessionItem::onAttached(Device *device)
 {
     auto dev = m_session->add_device(device);
@@ -123,11 +130,14 @@ void SessionItem::onAttached(Device *device)
     devicesChanged();
 }
 
+/// handles hotplug detach condition
+/// runs on UI thread
+/// triggered by libUSB callback over Queue
 void SessionItem::onDetached(Device* device){
     if (m_active) {
             this->cancel();
     }
-    // wait for completion
+    // wait for completion and teardown relevant state
     m_session->wait_for_completion();
     m_session->remove_device(device);
     if ((int) m_session->m_devices.size() < m_devices.size()) {
@@ -139,11 +149,16 @@ void SessionItem::onDetached(Device* device){
     devicesChanged();
 }
 
+/// cancel obnoxious amount of redirection
+/// SessionItem::cancel calls Session::cancel calls Device::cancel on each device
 void SessionItem::cancel() {
     if (!m_active) { return; }
     m_session->cancel();
 }
 
+/// completion event handler
+/// runs on UI thread
+/// waits for device to complete (paradoxically?), then tears down the output update connection
 void SessionItem::onFinished()
 {
     m_session->end();
@@ -162,6 +177,8 @@ void SessionItem::onFinished()
     }
 }
 
+/// progress handler
+/// called over Queue, updates BufferItem with new data as appropriate
 void SessionItem::onProgress(sample_t sample) {
     for (auto dev: m_devices) {
         for (auto chan: dev->m_channels) {
@@ -176,6 +193,7 @@ void SessionItem::onProgress(sample_t sample) {
     }
 }
 
+/// DeviceItem constructor
 DeviceItem::DeviceItem(SessionItem* parent, Device* dev):
 QObject(parent),
 m_device(dev)
@@ -187,6 +205,7 @@ m_device(dev)
     }
 }
 
+/// ChannelItem constructor
 ChannelItem::ChannelItem(DeviceItem* parent, Device* dev, unsigned ch_i):
 QObject(parent), m_device(dev), m_index(ch_i), m_mode(0)
 {
@@ -198,6 +217,7 @@ QObject(parent), m_device(dev), m_index(ch_i), m_mode(0)
     }
 }
 
+/// SignalItem constructor
 SignalItem::SignalItem(ChannelItem* parent, int index, Signal* sig):
 QObject(parent),
 m_index(index),
@@ -212,16 +232,19 @@ m_measurement(0.0)
     connect(m_channel, &ChannelItem::modeChanged, this, &SignalItem::onParentModeChanged);
 }
 
+/// mode changed handler
 void SignalItem::onParentModeChanged(int) {
     isOutputChanged(getIsOutput());
     isInputChanged(getIsInput());
 }
 
+/// updates label in constant src mode
 void SignalItem::updateMeasurement(){
     m_measurement = m_buffer->mean();
     measurementChanged(m_measurement);
 }
 
+/// SrcItem initialisation
 SrcItem::SrcItem(SignalItem* parent):
 QObject(parent),
 m_src("constant"),
@@ -240,6 +263,7 @@ m_parent(parent)
     connect(this, &SrcItem::dutyChanged, [=]{ changed(); });
 }
 
+/// update output signal
 void SrcItem::update() {
     Src v = SRC_CONSTANT;
     if (m_src == "constant")        v = SRC_CONSTANT;

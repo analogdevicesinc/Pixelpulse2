@@ -12,6 +12,8 @@ class SrcItem;
 
 class FloatBuffer;
 
+/// SessionItem is the primary object in Pixelpulse2
+/// It abstracts over a libsmu session, exposing relevant parameters to QML.
 class SessionItem : public QObject {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<DeviceItem> devices READ getDevices NOTIFY devicesChanged)
@@ -61,6 +63,8 @@ protected:
     QList<DeviceItem *> m_devices;
 };
 
+
+/// DeviceItem abstracts over a LibSMU Device exposing relevant parameters to QML
 class DeviceItem : public QObject {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<ChannelItem> channels READ getChannels CONSTANT);
@@ -112,6 +116,7 @@ protected:
     friend class SignalItem;
 };
 
+/// Abstracts over a LibSMU Signal and the BufferItem used for rendering data
 class SignalItem : public QObject {
     Q_OBJECT
     Q_PROPERTY(FloatBuffer* buffer READ getBuffer CONSTANT);
@@ -163,6 +168,7 @@ protected:
     void updateMeasurement();
 };
 
+/// Should be used for handling mode switches in continuous mode.
 class ModeItem : public QObject {
 Q_OBJECT
 public:
