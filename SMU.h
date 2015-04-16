@@ -18,6 +18,7 @@ class SessionItem : public QObject {
     Q_PROPERTY(bool active READ getActive NOTIFY activeChanged);
     Q_PROPERTY(unsigned sampleRate MEMBER m_sample_rate NOTIFY sampleRateChanged);
     Q_PROPERTY(unsigned sampleCount MEMBER m_sample_count NOTIFY sampleCountChanged);
+    Q_PROPERTY(int activeDevices READ getActiveDevices NOTIFY activeChanged);
     Q_PROPERTY(int availableDevices READ getAvailableDevices NOTIFY devicesChanged);
 
 public:
@@ -29,6 +30,7 @@ public:
     Q_INVOKABLE void start(bool continuous);
     Q_INVOKABLE void cancel();
     int getAvailableDevices() { return m_session->m_available_devices.size(); }
+    int getActiveDevices() { return m_session->m_devices.size(); }
 
 
     bool getActive() { return m_active; }
