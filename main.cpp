@@ -5,8 +5,9 @@
 #include <QRunnable>
 #include <QThreadPool>
 #include "SMU.h"
-#include "utils/backtracing.h"
 
+#include "utils/backtracing.h"
+#include "utils/fileio.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
 
     registerTypes();
 
+    FileIO fileIO;
     SessionItem smu_session;
     smu_session.openAllDevices();
     engine.rootContext()->setContextProperty("session", &smu_session);
@@ -25,7 +27,7 @@ int main(int argc, char *argv[])
 	versions.insert("build_date", BUILD_DATE);
 	versions.insert("git_version", GIT_VERSION);
 	engine.rootContext()->setContextProperty("versions", versions);
-
+    engine.rootContext()->setContextProperty("fileio", &fileIO);
     if (argc > 1) {
         if (strcmp(argv[1], "-v") || strcmp(argv[1], "--version")) {
             std::cout << GIT_VERSION << ": Built on " << BUILD_DATE << std::endl;

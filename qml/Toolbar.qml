@@ -2,6 +2,7 @@ import QtQuick 2.1
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
+import QtQuick.Dialogs 1.0
 
 ToolbarStyle {
   ExclusiveGroup {
@@ -12,6 +13,18 @@ ToolbarStyle {
   property alias plotsVisible: plotsVisibleItem.checked
   property alias contentVisible: contentVisibleItem.checked
 
+  FileDialog {
+    id: fileDialog
+    selectExisting: false
+    sidebarVisible: false
+    title: "Please enter a location to save your data."
+    onAccepted: {
+        console.log("You chose: " + fileDialog.fileUrls)
+    }
+    onRejected: {
+        console.log("Canceled")
+    }
+  }
   Button {
     tooltip: "Menu"
     Layout.fillHeight: true
@@ -50,6 +63,12 @@ ToolbarStyle {
         checkable: true
       }
 
+      MenuSeparator{}
+      MenuItem {
+        id: dialogVisibleItem
+        text: "Export Data"
+        onTriggered: fileDialog.visible = true
+      }
       MenuSeparator{}
       MenuItem { text: "Exit"; onTriggered: Qt.quit() }
     }

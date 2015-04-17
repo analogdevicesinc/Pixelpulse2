@@ -13,10 +13,12 @@
         <file>qml/TimelineFlickable.qml</file>
         <file>qml/TimelineHeader.qml</file>
         <file>qml/Axes.qml</file>
+        <file>qml/FileDialog.qml</file>
         <file>qml/OverlayPeriodic.qml</file>
         <file>qml/DragDot.qml</file>
         <file>qml/DeviceRow.qml</file>
         <file>qml/jsutils.js</file>
+        <file>qml/dataexport.js</file>
         <file>icons/simv.png</file>
         <file>icons/svmi.png</file>
         <file>icons/mv.png</file>

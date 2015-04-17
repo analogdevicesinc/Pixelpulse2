@@ -57,7 +57,8 @@ HEADERS += \
     libsmu/libsmu.h \
     libsmu/libsmu.hpp \
     libsmu/device_cee.hpp \
-    libsmu/internal.hpp
+    libsmu/internal.hpp \
+    utils/fileio.h
 
 win32:debug {
 	CONFIG += console
