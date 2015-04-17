@@ -5,6 +5,7 @@
 
 #include <QObject>
 #include <QFile>
+#include <QDebug>
 #include <QTextStream>
 
 class FileIO : public QObject
@@ -16,14 +17,14 @@ public slots:
     {
         if (source.isEmpty())
             return false;
-
-        QFile file(source);
-        if (!file.open(QFile::WriteOnly | QFile::Truncate))
-            return false;
-
+        QString s = source;
+        // trim "file:/" uri from the path
+        s.remove(0,6);
+        QFile file(s);
+        file.open(QIODevice::WriteOnly | QIODevice::Text);
         QTextStream out(&file);
-        out << data;
-        file.close();
+        // end with a newline
+        out << data << "\n";
         return true;
     }
 

@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Dialogs 1.0
+import "dataexport.js" as CSVExport
 
 ToolbarStyle {
   ExclusiveGroup {
@@ -18,13 +19,26 @@ ToolbarStyle {
     selectExisting: false
     sidebarVisible: false
     title: "Please enter a location to save your data."
+    nameFilters: [ "CSV files (*.csv)", "All files (*)" ]
     onAccepted: {
-        console.log("You chose: " + fileDialog.fileUrls)
-    }
-    onRejected: {
-        console.log("Canceled")
+        var labels = [];
+        var columns = [];
+        if (session.devices) {
+          while (session.active){};
+          for (var i = 0; i < session.devices.length; i++) {
+             for (var j = 0; j < session.devices[i].channels.length; j++) {
+               for (var k = 0; k < session.devices[i].channels[i].signals.length; k++) {
+                  var label = '' + i + session.devices[i].channels[j].label +"_"+ session.devices[i].channels[j].signals[k].label;
+                  labels.push(label);
+                  columns.push(session.devices[i].channels[j].signals[k].buffer.getData());
+               };
+             };
+          };
+        fileio.write(fileDialog.fileUrls, CSVExport.dumpsample(columns, labels));
+        };
     }
   }
+
   Button {
     tooltip: "Menu"
     Layout.fillHeight: true
