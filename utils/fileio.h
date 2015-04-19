@@ -17,7 +17,7 @@ public slots:
 	/// accept a file handle by URI and source datastring
     bool writeByURI(const QUrl& destination, const QString& data) {
         auto path = destination.toLocalFile();
-        return writeByFile(path, data);
+        return writeByFilename(path, data);
     }
 	/// accept a file handle by string and source datastring
     bool writeByFilename(const QString& source, const QString& data)
