@@ -15,7 +15,10 @@ class FileIO : public QObject
 
 public slots:
     bool writeToURL(const QUrl& destination, const QString& data) {
-        return write(destination.toLocalFile(), data);
+        qDebug() << destination;
+        auto path = destination.toLocalFile();
+        qDebug() << path;
+        return write(path, data);
     }
     bool write(const QString& source, const QString& data)
     {
