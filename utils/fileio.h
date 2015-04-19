@@ -5,6 +5,7 @@
 
 #include <QObject>
 #include <QFile>
+#include <QUrl>
 #include <QDebug>
 #include <QTextStream>
 
@@ -13,13 +14,17 @@ class FileIO : public QObject
     Q_OBJECT
 
 public slots:
+    bool writeToURL(const QUrl& destination, const QString& data) {
+        qDebug() << destination;
+        auto path = destination.toLocalFile();
+        qDebug() << path;
+        return write(path, data);
+    }
     bool write(const QString& source, const QString& data)
     {
         if (source.isEmpty())
             return false;
         QString s = source;
-        // trim "file:/" uri from the path
-        s.remove(0,6);
         QFile file(s);
         file.open(QIODevice::WriteOnly | QIODevice::Text);
         QTextStream out(&file);

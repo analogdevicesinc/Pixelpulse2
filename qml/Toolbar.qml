@@ -34,8 +34,8 @@ ToolbarStyle {
                };
              };
           };
-        console.log('selected path: ', fileDialog.fileUrls);
-        fileio.write(fileDialog.fileUrls, CSVExport.dumpsample(columns, labels));
+        console.log('selected path: ', fileDialog.fileUrls[0]);
+        fileio.writeToURL(fileDialog.fileUrls[0], CSVExport.dumpsample(columns, labels));
         };
     }
   }
