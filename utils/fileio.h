@@ -14,11 +14,13 @@ class FileIO : public QObject
     Q_OBJECT
 
 public slots:
-    bool writeToURL(const QUrl& destination, const QString& data) {
+	/// accept a file handle by URI and source datastring
+    bool writeByURI(const QUrl& destination, const QString& data) {
         auto path = destination.toLocalFile();
         return write(path, data);
     }
-    bool write(const QString& source, const QString& data)
+	/// accept a file handle by string and source datastring
+    bool writeByFilename(const QString& source, const QString& data)
     {
         if (source.isEmpty())
             return false;

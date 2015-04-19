@@ -33,7 +33,7 @@ ToolbarStyle {
                };
              };
           };
-        fileio.writeToURL(fileDialog.fileUrls[0], CSVExport.dumpsample(columns, labels));
+        fileio.writeByURI(fileDialog.fileUrls[0], CSVExport.dumpsample(columns, labels));
         };
     }
   }
