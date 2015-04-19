@@ -24,7 +24,6 @@ ToolbarStyle {
         var labels = [];
         var columns = [];
         if (session.devices) {
-          while (session.active){};
           for (var i = 0; i < session.devices.length; i++) {
              for (var j = 0; j < session.devices[i].channels.length; j++) {
                for (var k = 0; k < session.devices[i].channels[i].signals.length; k++) {
@@ -34,7 +33,6 @@ ToolbarStyle {
                };
              };
           };
-        console.log('selected path: ', fileDialog.fileUrls[0]);
         fileio.writeToURL(fileDialog.fileUrls[0], CSVExport.dumpsample(columns, labels));
         };
     }
