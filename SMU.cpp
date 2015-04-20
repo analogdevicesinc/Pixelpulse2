@@ -138,7 +138,9 @@ void SessionItem::onDetached(Device* device){
             this->cancel();
     }
     // wait for completion and teardown relevant state
-    m_session->wait_for_completion();
+	// cut out the middleman, ensure completion is handled
+	// don't rely on nondeterministic race condition between Detached and Finished
+    onFinished();
     m_session->remove_device(device);
     if ((int) m_session->m_devices.size() < m_devices.size()) {
         for (auto dev: m_devices) {

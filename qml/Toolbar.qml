@@ -2,6 +2,8 @@ import QtQuick 2.1
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
+import QtQuick.Dialogs 1.0
+import "dataexport.js" as CSVExport
 
 ToolbarStyle {
   ExclusiveGroup {
@@ -11,6 +13,30 @@ ToolbarStyle {
   property alias repeatedSweep: repeatedSweepItem.checked
   property alias plotsVisible: plotsVisibleItem.checked
   property alias contentVisible: contentVisibleItem.checked
+
+  FileDialog {
+    id: fileDialog
+    selectExisting: false
+    sidebarVisible: false
+    title: "Please enter a location to save your data."
+    nameFilters: [ "CSV files (*.csv)", "All files (*)" ]
+    onAccepted: {
+        var labels = [];
+        var columns = [];
+        if (session.devices) {
+          for (var i = 0; i < session.devices.length; i++) {
+             for (var j = 0; j < session.devices[i].channels.length; j++) {
+               for (var k = 0; k < session.devices[i].channels[i].signals.length; k++) {
+                  var label = '' + i + session.devices[i].channels[j].label +"_"+ session.devices[i].channels[j].signals[k].label;
+                  labels.push(label);
+                  columns.push(session.devices[i].channels[j].signals[k].buffer.getData());
+               };
+             };
+          };
+        fileio.writeByURI(fileDialog.fileUrls[0], CSVExport.dumpsample(columns, labels));
+        };
+    }
+  }
 
   Button {
     tooltip: "Menu"
@@ -50,6 +76,12 @@ ToolbarStyle {
         checkable: true
       }
 
+      MenuSeparator{}
+      MenuItem {
+        id: dialogVisibleItem
+        text: "Export Data"
+        onTriggered: fileDialog.visible = true
+      }
       MenuSeparator{}
       MenuItem { text: "Exit"; onTriggered: Qt.quit() }
     }
