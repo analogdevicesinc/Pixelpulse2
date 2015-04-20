@@ -1,4 +1,4 @@
-// basic csv serialisation function 
+// basic csv serialisation function
 // accepts a list of lists representing the columns of data, and a list of text labels
 var dumpsample = function (columns, labels) {
    if (columns.length != labels.length) {
@@ -13,7 +13,9 @@ var dumpsample = function (columns, labels) {
    var minimumLength = Math.min.apply(null, lengths);
    for (var i = 0; i < minimumLength; i++) {
        for (var j = 0; j < columns.length; j++) {
-            csvContent += columns[j][i] + ((j != (columns.length-1)) ? "," : "");
+            var x = columns[j][i].toFixed(4);
+            x = (x == 0) ? (0.00001).toFixed(4) : x;
+            csvContent += (x >= 0 ? "+" : "") + x + ((j != (columns.length-1)) ? "," : "");
         }
         csvContent += (i != (minimumLength-1) ? "\n" : "");
     }
