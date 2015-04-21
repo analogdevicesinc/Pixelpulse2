@@ -14,7 +14,7 @@ before_script: /usr/local/opt/qt5/bin/qmake
 
 script: make
 
-after_script: /usr/local/opt/qt5/binmacdeployqt pixelpulse2.app -dmg -always-overwrite -verbose=2 -qmldir=qml
+after_script: /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -always-overwrite -verbose=2 -qmldir=qml
 
 deploy:
   provider: s3
