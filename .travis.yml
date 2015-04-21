@@ -1,35 +1,16 @@
 language: cpp
-sudo: false
-compiler:
- - gcc
-
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - g++-4.9
-    - pkg-config
-    - libusb-1.0-0-dev
-    - libudev-dev
-    - mesa-common
-    - build-essential
 
 before_install:
-  - export CC=/usr/bin/gcc-4.9
-  - export CXX=/usr/bin/g++-4.9
-  - "mkdir qt5"
-  - "wget -q -O qt5.zip http://utils.musescore.org.s3.amazonaws.com/qt541.zip"
-  - "unzip -qq qt5.zip -d qt5"
-  - "export PATH=`pwd`/qt5/bin:$PATH"
-  - "export QT_PLUGIN_PATH=`pwd`/qt5/plugins"
-  - "export QML2_IMPORT_PATH=`pwd`/qt5/qml"
+ - brew install --build-from-source libusb
+ - brew install qt5
 
 before_script: qmake
 script: make
 
-os:
-  - linux
-#  - osx
+after_script:
+ - macdeployqt pixelpulse2.app -dmg -always-overwrite -verbose=2 -qmldir=qml
 
-#osx_image: xcode61
+os:
+  - osx
+
+osx_image: xcode61
