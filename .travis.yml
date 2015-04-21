@@ -1,5 +1,5 @@
 language: cpp
-
+sudo: false
 compiler:
  - gcc
 
@@ -11,7 +11,6 @@ addons:
     - g++-4.9
     - pkg-config
     - libusb-1.0-0-dev
-    - libgudev-dev
     - libudev-dev
     - mesa-common
     - build-essential
