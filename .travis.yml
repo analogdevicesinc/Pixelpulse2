@@ -2,7 +2,7 @@ os: osx
 
 osx_image: xcode61
 
-language: objective-c 
+language: objective-c
 
 before_install:
  - brew update
@@ -11,7 +11,16 @@ before_install:
  - brew linkapps qt5
 
 before_script: /usr/local/opt/qt5/bin/qmake
+
 script: make
 
-after_script:
- - /usr/local/opt/qt5/binmacdeployqt pixelpulse2.app -dmg -always-overwrite -verbose=2 -qmldir=qml
+after_script: /usr/local/opt/qt5/binmacdeployqt pixelpulse2.app -dmg -always-overwrite -verbose=2 -qmldir=qml
+
+deploy:
+  provider: s3
+  access_key_id:
+    secure: DrNQ4UydKqirNGHYu9MgIXDjnaBXblR1037l/KWNnkYV0VXkswG8FgtKR47rEZzrjfQ/SrYVSGxi8lnTlj5hwn4wsii7BzaZnjvbturz3dCQ2b6tXUxk0KGceio/G/vpMbfeqNhg36zQNBqvJ7bn3IpMqy2mBW/MwnjEoN4pNjM=
+  secret_access_key:
+    secure: CQz7vmxI7YGb4yojPY81/FTXzZkN/VRF71o8WuPpJ2TtEYKdQmT1Eqp7kMR2OvxL/OVKxLp9cqrdZoJDaFZbtgCOY7IJ7jKyCb1PAeyVTZWrx7qZ1fieTyq6JdNiJRtoUNUaCTfHzosFDtv6djYabDGO4SlYGJnOqiwSxfFqCTA=
+  bucket: pixelpulse2nightly
+  skip_cleanup: true
