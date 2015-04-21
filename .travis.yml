@@ -1,3 +1,7 @@
+os: osx
+
+osx_image: xcode61
+
 language: cpp
 
 before_install:
@@ -11,7 +15,3 @@ script: make
 after_script:
  - macdeployqt pixelpulse2.app -dmg -always-overwrite -verbose=2 -qmldir=qml
 
-os:
-  - osx
-
-osx_image: xcode61
