@@ -1,6 +1,7 @@
 language: cpp
 
 before_install:
+ - brew update
  - brew install --build-from-source libusb
  - brew install qt5
 
