@@ -2,7 +2,7 @@ os: osx
 
 osx_image: xcode61
 
-language: cpp
+language: objective-c 
 
 before_install:
  - brew update
