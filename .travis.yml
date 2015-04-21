@@ -20,6 +20,7 @@ deploy:
   bucket: pixelpulse2nightly
   skip_cleanup: true
   local_dir: deploy
+  acl: public_read
   on:
     repo: analogdevicesinc/Pixelpulse2
     all_branches: true
