@@ -18,8 +18,8 @@ deploy:
   secret_access_key:
     secure: IsTspMVYrpXM7ZdETjq+2gHXixQU8NuvVxRXEJuYQgH19FJpWots+jnCufcAUramn32/ISPMCzqtRAHCsG5AicftolruHlrQlFxuQKLK6jGoEliv+1vHsymgTYA7ZmM1CebVxW2mNYPs1oSg9wEeCznpwSwhuWRnuBd2YHvFSWs=
   bucket: pixelpulse2nightly
-  local-dir: deploy
-  acl: public_read
+  skip_cleanup: true
+  local_dir: deploy
   on:
     repo: analogdevicesinc/Pixelpulse2
     all_branches: true
