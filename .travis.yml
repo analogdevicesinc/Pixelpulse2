@@ -1,26 +1,24 @@
 os: osx
-
 osx_image: xcode61
-
 language: objective-c
-
 before_install:
- - brew update
- - brew install --build-from-source libusb
- - brew install qt5
- - brew linkapps qt5
-
+- brew update
+- brew install --build-from-source libusb
+- brew install qt5
+- brew linkapps qt5
 before_script: /usr/local/opt/qt5/bin/qmake
-
-script: make
-
-after_script: /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -always-overwrite -verbose=2 -qmldir=qml
-
+script: 
+- make
+- /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -always-overwrite -verbose=2 -qmldir=qml
+- mkdir -f deploy
+- cp pixelpulse2.dmg deploy
 deploy:
   provider: s3
-  access_key_id:
-    secure: DrNQ4UydKqirNGHYu9MgIXDjnaBXblR1037l/KWNnkYV0VXkswG8FgtKR47rEZzrjfQ/SrYVSGxi8lnTlj5hwn4wsii7BzaZnjvbturz3dCQ2b6tXUxk0KGceio/G/vpMbfeqNhg36zQNBqvJ7bn3IpMqy2mBW/MwnjEoN4pNjM=
+  access_key_id: AKIAIQOIHEBDCDW7SGFA
   secret_access_key:
-    secure: CQz7vmxI7YGb4yojPY81/FTXzZkN/VRF71o8WuPpJ2TtEYKdQmT1Eqp7kMR2OvxL/OVKxLp9cqrdZoJDaFZbtgCOY7IJ7jKyCb1PAeyVTZWrx7qZ1fieTyq6JdNiJRtoUNUaCTfHzosFDtv6djYabDGO4SlYGJnOqiwSxfFqCTA=
+    secure: IsTspMVYrpXM7ZdETjq+2gHXixQU8NuvVxRXEJuYQgH19FJpWots+jnCufcAUramn32/ISPMCzqtRAHCsG5AicftolruHlrQlFxuQKLK6jGoEliv+1vHsymgTYA7ZmM1CebVxW2mNYPs1oSg9wEeCznpwSwhuWRnuBd2YHvFSWs=
   bucket: pixelpulse2nightly
-  skip_cleanup: true
+  local-dir: deploy
+  acl: public_read
+  on:
+    repo: analogdevicesinc/Pixelpulse2
