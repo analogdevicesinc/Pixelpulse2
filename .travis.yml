@@ -10,7 +10,7 @@ before_script: /usr/local/opt/qt5/bin/qmake
 script: 
 - make
 - /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -always-overwrite -verbose=2 -qmldir=qml
-- mkdir -f deploy
+- mkdir deploy
 - cp pixelpulse2.dmg deploy
 deploy:
   provider: s3
