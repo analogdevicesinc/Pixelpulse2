@@ -29,3 +29,5 @@ after_build:
 
 cache:
  - distrib.zip -> pixelpulse2.pro
+ - c:\mingw.7z -> pixelpulse2.pro
+ - c:\msys.zip -> pixelpulse2.pro
