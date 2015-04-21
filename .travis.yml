@@ -8,6 +8,7 @@ before_install:
  - brew update
  - brew install --build-from-source libusb
  - brew install qt5
+ - brew linkapps qt5
 
 before_script: qmake
 script: make
