@@ -22,3 +22,4 @@ deploy:
   acl: public_read
   on:
     repo: analogdevicesinc/Pixelpulse2
+    all_branches: true
