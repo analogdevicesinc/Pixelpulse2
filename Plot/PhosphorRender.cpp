@@ -5,15 +5,6 @@
 #include <QtQuick/qsgflatcolormaterial.h>
 #include <iostream>
 
-class Material : public QSGFlatColorMaterial
-{
-public:
-    QSGMaterialType *type() const { static QSGMaterialType type; return &type; }
-
-    QMatrix4x4 transformation;
-    QColor color;
-};
-
 PhosphorRender::PhosphorRender(QQuickItem *parent)
     : QQuickItem(parent), m_ybuffer(NULL), m_xbuffer(NULL),
     m_xmin(0), m_xmax(1), m_ymin(0), m_ymax(1),
@@ -33,8 +24,9 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     }
 
     QSGGeometryNode *node = 0;
+    QSGTransformNode *transformNode = 0;
     QSGGeometry *geometry = 0;
-    Material *material = 0;
+    QSGFlatColorMaterial *material = 0;
 
     unsigned n_points;
 
@@ -51,20 +43,29 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
         geometry->setDrawingMode(GL_LINE_STRIP);
         node->setGeometry(geometry);
         node->setFlag(QSGNode::OwnsGeometry);
-        material = new Material;
-        material->setColor(m_color);
+        material = new QSGFlatColorMaterial;
         node->setMaterial(material);
         node->setFlag(QSGNode::OwnsMaterial);
+
+        transformNode = new QSGTransformNode;
+        transformNode->appendChildNode(node);
     } else {
-        node = static_cast<QSGGeometryNode *>(oldNode);
+        transformNode = static_cast<QSGTransformNode *>(oldNode);
+        node = static_cast<QSGGeometryNode *>(transformNode->firstChild());
+        material = static_cast<QSGFlatColorMaterial*>(node->material());
         geometry = node->geometry();
         geometry->allocate(n_points);
     }
 
     QRectF bounds = boundingRect();
-    material->transformation.setToIdentity();
-    material->transformation.scale(bounds.width()/(m_xmax - m_xmin), bounds.height()/(m_ymin - m_ymax));
-    material->transformation.translate(-m_xmin, -m_ymax);
+    QMatrix4x4 matrix;
+    matrix.scale(bounds.width()/(m_xmax - m_xmin), bounds.height()/(m_ymin - m_ymax));
+    matrix.translate(-m_xmin, -m_ymax);
+    transformNode->setMatrix(matrix);
+    transformNode->markDirty(QSGNode::DirtyMatrix);
+
+    material->setColor(m_color);
+
     auto verticies = geometry->vertexDataAsPoint2D();
     if (m_xbuffer) {
         for (unsigned i=0; i<n_points; i++) {
@@ -74,9 +75,5 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
         m_ybuffer->toVertexData(m_xmin, m_xmax, verticies, n_points);
     }
     node->markDirty(QSGNode::DirtyGeometry|QSGNode::DirtyMaterial);
-    QSGTransformNode *transformNode = new QSGTransformNode;
-    transformNode->setMatrix(material->transformation);
-    transformNode->appendChildNode(node);
-    transformNode->markDirty(QSGNode::DirtyMatrix);
     return transformNode;
 }
