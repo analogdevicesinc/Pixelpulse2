@@ -6,9 +6,9 @@ import QtQuick.Controls.Styles 1.1
 
 Rectangle {
   id: signalBlock
+  property alias axes: axes
   property var xaxis
   property var signal
-
   color: '#444'
 
   function updateMode() {

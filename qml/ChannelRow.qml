@@ -6,6 +6,7 @@ import QtQuick.Controls.Styles 1.1
 
 Rectangle {
   property var channel
+  property alias signalRepeater:signalRepeater
   color: '#333'
 
   Button {
@@ -64,6 +65,7 @@ Rectangle {
     spacing: 0
 
     Repeater {
+      id: signalRepeater
       model: modelData.signals
 
       SignalRow {

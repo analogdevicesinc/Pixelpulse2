@@ -80,6 +80,7 @@ ApplicationWindow {
 						spacing: 0
 
 						Repeater {
+							id: deviceRepeater
 							model: session.devices
 							DeviceRow {
 								Layout.fillHeight: true
