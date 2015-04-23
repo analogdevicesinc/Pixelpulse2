@@ -61,6 +61,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="classes.html"><span>Data&#160;Structure&#160;Index</span></a></li>
+      <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Data&#160;Fields</span></a></li>
     </ul>
   </div>
@@ -69,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Data Structures</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Data Structures</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -92,6 +93,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="SMU_8h_source.html">SMU.h</a>&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for SessionItem:</div>
+<div class="dyncontent">
+<div class="center"><img src="classSessionItem__coll__graph.png" border="0" usemap="#SessionItem_coll__map" alt="Collaboration graph"/></div>
+<map name="SessionItem_coll__map" id="SessionItem_coll__map">
+<area shape="rect" id="node2" href="classSession.html" title="Session" alt="" coords="17,117,87,147"/></map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="signals"></a>
 Signals</h2></td></tr>
@@ -108,9 +116,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>progress</b> (sample_
 <tr class="memitem:a3569c1e099dc73c4a231b260d1613232"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3569c1e099dc73c4a231b260d1613232"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>finished</b> (unsigned status)</td></tr>
 <tr class="memitem:a7e7daa1a24a9888383e69bedfe77eb75"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e7daa1a24a9888383e69bedfe77eb75"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>attached</b> (Device *device)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>attached</b> (<a class="el" href="classDevice.html">Device</a> *device)</td></tr>
 <tr class="memitem:a60961ed48aee8a0d9358d02b86f64bd8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a60961ed48aee8a0d9358d02b86f64bd8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>detached</b> (Device *device)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>detached</b> (<a class="el" href="classDevice.html">Device</a> *device)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -137,13 +145,13 @@ QQmlListProperty&lt; <a class="el" href="classDeviceItem.html">DeviceItem</a> &g
 Protected Slots</h2></td></tr>
 <tr class="memitem:ad8d1450ca2e25c39df3b94340e0a256d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSessionItem.html#ad8d1450ca2e25c39df3b94340e0a256d">onProgress</a> (sample_t)</td></tr>
 <tr class="memitem:a85e81a6ebb4439a135fcfb6a0bdfbf71"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSessionItem.html#a85e81a6ebb4439a135fcfb6a0bdfbf71">onFinished</a> ()</td></tr>
-<tr class="memitem:ae96a8264c634e254bc188ff20a700bf1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSessionItem.html#ae96a8264c634e254bc188ff20a700bf1">onAttached</a> (Device *device)</td></tr>
-<tr class="memitem:a466a6da8e80a4a2836d9b86b7b6721df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSessionItem.html#a466a6da8e80a4a2836d9b86b7b6721df">onDetached</a> (Device *device)</td></tr>
+<tr class="memitem:ae96a8264c634e254bc188ff20a700bf1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSessionItem.html#ae96a8264c634e254bc188ff20a700bf1">onAttached</a> (<a class="el" href="classDevice.html">Device</a> *device)</td></tr>
+<tr class="memitem:a466a6da8e80a4a2836d9b86b7b6721df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSessionItem.html#a466a6da8e80a4a2836d9b86b7b6721df">onDetached</a> (<a class="el" href="classDevice.html">Device</a> *device)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:af92d70e7e3c93d77916e7056f33b90bb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af92d70e7e3c93d77916e7056f33b90bb"></a>
-Session *&#160;</td><td class="memItemRight" valign="bottom"><b>m_session</b></td></tr>
+<a class="el" href="classSession.html">Session</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m_session</b></td></tr>
 <tr class="memitem:a2675972e503f099ef2fad5883aa77f01"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2675972e503f099ef2fad5883aa77f01"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_active</b></td></tr>
 <tr class="memitem:ae7ad8fe21086d662a7b0c4c4b1598dd0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae7ad8fe21086d662a7b0c4c4b1598dd0"></a>
@@ -187,7 +195,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>availableDevices</b></
         </tr>
       </table>
 </div><div class="memdoc">
-<p>cancel obnoxious amount of redirection <a class="el" href="classSessionItem.html#a1bb133409ccfdd8021ebfdfc995fc8ea">SessionItem::cancel</a> calls Session::cancel calls Device::cancel on each device </p>
+<p>cancel obnoxious amount of redirection <a class="el" href="classSessionItem.html#a1bb133409ccfdd8021ebfdfc995fc8ea">SessionItem::cancel</a> calls <a class="el" href="classSession.html#aa6bf46a675f61424635ed4477060a01f" title="Cancel capture and block waiting for it to complete.">Session::cancel</a> calls Device::cancel on each device </p>
 
 <p>Definition at line <a class="el" href="SMU_8cpp_source.html#l00158">158</a> of file <a class="el" href="SMU_8cpp_source.html">SMU.cpp</a>.</p>
 
@@ -212,7 +220,7 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">void SessionItem::onAttached </td>
           <td>(</td>
-          <td class="paramtype">Device *&#160;</td>
+          <td class="paramtype"><a class="el" href="classDevice.html">Device</a> *&#160;</td>
           <td class="paramname"><em>device</em></td><td>)</td>
           <td></td>
         </tr>
@@ -239,7 +247,7 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">void SessionItem::onDetached </td>
           <td>(</td>
-          <td class="paramtype">Device *&#160;</td>
+          <td class="paramtype"><a class="el" href="classDevice.html">Device</a> *&#160;</td>
           <td class="paramname"><em>device</em></td><td>)</td>
           <td></td>
         </tr>
@@ -325,7 +333,7 @@ Here is the caller graph for this function:</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 23 2015 16:40:47 for Pixelpulse2 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 23 2015 17:08:09 for Pixelpulse2 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

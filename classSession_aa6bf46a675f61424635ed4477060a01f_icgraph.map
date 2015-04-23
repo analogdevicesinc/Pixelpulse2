@@ -1,0 +1,6 @@
+<map id="Session::cancel" name="Session::cancel">
+<area shape="rect" id="node3" href="$classSession.html#ad1316aa949962a517a4bdf3c1b6b93a7" title="internal: Called by devices on the USB thread when a device encounters an error" alt="" coords="193,5,340,35"/>
+<area shape="rect" id="node5" href="$classSessionItem.html#a858f8211c7b20ec6fa42f429098f353c" title="called at exit" alt="" coords="168,59,365,88"/>
+<area shape="rect" id="node7" href="$classSessionItem.html#a1bb133409ccfdd8021ebfdfc995fc8ea" title="SessionItem::cancel" alt="" coords="196,112,337,141"/>
+<area shape="rect" id="node9" href="$classSessionItem.html#a466a6da8e80a4a2836d9b86b7b6721df" title="SessionItem::onDetached" alt="" coords="413,112,587,141"/>
+</map>

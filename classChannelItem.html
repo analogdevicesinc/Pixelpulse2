@@ -61,6 +61,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="classes.html"><span>Data&#160;Structure&#160;Index</span></a></li>
+      <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Data&#160;Fields</span></a></li>
     </ul>
   </div>
@@ -69,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Data Structures</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Data Structures</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -90,6 +91,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">ChannelItem Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+<div class="dynheader">
+Collaboration diagram for ChannelItem:</div>
+<div class="dyncontent">
+<div class="center"><img src="classChannelItem__coll__graph.png" border="0" usemap="#ChannelItem_coll__map" alt="Collaboration graph"/></div>
+<map name="ChannelItem_coll__map" id="ChannelItem_coll__map">
+<area shape="rect" id="node2" href="classDevice.html" title="Device" alt="" coords="23,213,84,243"/><area shape="rect" id="node6" href="classSession.html" title="Session" alt="" coords="108,117,177,147"/></map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="signals"></a>
 Signals</h2></td></tr>
@@ -99,7 +107,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>modeChanged</b> (unsi
 <tr class="heading"><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0bef027b7cae557052d0ac51edf60c1e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0bef027b7cae557052d0ac51edf60c1e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classChannelItem.html#a0bef027b7cae557052d0ac51edf60c1e">ChannelItem</a> (<a class="el" href="classDeviceItem.html">DeviceItem</a> *, Device *, unsigned index)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classChannelItem.html#a0bef027b7cae557052d0ac51edf60c1e">ChannelItem</a> (<a class="el" href="classDeviceItem.html">DeviceItem</a> *, <a class="el" href="classDevice.html">Device</a> *, unsigned index)</td></tr>
 <tr class="memdesc:a0bef027b7cae557052d0ac51edf60c1e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classChannelItem.html">ChannelItem</a> constructor. <br/></td></tr>
 <tr class="memitem:ab80ad589238aba250b7194741a30e5ba"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab80ad589238aba250b7194741a30e5ba"></a>
 QQmlListProperty&lt; <a class="el" href="classSignalItem.html">SignalItem</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getSignals</b> ()</td></tr>
@@ -109,7 +117,7 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><b>getLabel</b> () co
 <tr class="heading"><td colspan="2"><h2><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:a1dc21314ce8065321805cb93b672606a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1dc21314ce8065321805cb93b672606a"></a>
-Device *const&#160;</td><td class="memItemRight" valign="bottom"><b>m_device</b></td></tr>
+<a class="el" href="classDevice.html">Device</a> *const&#160;</td><td class="memItemRight" valign="bottom"><b>m_device</b></td></tr>
 <tr class="memitem:ad401bd5b4ed7688a31cc38c75607e533"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad401bd5b4ed7688a31cc38c75607e533"></a>
 const unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>m_index</b></td></tr>
 <tr class="memitem:a21bb15166f022eda7ad3bf50fd8a4c3d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a21bb15166f022eda7ad3bf50fd8a4c3d"></a>
@@ -145,7 +153,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>SignalItem</b></td><
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Apr 23 2015 16:40:47 for Pixelpulse2 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 23 2015 17:08:09 for Pixelpulse2 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

@@ -1,4 +1,9 @@
 <map id="SignalItem" name="SignalItem">
-<area shape="rect" id="node2" href="$classSrcItem.html" title="SrcItem" alt="" coords="23,197,89,227"/>
-<area shape="rect" id="node5" href="$classChannelItem.html" title="ChannelItem" alt="" coords="8,5,104,35"/>
+<area shape="rect" id="node2" href="$classSrcItem.html" title="SrcItem" alt="" coords="118,501,185,531"/>
+<area shape="rect" id="node5" href="$classChannelItem.html" title="ChannelItem" alt="" coords="53,309,149,339"/>
+<area shape="rect" id="node7" href="$classDevice.html" title="Device" alt="" coords="69,213,130,243"/>
+<area shape="rect" id="node11" href="$classSession.html" title="Session" alt="" coords="76,117,145,147"/>
+<area shape="rect" id="node14" href="$classSignal.html" title="Signal" alt="" coords="173,309,232,339"/>
+<area shape="rect" id="node16" href="$structsl__signal__info.html" title="sl_signal_info" alt="" coords="154,213,256,243"/>
+<area shape="rect" id="node18" href="$structsl__unit.html" title="sl_unit" alt="" coords="176,117,234,147"/>
 </map>

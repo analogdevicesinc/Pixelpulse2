@@ -1,4 +1,9 @@
 <map id="SrcItem" name="SrcItem">
-<area shape="rect" id="node2" href="$classSignalItem.html" title="Abstracts over a LibSMU Signal and the BufferItem used for rendering data." alt="" coords="41,101,124,131"/>
-<area shape="rect" id="node5" href="$classChannelItem.html" title="ChannelItem" alt="" coords="124,5,220,35"/>
+<area shape="rect" id="node2" href="$classSignalItem.html" title="Abstracts over a LibSMU Signal and the BufferItem used for rendering data." alt="" coords="87,405,169,435"/>
+<area shape="rect" id="node5" href="$classChannelItem.html" title="ChannelItem" alt="" coords="124,309,220,339"/>
+<area shape="rect" id="node7" href="$classDevice.html" title="Device" alt="" coords="140,213,201,243"/>
+<area shape="rect" id="node11" href="$classSession.html" title="Session" alt="" coords="147,117,216,147"/>
+<area shape="rect" id="node14" href="$classSignal.html" title="Signal" alt="" coords="245,309,304,339"/>
+<area shape="rect" id="node16" href="$structsl__signal__info.html" title="sl_signal_info" alt="" coords="225,213,327,243"/>
+<area shape="rect" id="node18" href="$structsl__unit.html" title="sl_unit" alt="" coords="247,117,305,147"/>
 </map>

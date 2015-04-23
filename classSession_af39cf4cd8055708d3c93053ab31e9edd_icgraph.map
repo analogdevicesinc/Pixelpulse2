@@ -1,0 +1,6 @@
+<map id="Session::end" name="Session::end">
+<area shape="rect" id="node3" href="$classSession.html#ad9eccacadea5098995d429356e32e89f" title="Run the currently configured capture and wait for it to complete." alt="" coords="204,5,297,35"/>
+<area shape="rect" id="node5" href="$classSessionItem.html#a858f8211c7b20ec6fa42f429098f353c" title="called at exit" alt="" coords="152,59,349,88"/>
+<area shape="rect" id="node7" href="$classSessionItem.html#a85e81a6ebb4439a135fcfb6a0bdfbf71" title="SessionItem::onFinished" alt="" coords="168,112,333,141"/>
+<area shape="rect" id="node9" href="$classSessionItem.html#a466a6da8e80a4a2836d9b86b7b6721df" title="SessionItem::onDetached" alt="" coords="397,112,571,141"/>
+</map>

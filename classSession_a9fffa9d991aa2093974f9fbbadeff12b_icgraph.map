@@ -1,0 +1,4 @@
+<map id="Session::remove_device" name="Session::remove_device">
+<area shape="rect" id="node3" href="$classSessionItem.html#a858f8211c7b20ec6fa42f429098f353c" title="called at exit" alt="" coords="219,5,416,35"/>
+<area shape="rect" id="node5" href="$classSessionItem.html#a466a6da8e80a4a2836d9b86b7b6721df" title="SessionItem::onDetached" alt="" coords="231,59,404,88"/>
+</map>
