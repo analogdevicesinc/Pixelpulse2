@@ -1,11 +1,12 @@
 var saveState = function () {
-	var signalStates = [];
+	var signalStates = {};
 	for (var a = 0; a < deviceRepeater.count; a++){
 		var deviceItem = deviceRepeater.itemAt(a);
 		for (var b = 0; b < deviceItem.channelRepeater.count; b++){
 			var channelItem = deviceItem.channelRepeater.itemAt(b);
 			var channel = channelItem.channel;
 			for (var c = 0; c < channelItem.signalRepeater.count; c++) {
+				var label = '' + a + session.devices[a].channels[b].label +"_"+ session.devices[a].channels[b].signals[c].label;
 				var signalState = {};
 				var signalItem = channelItem.signalRepeater.itemAt(c);
 				var signal = signalItem.signal;
@@ -19,7 +20,7 @@ var saveState = function () {
 				signalState.ymin = signalItem.ymin;
 				signalState.ymax = signalItem.ymax;
 				signalState.mode = channel.mode;
-				signalStates.push(signalState);
+				signalStates[label] = signalState;
 			}
 		}
 	}
@@ -28,15 +29,15 @@ var saveState = function () {
 
 
 var restoreState = function (signalStates){
-
 	for (var a = 0; a < deviceRepeater.count; a++){
 		var deviceItem = deviceRepeater.itemAt(a);
 		for (var b = 0; b < deviceItem.channelRepeater.count; b++){
 			var channelItem = deviceItem.channelRepeater.itemAt(b);
 			var channel = channelItem.channel;
 			for (var c = 0; c < channelItem.signalRepeater.count; c++) {
+				var label = '' + a + session.devices[a].channels[b].label +"_"+ session.devices[a].channels[b].signals[c].label;
 				var signalItem = channelItem.signalRepeater.itemAt(c);
-				var signalState = signalStates[a+b+c];
+				var signalState = signalStates[label];
 				var signal = signalItem.signal;
 				channel.mode = signalState.mode;
 				signal.src.src = signalState.src;
