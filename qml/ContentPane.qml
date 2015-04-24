@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.3
 import "jsutils.js" as JSUtils
+import "sesssave.js" as StateSave
 
 ColumnLayout {
   id: cLayout
