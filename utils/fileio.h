@@ -33,6 +33,14 @@ public slots:
         return true;
     }
 
+    QString readByURI(const QUrl& source) {
+		auto path = source.toLocalFile();
+		QFile file(path);
+        file.open(QIODevice::ReadOnly | QIODevice::Text);
+		QTextStream in(&file);
+        return in.readAll();
+	}
+
 public:
     FileIO() {}
 };
