@@ -20,22 +20,7 @@ ToolbarStyle {
     sidebarVisible: false
     title: "Please enter a location to save your data."
     nameFilters: [ "CSV files (*.csv)", "All files (*)" ]
-    onAccepted: {
-        var labels = [];
-        var columns = [];
-        if (session.devices) {
-          for (var i = 0; i < session.devices.length; i++) {
-             for (var j = 0; j < session.devices[i].channels.length; j++) {
-               for (var k = 0; k < session.devices[i].channels[i].signals.length; k++) {
-                  var label = '' + i + session.devices[i].channels[j].label +"_"+ session.devices[i].channels[j].signals[k].label;
-                  labels.push(label);
-                  columns.push(session.devices[i].channels[j].signals[k].buffer.getData());
-               };
-             };
-          };
-        fileio.writeByURI(fileDialog.fileUrls[0], CSVExport.dumpsample(columns, labels));
-        };
-    }
+    onAccepted: { CSVExport.saveData();}
   }
 
   Button {
