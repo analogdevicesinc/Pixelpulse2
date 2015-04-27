@@ -6,9 +6,10 @@ import QtQuick.Controls.Styles 1.1
 
 Rectangle {
   id: signalBlock
+  property alias ymin: axes.ymin;
+  property alias ymax: axes.ymax;
   property var xaxis
   property var signal
-
   color: '#444'
 
   function updateMode() {

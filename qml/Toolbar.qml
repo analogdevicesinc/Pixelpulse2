@@ -4,6 +4,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Dialogs 1.0
 import "dataexport.js" as CSVExport
+import "sesssave.js" as StateSave
 
 ToolbarStyle {
   ExclusiveGroup {
@@ -15,27 +16,28 @@ ToolbarStyle {
   property alias contentVisible: contentVisibleItem.checked
 
   FileDialog {
-    id: fileDialog
+    id: dataDialog
     selectExisting: false
     sidebarVisible: false
     title: "Please enter a location to save your data."
     nameFilters: [ "CSV files (*.csv)", "All files (*)" ]
-    onAccepted: {
-        var labels = [];
-        var columns = [];
-        if (session.devices) {
-          for (var i = 0; i < session.devices.length; i++) {
-             for (var j = 0; j < session.devices[i].channels.length; j++) {
-               for (var k = 0; k < session.devices[i].channels[i].signals.length; k++) {
-                  var label = '' + i + session.devices[i].channels[j].label +"_"+ session.devices[i].channels[j].signals[k].label;
-                  labels.push(label);
-                  columns.push(session.devices[i].channels[j].signals[k].buffer.getData());
-               };
-             };
-          };
-        fileio.writeByURI(fileDialog.fileUrls[0], CSVExport.dumpsample(columns, labels));
-        };
-    }
+    onAccepted: { CSVExport.saveData(dataDialog.fileUrls[0]);}
+  }
+  FileDialog {
+    id: sessSaveDialog
+    selectExisting: false
+    sidebarVisible: false
+    title: "Please enter a location to save your session."
+    nameFilters: [ "JSON files (*.json)", "All files (*)" ]
+    onAccepted: { fileio.writeByURI(sessSaveDialog.fileUrls[0], JSON.stringify(StateSave.saveState(), 0, 2));}
+  }
+  FileDialog {
+    id: sessRestoreDialog
+    selectExisting: true
+    sidebarVisible: false
+    title: "Please select a session to restore."
+    nameFilters: [ "JSON files (*.json)", "All files (*)" ]
+    onAccepted: { StateSave.restoreState(JSON.parse(fileio.readByURI(sessRestoreDialog.fileUrls[0])));}
   }
 
   Button {
@@ -78,9 +80,19 @@ ToolbarStyle {
 
       MenuSeparator{}
       MenuItem {
-        id: dialogVisibleItem
+        id: dataSaveVisibleItem
         text: "Export Data"
-        onTriggered: fileDialog.visible = true
+        onTriggered: dataDialog.visible = true
+      }
+      MenuItem {
+	    id: sessionSaveVisibleItem
+        text: "Save Session"
+        onTriggered: sessSaveDialog.visible = true
+      }
+      MenuItem {
+        id: sessionRestoreVisibleItem
+        text: "Restore Session"
+        onTriggered: sessRestoreDialog.visible = true
       }
       MenuSeparator{}
       MenuItem { text: "Exit"; onTriggered: Qt.quit() }

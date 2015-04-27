@@ -2,6 +2,7 @@ import QtQuick 2.1
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
+import "sesssave.js" as StateSave
 
 ApplicationWindow {
 	width: 1024
@@ -11,13 +12,14 @@ ApplicationWindow {
 	property var toolbarHeight: 56
 	id: window
 
-    property alias repeatedSweep: toolbar.repeatedSweep
+	property alias repeatedSweep: toolbar.repeatedSweep
 	property alias plotsVisible: toolbar.plotsVisible
 	property alias contentVisible: toolbar.contentVisible
+	property var lastConfig: {}
 
 	Controller {
 		id: controller
-        continuous: !repeatedSweep
+		continuous: !repeatedSweep
 	}
 
 	Rectangle {
@@ -80,11 +82,17 @@ ApplicationWindow {
 						spacing: 0
 
 						Repeater {
+							id: deviceRepeater
 							model: session.devices
 							DeviceRow {
 								Layout.fillHeight: true
 								Layout.fillWidth: true
 								device: model
+							}
+							onItemAdded: {
+								if ((Object.keys(lastConfig).length) > 0) {
+									StateSave.restoreState(lastConfig);
+								}
 							}
 						}
 					}
