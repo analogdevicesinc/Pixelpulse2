@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import "sesssave.js" as StateSave
 
 Item {
   id: controlItem
@@ -16,6 +17,9 @@ Item {
     session.sampleRate = sampleRate
     session.sampleCount = sampleCount
     session.start(continuous);
+    if ( session.devices.length > 0 ) {
+      lastConfig = StateSave.saveState();
+    }
   }
 
   Timer {
