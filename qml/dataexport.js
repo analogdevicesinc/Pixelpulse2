@@ -22,7 +22,7 @@ var dumpSamples = function (columns, labels) {
    return csvContent
 }
 
-var saveData = function () {
+var saveData = function (target) {
     var labels = [];
     var columns = [];
     if (session.devices) {
@@ -35,7 +35,7 @@ var saveData = function () {
                 };
             };
         };
-    fileio.writeByURI(fileDialog.fileUrls[0], dumpSamples(columns, labels));
+    fileio.writeByURI(target, dumpSamples(columns, labels));
     };
 };
 
