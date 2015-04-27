@@ -11,6 +11,7 @@
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::addLibraryPath("./");
     init_signal_handlers(argv[0]);
 
     QGuiApplication app(argc, argv);
