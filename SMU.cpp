@@ -108,6 +108,7 @@ void SessionItem::start(bool continuous)
                         dev->m_device->unlock();
                     });
                 } else {
+                    sig->m_buffer->startSweep();
                     sig->m_signal->measure_buffer(sig->m_buffer->data(), m_sample_count);
                 }
                 sig->m_src->update();
