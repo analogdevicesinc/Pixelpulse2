@@ -8,6 +8,7 @@ Item {
   property real sampleRate: session.devices.length ? session.devices[0].DefaultRate : 0
   property real sampleTime: 0.1
   readonly property int sampleCount: sampleTime * sampleRate
+  property bool restartAfterStop: false
 
   function trigger() {
     session.sampleRate = sampleRate
@@ -36,9 +37,21 @@ Item {
     }
   }
 
+  onContinuousChanged: {
+    // Restart the session so the new sampling mode takes effect
+    restartAfterStop = true;
+    session.cancel();
+  }
+
   Connections {
     target: session
     onFinished: {
+      if (enabled && restartAfterStop) {
+        restartAfterStop = false;
+        timer.start()
+        return;
+      }
+
       if (!continuous && repeat && enabled) {
         timer.start();
       }
