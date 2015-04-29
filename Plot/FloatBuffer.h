@@ -70,12 +70,14 @@ public:
 		}
 		return qData;
 	}
-			
 
-    void setValid(unsigned start, unsigned length) {
-        m_start = start;
-        m_length = length;
-        dataChanged();
+    void startSweep() {
+        // When switching from continuous to repeated-sweep mode, stop acting like a ring buffer
+        if (m_start != 0) {
+            m_start = 0;
+            m_length = 0;
+            dataChanged();
+        }
     }
 
     void sweepProgress(unsigned sample) {
