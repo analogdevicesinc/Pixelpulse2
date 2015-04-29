@@ -184,6 +184,13 @@ void SessionItem::onFinished()
 /// progress handler
 /// called over Queue, updates BufferItem with new data as appropriate
 void SessionItem::onProgress(sample_t sample) {
+
+    if (!m_continuous && sample > m_sample_count) {
+        // libsmu rounds up to the packet size and can report a sample count higher than requested,
+        // but the buffers only deal with requested samples.
+        sample = m_sample_count;
+    }
+
     for (auto dev: m_devices) {
         for (auto chan: dev->m_channels) {
             for (auto sig: chan->m_signals) {
