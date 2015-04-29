@@ -153,7 +153,7 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
     } else {
         m_ybuffer->toVertexData(m_xmin, m_xmax, verticies, n_points);
     }
-    node->markDirty(QSGNode::DirtyGeometry);
+    node->markDirty(QSGNode::DirtyGeometry | QSGNode::DirtyMaterial);
 
     return node;
 }
