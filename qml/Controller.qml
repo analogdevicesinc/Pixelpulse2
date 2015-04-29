@@ -2,11 +2,9 @@ import QtQuick 2.0
 import "sesssave.js" as StateSave
 
 Item {
-  id: controlItem
   property bool enabled: false
   property bool continuous: false
   property bool repeat: true
-  property bool changingMode: false
   property real sampleRate: session.devices.length ? session.devices[0].DefaultRate : 0
   property real sampleTime: 0.1
   readonly property int sampleCount: sampleTime * sampleRate
@@ -41,26 +39,11 @@ Item {
   Connections {
     target: session
     onFinished: {
-      if (!continuous) {
-        if (repeat) {
-            if (enabled) {
-                timer.start();
-            } else {
-                enabled = false;
-            }
-        }
-      }
-      else {
-        if (changingMode) {
-            trigger();
-            changingMode = false;
-            console.log("changing mode");
-        }
-        else {
-          enabled = false
-        }
+      if (!continuous && repeat && enabled) {
+        timer.start();
       }
     }
+
     onDetached: {
       enabled = false;
       continuous = false;
