@@ -45,7 +45,7 @@ To build / run on a generic POSIX platform
     cd pixelpulse2
     mkdir build
     cd build
-    qmake ..
+    qmake -qt=qt5 ..
     make
 
 To build / install for Debian, from the `pixelpulse2` directory:
