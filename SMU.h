@@ -34,6 +34,7 @@ public:
     int getAvailableDevices() { return m_session->m_available_devices.size(); }
     int getActiveDevices() { return m_session->m_devices.size(); }
 
+    Q_INVOKABLE void updateMeasurements();
 
     bool getActive() { return m_active; }
     QQmlListProperty<DeviceItem> getDevices() { return QQmlListProperty<DeviceItem>(this, m_devices); }
@@ -165,7 +166,8 @@ protected:
     friend class SessionItem;
     friend class SrcItem;
 
-    void updateMeasurement();
+    void updateMeasurementMean();
+    void updateMeasurementLatest();
 };
 
 /// Should be used for handling mode switches in continuous mode.

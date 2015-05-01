@@ -175,7 +175,7 @@ void SessionItem::onFinished()
             for (auto sig: chan->m_signals) {
                 disconnect(sig->m_src, &SrcItem::changed, 0, 0);
                 if (!m_continuous) {
-                    sig->updateMeasurement();
+                    sig->updateMeasurementMean();
                 }
             }
         }
@@ -200,6 +200,16 @@ void SessionItem::onProgress(sample_t sample) {
                 } else {
                     sig->m_buffer->sweepProgress(sample);
                 }
+            }
+        }
+    }
+}
+
+void SessionItem::updateMeasurements() {
+    for (auto dev: m_devices) {
+        for (auto chan: dev->m_channels) {
+            for (auto sig: chan->m_signals) {
+                sig->updateMeasurementLatest();
             }
         }
     }
@@ -251,8 +261,13 @@ void SignalItem::onParentModeChanged(int) {
 }
 
 /// updates label in constant src mode
-void SignalItem::updateMeasurement(){
+void SignalItem::updateMeasurementMean(){
     m_measurement = m_buffer->mean();
+    measurementChanged(m_measurement);
+}
+
+void SignalItem::updateMeasurementLatest(){
+    m_measurement = m_signal->measure_instantaneous();
     measurementChanged(m_measurement);
 }
 

@@ -37,6 +37,14 @@ Item {
     }
   }
 
+  Timer {
+    id: updateMeasurementsTimer
+    interval: 50
+    repeat: true
+    running: enabled && continuous
+    onTriggered: session.updateMeasurements()
+  }
+
   onContinuousChanged: {
     // Restart the session so the new sampling mode takes effect
     restartAfterStop = true;
