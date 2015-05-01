@@ -14,7 +14,8 @@ int main(int argc, char *argv[])
     QCoreApplication::addLibraryPath("./");
 
     // Prevent config being written to ~/.config/Unknown Organization/pixelpulse2.conf
-    QCoreApplication::setOrganizationName("Pixelpulse2");
+    QCoreApplication::setOrganizationName("Analog Devices, Inc.");
+    QCoreApplication::setApplicationName("Pixelpulse2");
 
     init_signal_handlers(argv[0]);
 
