@@ -90,8 +90,10 @@ ApplicationWindow {
 								device: model
 							}
 							onItemAdded: {
-								if ((Object.keys(lastConfig).length) > 0) {
-									StateSave.restoreState(lastConfig);
+								if ( lastConfig ) {
+									if ((Object.keys(lastConfig).length) > 0) {
+										StateSave.restoreState(lastConfig);
+									}
 								}
 							}
 						}
