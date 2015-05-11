@@ -70,4 +70,24 @@ Item {
       continuous = false;
     }
   }
+
+  Repeater {
+    model: session.devices
+    Item {
+      Repeater {
+        model: modelData.channels
+        Item {
+          Connections {
+            target: modelData
+            onModeChanged: {
+              if (continuous) {
+                  restartAfterStop = true;
+                  session.cancel();
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
