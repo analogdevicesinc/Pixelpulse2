@@ -59,23 +59,28 @@ To build / run on Ubuntu 15.04 [adapted from user shabaz's blog post on Farnell]
  * Please note that you make encounter issues if you are running a version of Ubuntu lower than 15.04, because the version of QT in the repositories will likely be less than 5.4 (this also applies if you are running a Linux distribution that uses an older version of Ubuntu, for example Linux Mint 17.1, which uses Ubuntu 14.04)
 
 * Get everything ready
+
     sudo apt-get update
 
 * Install libusb and libudev
+
    sudo apt-get install libusb-1.0-0-dev
    sudo apt-get install libudev-dev
 
 * Download and install Qt5.4
+
     wget http://qtmirror.ics.com/pub/qtproject/development_releases/qt/5.4/5.4.0-rc/qt-opensource-linux-x64-5.4.0-rc.run
     chmod 755 qt-o*
     ./qt-opensource-linux-x64-5.4.0-rc.run
     
 * Install a couple extra Qt modules
+
     sudo apt-get install qtdeclarative5-controls-plugin
     sudo apt-get install qtdeclarative5-quicklayouts-plugin
     sudo apt-get install qtdeclarative5-dev
 
 * Change your default configuration file
+
     sudo su
     cd /usr/lib/x86_64-linux-gnu/qt-default/qtchooser
     ls -l
@@ -85,6 +90,7 @@ To build / run on Ubuntu 15.04 [adapted from user shabaz's blog post on Farnell]
     exit
 
 * Make a new folder, clone the pixelpulse library into it from git, and build it!
+
     mkdir development
     cd development
     git clone --recursive https://github.com/signalspec/pixelpulse2
@@ -97,8 +103,11 @@ To build / run on Ubuntu 15.04 [adapted from user shabaz's blog post on Farnell]
 * After it is finished building, pixelpulse should be ready to use with your M1K
  * Make sure your M1K is plugged into your computer.  The onboard LED should light up when it is connected.  You can double-check by typing lsusb.  You should see something along the lines of Bus 001 Device 002: ID 064b:784c Analog Devices, Inc. (White Mountain DSP)
  * You should be ready to launch pixelpulse. First, go to the directory it was built in:
+
     ~/development/pixelpulse2/build
+
  * Run pixelpulse as root
+
     sudo ./pixelpulse2
 
 
