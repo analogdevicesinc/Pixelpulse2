@@ -116,7 +116,7 @@ To build / run on Ubuntu 15.04, [adapted from user shabaz's blog post on Farnell
  * You should be ready to launch pixelpulse. First, go to the directory it was built in:
     
     ```bash
-    ~/development/pixelpulse2/build
+    cd ~/development/pixelpulse2/build
     ```
 
  * Run pixelpulse as root
