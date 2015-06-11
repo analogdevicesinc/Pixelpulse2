@@ -41,24 +41,20 @@ If you have not built packages from source before, this is ill-advised.
 
 To build / run on a generic POSIX platform
 
-    ```bash
     git clone --recursive https://github.com/signalspec/pixelpulse2
     cd pixelpulse2
     mkdir build
     cd build
     qmake -qt=qt5 ..
     make
-    ```
 
 To build / install for Debian, from the `pixelpulse2` directory:
-    ```bash
 
     dh_make -p pixelpulse2_0.8 -s -c blank --createorig
     dpkg-buildpackage
     sudo dpkg -i ../pixelpulse2_0.1-1_i386.deb
-    ```
 
-To build / run on Ubuntu 15.04 [adapted from user shabaz's blog post on Farnell](http://www.element14.com/community/groups/test-and-measurement/blog/2015/02/14/getting-started-with-the-active-learning-module-adalm1000).  
+To build / run on Ubuntu 15.04, [adapted from user shabaz's blog post on Farnell](http://www.element14.com/community/groups/test-and-measurement/blog/2015/02/14/getting-started-with-the-active-learning-module-adalm1000).  
 
  * Please note that you make encounter issues if you are running a version of Ubuntu lower than 15.04, because the version of QT in the repositories will likely be less than 5.4 (this also applies if you are running a Linux distribution that uses an older version of Ubuntu, for example Linux Mint 17.1, which uses Ubuntu 14.04)
 
