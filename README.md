@@ -54,11 +54,11 @@ To build / install for Debian, from the `pixelpulse2` directory:
     dpkg-buildpackage
     sudo dpkg -i ../pixelpulse2_0.1-1_i386.deb
 
-To build / run on Ubuntu 15.04, [adapted from user shabaz's blog post on Farnell](http://www.element14.com/community/groups/test-and-measurement/blog/2015/02/14/getting-started-with-the-active-learning-module-adalm1000).  
+To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com/community/groups/test-and-measurement/blog/2015/02/14/getting-started-with-the-active-learning-module-adalm1000).  
 
- * Please note that you make encounter issues if you are running a version of Ubuntu lower than 15.04, because the version of QT in the repositories will likely be less than 5.4 (this also applies if you are running a Linux distribution that uses an older version of Ubuntu, for example Linux Mint 17.1, which uses Ubuntu 14.04)
+ * Please note that you make encounter issues if you are running a version of Ubuntu lower than 15.04, because the version of QT in the repositories will likely be less than 5.4 (this also applies if you are running a Linux distribution that uses an older version of Ubuntu, for example Linux Mint 17.1, which uses Ubuntu 14.04.)
 
-* Get everything ready
+* Get ready
 
     ```bash
     sudo apt-get update
@@ -111,15 +111,15 @@ To build / run on Ubuntu 15.04, [adapted from user shabaz's blog post on Farnell
     make
     ```
 
-* After it is finished building, pixelpulse should be ready to use with your M1K
- * Make sure your M1K is plugged into your computer.  The onboard LED should light up when it is connected.  You can double-check by typing lsusb.  You should see something along the lines of Bus 001 Device 002: ID 064b:784c Analog Devices, Inc. (White Mountain DSP)
- * You should be ready to launch pixelpulse. First, go to the directory it was built in:
+* After it is finished building, Pixelpulse2 should be ready to use with your M1K
+ * Make sure your M1K is plugged into your computer.  The onboard LED should light up when it is connected.  You can double-check by typing ```lsusb```.  You should see something along the lines of ```ID 064b:784c Analog Devices, Inc. (White Mountain DSP)```
+ * You should be ready to launch Pixelpulse2. First, go to the directory it was built in:
     
     ```bash
     cd ~/development/pixelpulse2/build
     ```
 
- * Run pixelpulse as root
+ * Run Pixelpulse2 as root
 
     ```bash
     sudo ./pixelpulse2
