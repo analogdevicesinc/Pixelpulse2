@@ -54,3 +54,75 @@ To build / install for Debian, from the `pixelpulse2` directory:
     dpkg-buildpackage
     sudo dpkg -i ../pixelpulse2_0.1-1_i386.deb
 
+To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com/community/groups/test-and-measurement/blog/2015/02/14/getting-started-with-the-active-learning-module-adalm1000).  
+
+ * Please note that you make encounter issues if you are running a version of Ubuntu lower than 15.04, because the version of QT in the repositories will likely be less than 5.4 (this also applies if you are running a Linux distribution that uses an older version of Ubuntu, for example Linux Mint 17.1, which uses Ubuntu 14.04.)
+
+* Get ready
+
+    ```bash
+    sudo apt-get update
+    ```
+
+* Install libusb and libudev
+
+    ```bash
+   sudo apt-get install libusb-1.0-0-dev
+   sudo apt-get install libudev-dev
+    ```
+
+* Download and install Qt5.4
+
+    ```bash
+    wget http://qtmirror.ics.com/pub/qtproject/development_releases/qt/5.4/5.4.0-rc/qt-opensource-linux-x64-5.4.0-rc.run
+    chmod 755 qt-o*
+    ./qt-opensource-linux-x64-5.4.0-rc.run
+    ```
+    
+* Install a couple extra Qt modules
+    ```bash
+    sudo apt-get install qtdeclarative5-controls-plugin
+    sudo apt-get install qtdeclarative5-quicklayouts-plugin
+    sudo apt-get install qtdeclarative5-dev
+    ```
+
+* Change your default configuration file
+
+    ```bash
+    sudo su
+    cd /usr/lib/x86_64-linux-gnu/qt-default/qtchooser
+    ls -l
+    rm default.conf
+    ln -s ../../../../share/qtchooser/qt5-x86_64-linux-gnu.conf default.conf
+    ls –l
+    exit
+    ```
+
+* Make a new folder, clone the pixelpulse library into it from git, and build it!
+
+    ```bash
+    mkdir development
+    cd development
+    git clone --recursive https://github.com/signalspec/pixelpulse2
+    cd pixelpulse2
+    mkdir build
+    cd build
+    qmake ..
+    make
+    ```
+
+* After it is finished building, Pixelpulse2 should be ready to use with your M1K
+ * Make sure your M1K is plugged into your computer.  The onboard LED should light up when it is connected.  You can double-check by typing ```lsusb```.  You should see something along the lines of ```ID 064b:784c Analog Devices, Inc. (White Mountain DSP)```
+ * You should be ready to launch Pixelpulse2. First, go to the directory it was built in:
+    
+    ```bash
+    cd ~/development/pixelpulse2/build
+    ```
+
+ * Run Pixelpulse2 as root
+
+    ```bash
+    sudo ./pixelpulse2
+    ```
+
+
