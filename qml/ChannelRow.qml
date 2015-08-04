@@ -31,8 +31,10 @@ Rectangle {
 
     function updateMode() {
        var chIdx = {A: 1, B: 2}[channel.label];
-       xyPane.children[2+chIdx].ysignal = (channel.mode == 1) ? xyPane.children[2+chIdx].isignal : xyPane.children[2+chIdx].vsignal;
-       xyPane.children[2+chIdx].xsignal = (channel.mode == 1) ? xyPane.children[2+chIdx].vsignal : xyPane.children[2+chIdx].isignal;
+       var offs = 1 + deviceRepeater.count + parent.parent.parent.currentIndex * 2;
+
+       xyPane.children[offs+chIdx].ysignal = (channel.mode == 1) ? xyPane.children[offs+chIdx].isignal : xyPane.children[offs+chIdx].vsignal;
+       xyPane.children[offs+chIdx].xsignal = (channel.mode == 1) ? xyPane.children[offs+chIdx].vsignal : xyPane.children[offs+chIdx].isignal;
     }
 
     menu: Menu {

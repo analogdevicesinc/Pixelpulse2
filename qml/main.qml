@@ -88,6 +88,7 @@ ApplicationWindow {
 								Layout.fillHeight: true
 								Layout.fillWidth: true
 								device: model
+								currentIndex: index
 							}
 							onItemAdded: {
 								if ( lastConfig ) {

@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.0
 Rectangle {
   property var device
   property alias channelRepeater: channelRepeater
+  property var currentIndex
   color: '#222'
 
   Text {
