@@ -5,7 +5,7 @@ before_install:
 - brew update 2>&1 > /dev/null
 - brew install --build-from-source libusb 2>&1 > /dev/null
 - brew install qt5 2>&1 > /dev/null
-- brew linkapps qt5
+- brew link qt5 --force
 before_script: /usr/local/opt/qt5/bin/qmake
 script: 
 - make
