@@ -1,4 +1,4 @@
-os: unstable
+os: Windows Server 2012 R2
 
 platform:
  - x86
@@ -25,10 +25,11 @@ build_script:
 after_build:
 - ps: |
     If (!(Test-Path -Path "distrib.zip")) {
-      windeployqt --qmldir qml release\pixelpulse2.exe --dir distrib --compiler-runtime
+      windeployqt --qmldir qml release\pixelpulse2.exe --dir distrib
       cp C:\OpenSSL-Win32\libeay32.dll distrib
       cp C:\OpenSSL-Win32\libssl32.dll distrib
       cp C:\OpenSSL-Win32\ssleay32.dll distrib
+      cp C:\Windows\System32\msvcr120.dll distrib
       7z a -y distrib.zip distrib
     }
     appveyor PushArtifact release\pixelpulse2.exe
