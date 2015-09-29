@@ -9,8 +9,6 @@ install:
   - ps: (new-object System.Net.WebClient).Downloadfile("http://sourceforge.net/projects/mingw-w64/files/External%20binary%20packages%20%28Win64%20hosted%29/MSYS%20%2832-bit%29/MSYS-20111123.zip", "c:\msys.zip")
   - 7z x -y "c:\msys.zip" -o"C:\" > nul
   - set QTDIR=C:\Qt\5.4\mingw491_32
-  - dir C:\Qt
-#  - '%QTDIR%\bin\qtenv2.bat'
   - set PATH=C:\Program Files (x86)\MSBuild\12.0\bin\;C:\mingw32\bin;C:\msys\bin\;%QTDIR%\bin;%PATH%
   - ps: (new-object System.Net.WebClient).Downloadfile("http://itdaniher.com/static/libusb-1.0-hp.7z", "c:\libusb.7z")
   - 7z x -y "c:\libusb.7z" -o"C:\libusb" > nul
@@ -30,6 +28,7 @@ after_build:
       cp C:\OpenSSL-Win32\libssl32.dll distrib
       cp C:\OpenSSL-Win32\ssleay32.dll distrib
       cp C:\Windows\System32\msvcr120.dll distrib
+      cp C:\Windows\System32\msvcp120.dll distrib
       7z a -y distrib.zip distrib
     }
     appveyor PushArtifact release\pixelpulse2.exe
