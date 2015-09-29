@@ -11,7 +11,7 @@ script:
 - make
 - /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -always-overwrite -verbose=2 -qmldir=qml
 - curl -o /tmp/macdeployqtfix.py https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
-- python /tmp/macdeployqtfix.py /Volumes/pixelpulse2/pixelpulse2.app/Contents/MacOS/pixelpulse2 /usr/local/Cellar/qt5/5.5.0_1/
+- python /tmp/macdeployqtfix.py ./pixelpulse2.app/Contents/MacOS/pixelpulse2 /usr/local/Cellar/qt5/5.5.0_1/
 - /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -no-plugins
 - mkdir deploy
 - cp pixelpulse2.dmg deploy
