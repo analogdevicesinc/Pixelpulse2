@@ -1,10 +1,10 @@
-os: unstable
+os: Windows Server 2012 R2
 
 platform:
  - x86
 
 install:
-  - ps: (new-object System.Net.WebClient).Downloadfile("https://downloads.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/4.9.2/threads-posix/dwarf/i686-4.9.2-release-posix-dwarf-rt_v3-rev0.7z", "c:\mingw.7z")
+  - ps: (new-object System.Net.WebClient).Downloadfile("http://iweb.dl.sourceforge.net/project/mingw-w64/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/5.2.0/threads-posix/dwarf/i686-5.2.0-release-posix-dwarf-rt_v4-rev0.7z", "c:\mingw.7z")
   - 7z x -y "c:\mingw.7z" -o"C:\" > nul
   - ps: (new-object System.Net.WebClient).Downloadfile("http://sourceforge.net/projects/mingw-w64/files/External%20binary%20packages%20%28Win64%20hosted%29/MSYS%20%2832-bit%29/MSYS-20111123.zip", "c:\msys.zip")
   - 7z x -y "c:\msys.zip" -o"C:\" > nul
@@ -12,6 +12,8 @@ install:
   - set PATH=C:\Program Files (x86)\MSBuild\12.0\bin\;C:\mingw32\bin;C:\msys\bin\;%QTDIR%\bin;%PATH%
   - ps: (new-object System.Net.WebClient).Downloadfile("http://itdaniher.com/static/libusb-1.0-hp.7z", "c:\libusb.7z")
   - 7z x -y "c:\libusb.7z" -o"C:\libusb" > nul
+  - appveyor DownloadFile https://slproweb.com/download/Win32OpenSSL_Light-1_0_2d.exe
+  - Win32OpenSSL_Light-1_0_2d.exe /silent /verysilent /sp- /suppressmsgboxes
 
 build_script:
   - git submodule update --init --recursive
@@ -22,12 +24,17 @@ after_build:
 - ps: |
     If (!(Test-Path -Path "distrib.zip")) {
       windeployqt --qmldir qml release\pixelpulse2.exe --dir distrib
+      cp C:\OpenSSL-Win32\libeay32.dll distrib
+      cp C:\OpenSSL-Win32\libssl32.dll distrib
+      cp C:\OpenSSL-Win32\ssleay32.dll distrib
+      cp C:\Windows\System32\msvcr120.dll distrib
+      cp C:\Windows\System32\msvcp120.dll distrib
       7z a -y distrib.zip distrib
     }
     appveyor PushArtifact release\pixelpulse2.exe
     appveyor PushArtifact distrib.zip
 
 cache:
- - distrib.zip -> pixelpulse2.pro
- - c:\mingw.7z -> pixelpulse2.pro
- - c:\msys.zip -> pixelpulse2.pro
+ - distrib.zip -> appveyor.yml
+ - c:\mingw.7z -> appveyor.yml
+ - c:\msys.zip -> appveyor.yml
