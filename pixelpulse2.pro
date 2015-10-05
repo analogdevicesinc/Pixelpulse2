@@ -61,7 +61,7 @@ HEADERS += \
     utils/fileio.h
 
 win32:debug {
-	CONFIG += console
+#	CONFIG += console
 	LIBS += -limagehlp -ldbghelp
 }
 
