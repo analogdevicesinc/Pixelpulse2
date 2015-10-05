@@ -58,7 +58,8 @@ HEADERS += \
     libsmu/libsmu.hpp \
     libsmu/device_cee.hpp \
     libsmu/internal.hpp \
-    utils/fileio.h
+    utils/fileio.h \
+    utils/bossac_wrap.h
 
 win32:debug {
 #	CONFIG += console
