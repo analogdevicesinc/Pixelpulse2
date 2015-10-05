@@ -2,14 +2,17 @@ os: osx
 osx_image: xcode61
 language: objective-c
 before_install:
-- brew update
-- brew install --build-from-source libusb
-- brew install qt5
-- brew linkapps qt5
+- brew update 2>&1 > /dev/null
+- brew install --build-from-source libusb 2>&1 > /dev/null
+- brew install qt5 2>&1 > /dev/null
+- brew link qt5 --force
 before_script: /usr/local/opt/qt5/bin/qmake
 script: 
 - make
-- /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -always-overwrite -verbose=2 -qmldir=qml
+- /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -always-overwrite -verbose=2 -qmldir=qml
+- curl -o /tmp/macdeployqtfix.py https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
+- python /tmp/macdeployqtfix.py ./pixelpulse2.app/Contents/MacOS/pixelpulse2 /usr/local/Cellar/qt5/5.5.0_1/
+- /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -no-plugins
 - mkdir deploy
 - cp pixelpulse2.dmg deploy
 deploy:
