@@ -25,7 +25,7 @@ var dumpSamples = function (columns, labels) {
 var saveData = function (target) {
     var labels = [];
     var columns = [];
-    if (session.devices) {
+    if (session.devices.length) {
         for (var i = 0; i < session.devices.length; i++) {
             for (var j = 0; j < session.devices[i].channels.length; j++) {
                 for (var k = 0; k < session.devices[i].channels[i].signals.length; k++) {
