@@ -7,7 +7,7 @@ before_install:
 - brew install qt5 2>&1 > /dev/null
 - brew link qt5 --force
 before_script: /usr/local/opt/qt5/bin/qmake
-script: 
+script:
 - make
 - /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -always-overwrite -verbose=2 -qmldir=qml
 - curl -o /tmp/macdeployqtfix.py https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
@@ -17,9 +17,9 @@ script:
 - cp pixelpulse2.dmg deploy
 deploy:
   provider: s3
-  access_key_id: AKIAIQOIHEBDCDW7SGFA
+  access_key_id: AKIAJIUMJWTHBLSLXXPA
   secret_access_key:
-    secure: IsTspMVYrpXM7ZdETjq+2gHXixQU8NuvVxRXEJuYQgH19FJpWots+jnCufcAUramn32/ISPMCzqtRAHCsG5AicftolruHlrQlFxuQKLK6jGoEliv+1vHsymgTYA7ZmM1CebVxW2mNYPs1oSg9wEeCznpwSwhuWRnuBd2YHvFSWs=
+    secure: OLYC1jXlh0sO+4rCJFci6AnsMCl4BQpiUCC6ndExCpRdJdHeHa7AmK7VqYEWp2esD+4oh+aq+wBKA7ZpKzWIbpDffvCFfGvph8nCnUhXpfy5bRG2nsKU4NbcwYy8vd+xzY/EY5neTqWwMbbsL7L+baqs4GGv9mHzKRhCPycOW+c=
   bucket: pixelpulse2nightly
   skip_cleanup: true
   local_dir: deploy
