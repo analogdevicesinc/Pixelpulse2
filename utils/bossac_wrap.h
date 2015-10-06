@@ -17,8 +17,10 @@ public slots:
         return "bossac";
     #elif defined(Q_OS_WIN32)
         return "bossac.exe";
+    #elif defined(Q_OS_MAC)
+        return "bossac";
     #else
-    #error "We don't support that version yet..."
+        #error "We don't support this platform yet."
     #endif
     }
 
