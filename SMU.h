@@ -2,6 +2,7 @@
 #include <QtQuick/QQuickItem>
 #include "libsmu/libsmu.hpp"
 #include <memory>
+#include "frontendsetup.h"
 
 class SessionItem;
 class DeviceItem;
@@ -40,7 +41,7 @@ public:
     QQmlListProperty<DeviceItem> getDevices() { return QQmlListProperty<DeviceItem>(this, m_devices); }
 
 signals:
-    void devicesChanged();
+    void devicesChanged(QList<DeviceItem *>);
     void activeChanged();
     void sampleRateChanged();
     void sampleCountChanged();
@@ -62,6 +63,8 @@ protected:
     unsigned m_sample_rate;
     unsigned m_sample_count;
     QList<DeviceItem *> m_devices;
+
+friend class FrontendSetup;
 };
 
 
@@ -78,6 +81,7 @@ class DeviceItem : public QObject {
 public:
     DeviceItem(SessionItem*, Device*);
     QQmlListProperty<ChannelItem> getChannels() { return QQmlListProperty<ChannelItem>(this, m_channels); }
+    QList<ChannelItem*> getChannelList() { return m_channels; }
     QString getLabel() { return QString(m_device->info()->label); }
     QString getFWVer() { return QString(m_device->fwver()); }
     QString getHWVer() { return QString(m_device->hwver()); }
@@ -100,6 +104,7 @@ class ChannelItem : public QObject {
 public:
     ChannelItem(DeviceItem*, Device*, unsigned index);
     QQmlListProperty<SignalItem> getSignals() { return QQmlListProperty<SignalItem>(this, m_signals); }
+    QList<SignalItem*> getSignalList() { return m_signals; }
     QString getLabel() const { return QString(m_device->channel_info(m_index)->label); }
 
 signals:

@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     Plot/FloatBuffer.cpp \
     libsmu/device_m1000.cpp \
     libsmu/session.cpp \
-    libsmu/device_cee.cpp
+    libsmu/device_cee.cpp \
+    frontendsetup.cpp
 
 RESOURCES += qml.qrc
 
@@ -59,7 +60,8 @@ HEADERS += \
     libsmu/libsmu.hpp \
     libsmu/device_cee.hpp \
     libsmu/internal.hpp \
-    utils/fileio.h
+    utils/fileio.h \
+    frontendsetup.h
 
 win32:debug {
 #	CONFIG += console

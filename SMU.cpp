@@ -58,7 +58,7 @@ void SessionItem::openAllDevices()
 		auto dev = m_session->add_device(&*i);
         m_devices.append(new DeviceItem(this, dev));
 	}
-    devicesChanged();
+    devicesChanged(m_devices);
 }
 
 /// called at exit
@@ -69,7 +69,7 @@ void SessionItem::closeAllDevices()
         m_session->end();
         QList<DeviceItem *> devices;
         m_devices.swap(devices);
-        devicesChanged();
+        devicesChanged(m_devices);
 
         for (auto i: devices) {
             m_session->remove_device(i->m_device);
@@ -128,7 +128,7 @@ void SessionItem::onAttached(Device *device)
     auto dev = m_session->add_device(device);
     Q_UNUSED(dev);
     m_devices.append(new DeviceItem(this, device));
-    devicesChanged();
+    devicesChanged(m_devices);
 }
 
 /// handles hotplug detach condition
@@ -151,7 +151,7 @@ void SessionItem::onDetached(Device* device){
     }
     // remove from list of available devices
     m_session->destroy_available(device);
-    devicesChanged();
+    devicesChanged(m_devices);
 }
 
 /// cancel obnoxious amount of redirection
