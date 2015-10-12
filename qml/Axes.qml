@@ -1,13 +1,10 @@
 import QtQuick 2.1
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
+import "axesutils.js" as AxesUtils
 
 Item {
   id: axes
-
-  property bool xbottom: true
-  property bool yleft: true
-  property bool yright: true
 
   property real xmin: 0
   property real xmax: 1
@@ -15,33 +12,18 @@ Item {
   property real ymin: 0
   property real ymax: 1
 
-  property real textSpacing: 12
-
   property int xgridticks: width  / 12
   property int ygridticks: height / 12
 
   property var gridColor: '#fff'
-  property var textColor: '#fff'
-  property var textSize: 14
 
-  function step(min, max, count) {
-    // Inspired by d3.js
-    var span = max - min;
-    var step = Math.pow(10, Math.floor(Math.log(span / count) / Math.LN10));
-    var err = count / span * step;
+  property int zHorizontalGrid: 0
+  property int zVerticalGrid: 0
 
-	  // Filter ticks to get closer to the desired count.
-	       if (err <= .35) step *= 10
-	  else if (err <= .75) step *= 5
-	  else if (err <= 1.0) step *= 2
-
-    return step
-  }
-
-  property real xstep: step(xmin, xmax, xgridticks)
+  property real xstep: AxesUtils.step(xmin, xmax, xgridticks)
   property real xstart: Math.ceil(xmin / xstep)
 
-  property real ystep: step(ymin, ymax, ygridticks)
+  property real ystep: AxesUtils.step(ymin, ymax, ygridticks)
   property real ystart: Math.ceil(ymin / ystep)
 
   property real yscale: height / (ymax - ymin)
@@ -62,31 +44,10 @@ Item {
       visible: yval <= ymax
       x: 0
       y: yToPx(yval)
+      z: zHorizontalGrid
       width: axes.width
       height: 1
       color: gridColor
-
-      Text {
-        visible: yleft
-        anchors.right: parent.left
-        anchors.rightMargin: textSpacing*2
-        anchors.leftMargin: textSpacing
-        anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: textSize
-        color: textColor
-        text: yval
-      }
-
-      Text {
-        visible: yright
-        anchors.left: parent.right
-        anchors.rightMargin: textSpacing*2
-        anchors.leftMargin: textSpacing
-        anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: textSize
-        color: textColor
-        text: yval
-      }
     }
   }
 
@@ -98,21 +59,10 @@ Item {
       visible: xval <= xmax
       x: xToPx(xval)
       y: 0
+      z: zVerticalGrid
       width: 1
       height: axes.height
       color: gridColor
-
-      Text {
-        visible: xbottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.bottom
-        anchors.bottomMargin: textSpacing*2
-        anchors.topMargin: textSpacing
-        font.pixelSize: textSize
-        color: textColor
-        text: xval
-        rotation: -90
-      }
     }
   }
 }

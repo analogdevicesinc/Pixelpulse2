@@ -10,6 +10,8 @@ Rectangle {
   property alias ymax: axes.ymax;
   property var xaxis
   property var signal
+  property int textSpacing: 18
+  property int vertScaleWidth: 2 * textSpacing
   color: '#444'
 
   function updateMode() {
@@ -170,50 +172,6 @@ Rectangle {
      }
   }
 
-  Item {
-      id: vertAxes
-
-      anchors.top: parent.top
-      anchors.bottom: parent.bottom
-      anchors.left: axes.right
-      anchors.topMargin: timelinePane.spacing
-      width: timelinePane.width - xaxis.width - signalsPane.width
-
-      MouseArea {
-        anchors.fill: parent
-
-        property var zoomParams
-        acceptedButtons: Qt.RightButton
-        onPressed: {
-          if (mouse.button == Qt.RightButton) {
-            zoomParams = {
-              firstY : mouse.y,
-              prevY : mouse.y,
-            }
-          } else {
-            mouse.accepted = false;
-          }
-        }
-        onReleased: {
-          zoomParams = null
-        }
-        onPositionChanged: {
-          if (zoomParams) {
-            var delta = (mouse.y - zoomParams.prevY)
-            zoomParams.prevY = mouse.y
-            var s = Math.pow(1.01, delta)
-            var y = axes.pxToY(zoomParams.firstY);
-
-            if (axes.ymax - axes.ymin < signal.resolution * 8 && s < 1) return;
-
-            axes.ymin = Math.max(y - s * (y - axes.ymin), signal.min);
-            axes.ymax = Math.min(y - s * (y - axes.ymax), signal.max);
-
-          }
-        }
-      }
-  }
-
   Axes {
     id: axes
 
@@ -224,15 +182,12 @@ Rectangle {
     anchors.bottom: parent.bottom
     anchors.topMargin: timelinePane.spacing
 
-    ymin: signal.min
-    ymax: signal.max
+    ymin: verticalScale.min
+    ymax: verticalScale.max
+
     xgridticks: 2
-    yleft: false
-    yright: true
-    xbottom: false
 
     gridColor: '#222'
-    textColor: '#fff'
 
     states: [
       State {
@@ -241,8 +196,11 @@ Rectangle {
           anchors.top: undefined
           anchors.bottom: undefined
           gridColor: '#111'
-          textColor: '#444'
         }
+        PropertyChanges { target: verticalScale
+            textColor: '#444'
+        }
+
         PropertyChanges { target: axes_mouse_area
           drag.target: axes
           drag.axis: Drag.YAxis
@@ -289,12 +247,12 @@ Rectangle {
         // Shift + scroll for Y-axis zoom
         if (wheel.modifiers & Qt.ShiftModifier) {
           var s = Math.pow(1.15, -wheel.angleDelta.y/120);
-          var y = axes.pxToY(wheel.y);
+          var y = verticalScale.pxToVal(wheel.y);
 
-          if (axes.ymax - axes.ymin < signal.resolution * 8 && s < 1) return;
+          if (verticalScale.max - verticalScale.ymin < signal.resolution * 8 && s < 1) return;
 
-          axes.ymin = Math.max(y - s * (y - axes.ymin), signal.min);
-          axes.ymax = Math.min(y - s * (y - axes.ymax), signal.max);
+          verticalScale.min = Math.max(y - s * (y - verticalScale.min), signal.min);
+          verticalScale.max = Math.min(y - s * (y - verticalScale.max), signal.max);
         }
         else {
           wheel.accepted = false
@@ -344,4 +302,21 @@ Rectangle {
     }
 
   }
+
+  AxisScale {
+    id: verticalScale
+    signalParent: signal
+    vertical: true
+    min: signal.min
+    max: signal.max
+    textColor: '#fff'
+
+    anchors.left: axes.right
+    anchors.rightMargin: textSpacing * 2
+    anchors.leftMargin: textSpacing / 2
+    anchors.top: axes.top
+    anchors.bottom: axes.bottom
+    width: vertScaleWidth
+  }
+
 }

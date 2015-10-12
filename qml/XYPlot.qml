@@ -11,6 +11,7 @@ Item {
   property var isignal
   property var xsignal: vsignal;
   property var ysignal: isignal;
+  property int textSpacing: 12
 
   Axes {
     id: axes
@@ -21,13 +22,10 @@ Item {
     anchors.topMargin: 32
     anchors.bottomMargin: 32
 
-    xmin: xsignal.min
-    xmax: xsignal.max
-    ymin: ysignal.min
-    ymax: ysignal.max
-    yleft: true
-    yright: false
-    xbottom: true
+    xmin: horizontalScale.min
+    xmax: horizontalScale.max
+    ymin: verticalScale.min
+    ymax: verticalScale.max
 
     // Shift + scroll for Y-axis zoom
     MouseArea {
@@ -39,25 +37,25 @@ Item {
       onWheel: {
         if (wheel.modifiers & Qt.ShiftModifier) {
           var s = Math.pow(1.15, -wheel.angleDelta.y/120);
-          var y = axes.pxToY(wheel.y);
+          var y = verticalScale.pxToVal(wheel.y);
 
-          if (axes.ymax - axes.ymin < ysignal.resolution * 8 && s < 1) return;
+          if (verticalScale.max - verticalScale.min < ysignal.resolution * 8 && s < 1) return;
 
-          axes.ymin = Math.max(y - s * (y - axes.ymin), ysignal.min);
-          axes.ymax = Math.min(y - s * (y - axes.ymax), ysignal.max);
+          verticalScale.min = Math.max(y - s * (y - verticalScale.min), ysignal.min);
+          verticalScale.max = Math.min(y - s * (y - verticalScale.max), ysignal.max);
         }
 		else {
           var s = Math.pow(1.15, -wheel.angleDelta.y/120);
-          var x = axes.pxToX(wheel.x);
+          var x = horizontalScale.pxToVal(wheel.x);
 
-          if (axes.xmax - axes.xmin < xsignal.resolution * 8 && s < 1) return;
-          axes.xmin = Math.max(x - s * (x - axes.xmin), xsignal.min);
-          axes.xmax = Math.min(x - s * (x - axes.xmax), xsignal.max);
+          if (horizontalScale.max - horizontalScale.min < xsignal.resolution * 8 && s < 1) return;
+          horizontalScale.min = Math.max(x - s * (x - horizontalScale.min), xsignal.min);
+          horizontalScale.max = Math.min(x - s * (x - horizontalScale.max), xsignal.max);
 		}
       }
     }
+
     gridColor: '#222'
-    textColor: '#fff'
 
     Rectangle {
       anchors.fill: parent
@@ -81,88 +79,36 @@ Item {
     }
   }
 
-  Item {
-      id: vertAxisScale
+  AxisScale {
+    id: verticalScale
+    signalParent: ysignal
+    vertical: true
+    min: ysignal.min
+    max: ysignal.max
+    textColor: '#fff'
 
-      anchors.top: parent.top
-      anchors.bottom: parent.bottom
-      anchors.left: parent.lefts
-      anchors.bottomMargin: axes.anchors.bottomMargin
-      width: axes.anchors.leftMargin
-
-      MouseArea {
-        anchors.fill: parent
-        property var zoomParams
-        acceptedButtons: Qt.RightButton
-        onPressed: {
-          if (mouse.button == Qt.RightButton) {
-            zoomParams = {
-              firstY : mouse.y,
-              prevY : mouse.y,
-            }
-          } else {
-            mouse.accepted = false
-          }
-        }
-        onReleased: {
-          zoomParams = null;
-        }
-        onPositionChanged: {
-          if (zoomParams) {
-            var delta = (mouse.y - zoomParams.prevY)
-            zoomParams.prevY = mouse.y
-            var s = Math.pow(1.01, delta)
-            var y = axes.pxToY((zoomParams.firstY))
-
-            if (axes.ymax - axes.ymin < ysignal.resolution * 8 && s < 1) return;
-
-            axes.ymin = Math.max(y - s * (y - axes.ymin), ysignal.min);
-            axes.ymax = Math.min(y - s * (y - axes.ymax), ysignal.max);
-          }
-        }
-      }
+    anchors.right: axes.left
+    anchors.rightMargin: textSpacing * 2
+    anchors.leftMargin: textSpacing
+    anchors.top: axes.top
+    anchors.bottom: axes.bottom
+    width: textSpacing * 2
   }
 
-  Item {
-      id: horizAxisScale
+  AxisScale {
+    id: horizontalScale
+    signalParent: xsignal
+    vertical: false
+    min: xsignal.min
+    max: xsignal.max
+    textColor: '#fff'
 
-      anchors.bottom: parent.bottom
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.leftMargin: axes.anchors.leftMargin
-      anchors.rightMargin: axes.anchors.rightMargin
-      height: axes.anchors.bottomMargin
-
-      MouseArea {
-        anchors.fill: parent
-        property var zoomParams
-        acceptedButtons: Qt.RightButton
-        onPressed: {
-          if (mouse.button == Qt.RightButton) {
-            zoomParams = {
-              firstX : mouse.x,
-              prevX : mouse.x,
-            }
-          } else {
-            mouse.accepted = false
-          }
-        }
-        onReleased: {
-          zoomParams = null;
-        }
-        onPositionChanged: {
-          if (zoomParams) {
-            var delta = -(mouse.x - zoomParams.prevX)
-            zoomParams.prevX = mouse.x
-            var s = Math.pow(1.01, delta)
-            var x = axes.pxToX((zoomParams.firstX))
-
-            if (axes.xmax - axes.xmin < xsignal.resolution * 8 && s < 1) return;
-
-            axes.xmin = Math.max(x - s * (x - axes.xmin), xsignal.min);
-            axes.xmax = Math.min(x - s * (x - axes.xmax), xsignal.max);
-          }
-        }
-      }
+    anchors.left: axes.left
+    anchors.right: axes.right
+    anchors.top: axes.bottom
+    anchors.bottomMargin: textSpacing * 2
+    anchors.topMargin: textSpacing
+    height: textSpacing * 2
   }
+
 }

@@ -31,5 +31,7 @@
         <file>icons/play.png</file>
         <file>icons/pause.png</file>
         <file>icons/gear.png</file>
+        <file>qml/AxisScale.qml</file>
+        <file>qml/axesutils.js</file>
     </qresource>
 </RCC>

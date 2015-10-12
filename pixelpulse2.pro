@@ -45,6 +45,7 @@ OTHER_FILES += \
     qml/TimelineFlickable.qml \
     qml/TimelineHeader.qml \
     qml/Axes.qml \
+    qml/AxisScale.qml \
     qml/OverlayPeriodic.qml \
     qml/DragDot.qml \
     qml/DeviceRow.qml
