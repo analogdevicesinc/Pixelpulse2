@@ -14,6 +14,7 @@ ToolbarStyle {
   property alias repeatedSweep: repeatedSweepItem.checked
   property alias plotsVisible: plotsVisibleItem.checked
   property alias contentVisible: contentVisibleItem.checked
+  property alias lockVertAxes: lockVerticalAxesItem.checked
 
   FileDialog {
     id: dataDialog
@@ -64,6 +65,12 @@ ToolbarStyle {
           onTriggered: controller.sampleTime = 1; text: '1 s' }
         MenuItem { exclusiveGroup: timeGroup; checkable: true;
           onTriggered: controller.sampleTime = 10; text: '10 s' }
+      }
+
+      MenuItem {
+        id: lockVerticalAxesItem
+        text: "Lock Vertical Axes"
+        checkable: true
       }
 
       MenuItem {

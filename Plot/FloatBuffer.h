@@ -17,7 +17,7 @@ public:
         return timeToIndex(end) - timeToIndex(start);
     }
 
-    unsigned size() {
+    Q_INVOKABLE unsigned size() {
         return m_length;
     }
 

@@ -5,6 +5,7 @@
 #include <QRunnable>
 #include <QThreadPool>
 #include "SMU.h"
+#include "frontendsetup.h"
 
 #include "utils/backtracing.h"
 #include "utils/fileio.h"
@@ -21,11 +22,18 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     registerTypes();
+    registerFrontendTypes();
 
     FileIO fileIO;
     SessionItem smu_session;
+    FrontendSetup *frontend = new FrontendSetup();
+
+    QObject::connect(&smu_session, SIGNAL(devicesChanged(QList<DeviceItem *>)),
+                     frontend, SLOT(OnDevicesChanged(QList<DeviceItem *>)));
+
     smu_session.openAllDevices();
     engine.rootContext()->setContextProperty("session", &smu_session);
+    engine.rootContext()->setContextProperty("frontend", frontend);
 
 	QVariantMap versions;
 	versions.insert("build_date", BUILD_DATE);
@@ -44,6 +52,7 @@ int main(int argc, char *argv[])
 
 
     int r = app.exec();
+    delete frontend;
     smu_session.closeAllDevices();
 
     return r;

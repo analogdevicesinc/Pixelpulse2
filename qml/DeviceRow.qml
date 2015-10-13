@@ -3,36 +3,24 @@ import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
 
 Rectangle {
-  property var device
-  property alias channelRepeater: channelRepeater
-  property var currentIndex
-  color: '#222'
+  property var list
 
-  Text {
-    text: device.label
-    color: 'white'
-    rotation: -90
-    transformOrigin: Item.TopLeft
-    font.pixelSize: 18/session.devices.length
-    y: width + timelinePane.spacing + 8
-    x: (timelinePane.spacing - height) / 2
+  Rectangle {
+    id: dummyDevRect
+    anchors.top: parent.top;
+    anchors.left: parent.left
+    width: timelinePane.spacing
+    height: timelinePane.spacing
+    color: parent.color
   }
 
-  ColumnLayout {
-    anchors.fill: parent
-    anchors.leftMargin: timelinePane.spacing
-    spacing: 0
-
-    Repeater {
-      id: channelRepeater
-      model: device.channels
-
-      ChannelRow {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-
-        channel: model
-      }
-    }
+  Selector {
+    anchors.top: dummyDevRect.bottom
+    itemLabel: list.crtLabel
+    enableArrows: list.labelCount > 1
+    onNextItem: list.crtLabelPos++
+    onPrevItem: list.crtLabelPos--
+    minReached: list.posAtLowest
+    maxReached: list.posAtHighest
   }
 }

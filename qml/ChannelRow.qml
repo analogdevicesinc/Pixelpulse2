@@ -5,11 +5,11 @@ import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
 
 Rectangle {
+  property var list
   property var channel
-  property alias signalRepeater:signalRepeater
-  color: '#333'
 
   Button {
+    id: modeButton
     anchors.top: parent.top
     anchors.left: parent.left
     width: timelinePane.spacing
@@ -20,7 +20,7 @@ Rectangle {
       'svmi',
       'simv',
     ]
-    iconSource: 'qrc:/icons/' + icons[channel.mode] + '.png'
+    iconSource: channel ? 'qrc:/icons/' + icons[channel.mode] + '.png' : ''
 
     style: ButtonStyle {
       background: Rectangle {
@@ -50,33 +50,14 @@ Rectangle {
     }
   }
 
-
-  Text {
-    text: "Channel " + channel.label
-    color: 'white'
-    rotation: -90
-    transformOrigin: Item.TopLeft
-    font.pixelSize: 18 / session.devices.length
-    y: width + timelinePane.spacing + 8
-    x: (timelinePane.spacing - height) / 2
+  Selector {
+    anchors.top: modeButton.bottom
+    itemLabel: list.crtLabel
+    enableArrows: list.labelCount > 1
+    onNextItem: list.crtLabelPos++
+    onPrevItem: list.crtLabelPos--
+    minReached: list.posAtLowest
+    maxReached: list.posAtHighest
   }
 
-  ColumnLayout {
-    anchors.fill: parent
-    anchors.leftMargin: timelinePane.spacing
-    spacing: 0
-
-    Repeater {
-      id: signalRepeater
-      model: modelData.signals
-
-      SignalRow {
-        Layout.fillHeight: true
-        Layout.fillWidth: true
-
-        signal: model
-        xaxis: timeline_xaxis
-      }
-    }
-  }
 }

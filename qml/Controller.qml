@@ -15,7 +15,7 @@ Item {
     session.sampleCount = sampleCount
     session.start(continuous);
     if ( session.devices.length > 0 ) {
-      lastConfig = StateSave.saveState();
+      ;//lastConfig = StateSave.saveState();
     }
   }
 

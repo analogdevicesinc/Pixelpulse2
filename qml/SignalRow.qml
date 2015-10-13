@@ -3,23 +3,26 @@ import QtQuick.Layouts 1.0
 import Plot 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
+import QtQml.Models 2.1
 
 Rectangle {
   id: signalBlock
-  property alias ymin: axes.ymin;
-  property alias ymax: axes.ymax;
   property var xaxis
+  property var channel
   property var signal
+  property var allsignals
+  property var signal_type
   property int textSpacing: 18
   property int vertScaleWidth: 2 * textSpacing
+  property int vertScalesWidth: (vertScaleWidth + view.spacing)  * (lockAxes ? 1 : allsignals.length)
   color: '#444'
 
   function updateMode() {
     channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
-    var target = parent.parent.parent;
-    for (var sig in target.children)
-        if (target.children[sig].children[0])
-           target.children[sig].children[0].updateMode();
+    //var target = parent.parent.parent;
+    //for (var sig in target.children)
+    //    if (target.children[sig].children[0])
+    //       target.children[sig].children[0].updateMode();
   }
 
   function switchToConstant() {
@@ -82,7 +85,7 @@ Rectangle {
     text: signal.label
     rotation: -90
     transformOrigin: Item.TopLeft
-    font.pixelSize: 18 / session.devices.length
+    font.pixelSize: 18
     y: width + timelinePane.spacing + 8
     x: (timelinePane.spacing - height) / 2
   }
@@ -172,6 +175,65 @@ Rectangle {
      }
   }
 
+  ListModel {
+      id: signalColors
+      ListElement {
+          r: 0.03
+          g: 0.2
+          b: 0.03
+          a: 1
+      }
+      ListElement {
+          r: 0.3
+          g: 0.3
+          b: 0.0
+          a: 1
+      }
+      ListElement {
+          r: 0.3
+          g: 0.3
+          b: 0.3
+          a: 1
+      }
+
+      ListElement {
+          r: 0.45
+          g: 0.0
+          b: 0.0
+          a: 1
+      }
+  }
+
+  // Same colors (green, yellow, etc.) as "signalColors" but a little more brighter
+  ListModel {
+      id: axisColors
+      ListElement {
+          r: 0.0
+          g: 1.0
+          b: 0.0
+          a: .75
+      }
+      ListElement {
+          r: 1.0
+          g: 1.0
+          b: 0.0
+          a: .75
+      }
+      ListElement {
+          r: 0.6
+          g: 0.6
+          b: 0.6
+          a: .75
+      }
+
+      ListElement {
+          r: 1.0
+          g: 0.0
+          b: 0.0
+          a: .75
+      }
+  }
+
   Axes {
     id: axes
 
@@ -182,12 +244,13 @@ Rectangle {
     anchors.bottom: parent.bottom
     anchors.topMargin: timelinePane.spacing
 
-    ymin: verticalScale.min
-    ymax: verticalScale.max
-
+    property var axes_list: view.contentItem.children
+    ymin: axes_list.length > 1 ? axes_list[channelList.crtLabelPos].min : signal.min
+    ymax: axes_list.length > 1 ? axes_list[channelList.crtLabelPos].max : signal.max
     xgridticks: 2
 
     gridColor: '#222'
+    zHorizontalGrid: -2
 
     states: [
       State {
@@ -196,9 +259,6 @@ Rectangle {
           anchors.top: undefined
           anchors.bottom: undefined
           gridColor: '#111'
-        }
-        PropertyChanges { target: verticalScale
-            textColor: '#444'
         }
 
         PropertyChanges { target: axes_mouse_area
@@ -245,14 +305,18 @@ Rectangle {
       }
       onWheel: {
         // Shift + scroll for Y-axis zoom
+        var axes_list = view.contentItem.children;
+        var i = channelList.crtLabelPos;
+        var axis = axes_list[i];
+
         if (wheel.modifiers & Qt.ShiftModifier) {
           var s = Math.pow(1.15, -wheel.angleDelta.y/120);
-          var y = verticalScale.pxToVal(wheel.y);
+          var y = axis.pxToVal(wheel.y);
 
-          if (verticalScale.max - verticalScale.ymin < signal.resolution * 8 && s < 1) return;
+          if (axis.max - axis.min < signal.resolution * 8 && s < 1) return;
 
-          verticalScale.min = Math.max(y - s * (y - verticalScale.min), signal.min);
-          verticalScale.max = Math.min(y - s * (y - verticalScale.max), signal.max);
+          axis.min = Math.max(y - s * (y - axis.min), signal.min);
+          axis.max = Math.min(y - s * (y - axis.max), signal.max);
         }
         else {
           wheel.accepted = false
@@ -276,19 +340,51 @@ Rectangle {
       color: "#282828"
     }
 
-    PhosphorRender {
-        id: line
-        anchors.fill: parent
-        clip: true
+    Repeater {
+        model: allsignals
+        PhosphorRender {
+            id: line
+            anchors.fill: parent
+            clip: true
+            z: -1
 
-        buffer: signal.buffer
-        pointSize: Math.max(2, Math.min(xaxis.xscale/session.sampleRate*3, 20))
-        color: signal.label == 'Current' ? Qt.rgba(0.2, 0.2, 0.03, 1) : Qt.rgba(0.03, 0.3, 0.03, 1)
+            buffer: modelData.buffer
+            pointSize: Math.max(2, Math.min(xaxis.xscale/session.sampleRate*3, 20))
+            color: Qt.rgba(signalColors.get(index).r,
+                            signalColors.get(index).g,
+                            signalColors.get(index).b,
+                            signalColors.get(index).a)
 
-        xmin: xaxis.visibleMin
-        xmax: xaxis.visibleMax
-        ymin: axes.ymin
-        ymax: axes.ymax
+            xmin: xaxis.visibleMin
+            xmax: xaxis.visibleMax
+            property var axis_list: view.contentItem.children
+            property var axisIndex: lockAxes ? channelList.crtLabelPos : index
+            ymin: axis_list.length > 1 ? axis_list[axisIndex].min : 0
+            ymax: axis_list.length > 1 ? axis_list[axisIndex].max : 0
+
+            // Check if user clicked on the line described by the waveform
+            // and set channel that the waveform belongs to as the active channnel
+            MouseArea{
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                propagateComposedEvents: true
+
+                onClicked: {
+                    var axes_list = view.contentItem.children;
+                    var i = lockAxes ? channelList.crtLabelPos : index;
+                    var axis = axes_list[i];
+
+                    // multiply with 10 because xaxis xmin and xmax go from 0 to 0.1 and we need 0 to 1.0
+                    var x = Math.round(xaxis.pxToX(mouse.x) * 10 * buffer.size());
+                    var y = axis.pxToVal(mouse.y);
+
+                    if (x > 0 && Math.abs(buffer.get(x) - y) < 0.04 * (ymax - ymin))
+                        channelList.crtLabelPos = index;
+
+                    mouse.accepted = false
+                }
+            }
+        }
     }
 
     OverlayPeriodic {
@@ -303,20 +399,89 @@ Rectangle {
 
   }
 
-  AxisScale {
-    id: verticalScale
-    signalParent: signal
-    vertical: true
-    min: signal.min
-    max: signal.max
-    textColor: '#fff'
+  Rectangle {
+      id:vAxesContainer
 
-    anchors.left: axes.right
-    anchors.rightMargin: textSpacing * 2
-    anchors.leftMargin: textSpacing / 2
-    anchors.top: axes.top
-    anchors.bottom: axes.bottom
-    width: vertScaleWidth
+      property int margin: 18
+      color: '#000'
+      anchors.left: axes.right
+      anchors.top: axes.top
+      anchors.bottom: axes.bottom
+      anchors.leftMargin: margin
+      width: vertScalesWidth
+
+      Component {
+          id: axesDelegate
+
+          AxisScale {
+              signalParent: signals[signal_type]
+              vertical: true
+              min: signals[signal_type].min
+              max: signals[signal_type].max
+              width: vertScaleWidth
+              withGrid: true
+              anchors { top: parent.top; bottom: parent.bottom }
+              textColor: lockAxes ? '#fff' : Qt.rgba(axisColors.get(index).r,
+                                 axisColors.get(index).g,
+                                 axisColors.get(index).b,
+                                 axisColors.get(index).a)
+              visible: !lockAxes | index === channelList.crtLabelPos
+
+              MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+
+                onClicked: {
+                  if (mouse.button == Qt.LeftButton)
+                    channelList.crtChannel = modelData;
+                }
+              }
+          }
+      }
+
+      DelegateModel {
+          id: visualModel
+
+          model: channelList.allChannels
+          delegate: axesDelegate
+      }
+
+      ListView {
+          id: view
+          anchors.fill: parent
+          model: visualModel
+          orientation: ListView.Horizontal
+          interactive: false
+
+          spacing: 10
+          cacheBuffer: 50
+
+          currentIndex: -1 // This removes a default qtquickitem from the contentItem.children list which was causing trouble when accessing the list by index
+
+          Connections {
+            target: channelList
+            onCrtChannelChanged: {
+                if (lockAxes)
+                    return;
+
+              var i = 0;
+              var last = visualModel.items.count;
+              while (i < last) {
+                  var chn = visualModel.items.get(i).model.modelData
+                  var chnIndex = channelList.crtLabelPos
+                  var vertAxesList = view.contentItem.children
+
+                  if (chn === channelList.crtChannel) {
+                      visualModel.items.move(i, 0);
+                      axes.ymin = Qt.binding(function() { return vertAxesList[chnIndex].min } );
+                      axes.ymax = Qt.binding(function() { return vertAxesList[chnIndex].max } );
+                      break;
+                  }
+                  i++;
+              }
+            }
+          }
+      }
   }
 
 }

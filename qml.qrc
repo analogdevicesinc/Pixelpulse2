@@ -33,5 +33,7 @@
         <file>icons/gear.png</file>
         <file>qml/AxisScale.qml</file>
         <file>qml/axesutils.js</file>
+        <file>qml/Arrow.qml</file>
+        <file>qml/Selector.qml</file>
     </qresource>
 </RCC>

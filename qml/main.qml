@@ -15,6 +15,11 @@ ApplicationWindow {
 	property alias repeatedSweep: toolbar.repeatedSweep
 	property alias plotsVisible: toolbar.plotsVisible
 	property alias contentVisible: toolbar.contentVisible
+	property alias lockAxes: toolbar.lockVertAxes
+	property var deviceList: frontend.deviceList
+	property var channelList: frontend.channelList
+	property var voltageList: frontend.voltageList.list
+	property var currentList: frontend.currentList.list
 	property var lastConfig: {}
 
 	Controller {
@@ -76,26 +81,56 @@ ApplicationWindow {
 					width: toolbar.width
 					color: '#111'
 
-					ColumnLayout {
+					RowLayout {
 						anchors.fill: parent
 						anchors.bottomMargin: 10
 						spacing: 0
 
-						Repeater {
-							id: deviceRepeater
-							model: session.devices
-							DeviceRow {
+						DeviceRow {
+							id: deviceSelect
+							width: timelinePane.spacing
+							Layout.fillHeight: true
+							color: '#222'
+							visible: deviceList.labelCount > 0
+							list: deviceList
+						}
+
+						ChannelRow {
+							id: channelSelect
+							width: timelinePane.spacing
+							Layout.fillHeight: true
+							color: '#333'
+							visible: channelList.labelCount > 0
+							list: channelList
+							channel: channelList.crtChannel
+						}
+
+						ColumnLayout {
+							width: timelinePane.spacing
+							spacing: 0
+							visible: channelList.labelCount > 0
+							SignalRow {
+								id: voltageSignalRow
 								Layout.fillHeight: true
 								Layout.fillWidth: true
-								device: model
-								currentIndex: index
+
+								channel: channelList.crtChannel
+								signal: channelList.crtChannel ? channelList.crtChannel.signals[0] : null
+								allsignals: voltageList
+								xaxis: timeline_xaxis
+								signal_type: 0
 							}
-							onItemAdded: {
-								if ( lastConfig ) {
-									if ((Object.keys(lastConfig).length) > 0) {
-										StateSave.restoreState(lastConfig);
-									}
-								}
+
+							SignalRow {
+								id: currentSignalRow
+								Layout.fillHeight: true
+								Layout.fillWidth: true
+
+								channel: channelList.crtChannel
+								signal: channelList.crtChannel ? channelList.crtChannel.signals[1] : null
+								allsignals: currentList
+								xaxis: timeline_xaxis
+								signal_type: 1
 							}
 						}
 					}
@@ -106,7 +141,7 @@ ApplicationWindow {
 				id: timeline_xaxis
 				anchors.fill: parent
 				anchors.leftMargin: toolbar.width
-				anchors.rightMargin: 48
+				anchors.rightMargin: 28 + voltageSignalRow.vertScalesWidth
 
 				boundMin: 0
 				boundMax: controller.sampleTime
