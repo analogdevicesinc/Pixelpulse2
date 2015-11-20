@@ -8,6 +8,29 @@ ColumnLayout {
   id: smpLayout
   spacing: 12
 
+  function deviceManagerListFill() {
+    var showPane = false;
+    if (devicesModel.count > 0)
+       devicesModel.clear();
+    for (var i = 0; i < session.devices.length; i++) {
+      var device = session.devices[i];
+      var updt_needed = "true"; // This needs to be replace with something like this: var updt_needed = device.NeedsFWupdate.
+
+      devicesModel.insert(devicesModel.count,
+                          {"name": device.label,
+                           "uid":device.UUID,
+                           "firmware_version": device.FWVer,
+                           "hardware_version": device.HWVer,
+                           "fw_updt_needed": updt_needed
+                          });
+
+       if (updt_needed == "true")
+         showPane = true;
+     }
+     if (showPane)
+       deviceMngrVisible = true;
+  }
+
   ToolbarStyle {
     Layout.fillWidth: true
     height: toolbarHeight
@@ -123,36 +146,14 @@ ColumnLayout {
       delegate: devDelegate
 
       Component.onCompleted: {
-        if (devicesModel.count > 0)
-          devicesModel.clear();
-        for (var i = 0; i < session.devices.length; i++) {
-          var device = session.devices[i];
-          devicesModel.insert(devicesModel.count,
-                              { "name": device.label,
-                                "uid":device.UUID,
-                                "firmware_version": device.FWVer,
-                                "hardware_version": device.HWVer,
-                                "fw_updt_needed": "false"
-                              });
-        }
+        deviceManagerListFill();
       }
     }
 
     Connections {
      target: session
        onDevicesChanged: {
-         if (devicesModel.count > 0)
-            devicesModel.clear();
-          for (var i = 0; i < session.devices.length; i++) {
-            var device = session.devices[i];
-            devicesModel.insert(devicesModel.count,
-                                {"name": device.label,
-                                 "uid":device.UUID,
-                                 "firmware_version": device.FWVer,
-                                 "hardware_version": device.HWVer,
-                                 "fw_updt_needed": "false"
-                                });
-          }
+           deviceManagerListFill();
        }
     }
   }
