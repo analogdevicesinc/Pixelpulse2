@@ -35,6 +35,7 @@ OTHER_FILES += \
     qml/main.qml \
     qml/Toolbar.qml \
     qml/PlotPane.qml \
+    qml/DeviceManagerPane.qml \
     qml/ToolbarStyle.qml \
     qml/ContentPane.qml \
     qml/XYPlot.qml \

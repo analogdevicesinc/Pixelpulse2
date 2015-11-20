@@ -14,6 +14,7 @@ ToolbarStyle {
   property alias repeatedSweep: repeatedSweepItem.checked
   property alias plotsVisible: plotsVisibleItem.checked
   property alias contentVisible: contentVisibleItem.checked
+  property alias deviceMngrVisible: deviceMngrVisibleItem.checked
 
   FileDialog {
     id: dataDialog
@@ -75,6 +76,12 @@ ToolbarStyle {
       MenuItem {
         id: contentVisibleItem
         text: "About"
+        checkable: true
+      }
+
+      MenuItem {
+        id: deviceMngrVisibleItem
+        text: "Device Manager"
         checkable: true
       }
 

@@ -15,6 +15,7 @@ ApplicationWindow {
 	property alias repeatedSweep: toolbar.repeatedSweep
 	property alias plotsVisible: toolbar.plotsVisible
 	property alias contentVisible: toolbar.contentVisible
+	property alias deviceMngrVisible: toolbar.deviceMngrVisible
 	property var lastConfig: {}
 
 	Controller {
@@ -128,5 +129,13 @@ ApplicationWindow {
 			Layout.minimumWidth: 0.2*window.width
 			Layout.maximumWidth: 0.4*window.width
 		}
+
+        DeviceManagerPane {
+            id: deviceMngrPane
+            visible: deviceMngrVisible
+            width: 360
+			Layout.minimumWidth: 0.2*window.width
+			Layout.maximumWidth: 0.4*window.width
+        }
 	}
 }
