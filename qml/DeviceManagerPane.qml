@@ -1,6 +1,8 @@
 import QtQuick 2.1
 import QtQuick.Layouts 1.0
 import QtQml.Models 2.1
+import QtQuick.Controls 1.1
+import QtQuick.Controls.Styles 1.3
 
 ColumnLayout {
   id: smpLayout
@@ -26,16 +28,15 @@ ColumnLayout {
       Rectangle {
         anchors { left: parent.left; right: parent.right;
                   leftMargin: 15; rightMargin: 15}
-        height: 60
+        height: 80
         color: 'black'
         Column {
           height: parent.height
           width: parent.width
-          spacing: 4
 
           Item {
             width: parent.width
-            height: 10
+            height: 20
             Text { text: "Device: " + name;
                    font.pointSize: 10;
                    color: 'white';
@@ -43,7 +44,7 @@ ColumnLayout {
           }
           Item {
             width: parent.width
-            height: 10
+            height: 20
             Text { text: "Serial Number: " + uid;
                    font.pointSize: 10;
                    color: 'white';
@@ -51,15 +52,56 @@ ColumnLayout {
           }
           Item {
             width: parent.width
-            height: 10
-            Text { text: "Firmware Version: " + firmware_version;
-                   font.pointSize: 10;
-                   color: 'white';
-                   anchors.verticalCenter: parent.verticalCenter}
+            height: 20
+            Row {
+              anchors.fill: parent
+              spacing: 10
+              Text { text: "Firmware Version: " + firmware_version;
+                     font.pointSize: 10;
+                     color: 'white';
+                     anchors.verticalCenter: parent.verticalCenter}
+              Rectangle {
+                height: parent.height
+                width: 115
+                color: 'white'
+                visible: fw_updt_needed == "true"
+
+                Rectangle {
+                  anchors.horizontalCenter: parent.horizontalCenter
+                  anchors.verticalCenter: parent.verticalCenter
+                  width: parent.width - 2
+                  height: parent.height - 2
+                  color: 'black'
+
+                  Text {
+                    x: 5
+                    text: "Update Firmware"
+                    font.pointSize: 10
+                    color: 'white'
+                    anchors.verticalCenter: parent.verticalCenter
+                  }
+
+                  MouseArea {
+                    property color lastColor: 'black'
+
+                    hoverEnabled: true
+                    anchors.fill: parent
+                    onClicked: {
+                      // do stuff ...
+                    }
+
+                    onEntered: parent.color = '#444'
+                    onExited: { lastColor = 'black'; parent.color = 'black' }
+                    onPressed: { lastColor = parent.color; parent.color =  '#888' }
+                    onReleased: parent.color = lastColor
+                  }
+                }
+              }
+            }
           }
           Item {
             width: parent.width
-            height: 10
+            height: 20
             Text { text: "Hardware Version: " + hardware_version;
                    font.pointSize: 10;
                    color: 'white';
@@ -89,7 +131,8 @@ ColumnLayout {
                               { "name": device.label,
                                 "uid":device.UUID,
                                 "firmware_version": device.FWVer,
-                                "hardware_version": device.HWVer
+                                "hardware_version": device.HWVer,
+                                "fw_updt_needed": "false"
                               });
         }
       }
@@ -106,7 +149,8 @@ ColumnLayout {
                                 {"name": device.label,
                                  "uid":device.UUID,
                                  "firmware_version": device.FWVer,
-                                 "hardware_version": device.HWVer
+                                 "hardware_version": device.HWVer,
+                                 "fw_updt_needed": "false"
                                 });
           }
        }
@@ -114,5 +158,3 @@ ColumnLayout {
   }
 
 }
-
-
