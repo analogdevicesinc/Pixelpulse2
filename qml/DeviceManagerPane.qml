@@ -157,4 +157,21 @@ ColumnLayout {
     }
   }
 
+  TextArea {
+    id: logOutput
+    readOnly: true;
+    Layout.fillWidth: true
+    backgroundVisible: false
+    selectByKeyboard: true
+    selectByMouse: true
+
+    implicitHeight: 51
+
+    style: TextAreaStyle {
+      textColor: "#fff"
+      selectionColor: "steelblue"
+      selectedTextColor: "#eee"
+      backgroundColor: "#eee"
+    }
+  }
 }
