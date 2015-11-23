@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.0
 import QtQml.Models 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Controls.Styles 1.3
+import "jsutils.js" as JSUtils
 
 ColumnLayout {
   id: smpLayout
@@ -12,24 +13,30 @@ ColumnLayout {
     var showPane = false;
     if (devicesModel.count > 0)
        devicesModel.clear();
+    JSUtils.checkLatestFw(function(ver) {
+        console.log('fw=', ver);
+
     for (var i = 0; i < session.devices.length; i++) {
       var device = session.devices[i];
       var updt_needed = "true"; // This needs to be replace with something like this: var updt_needed = device.NeedsFWupdate.
 
-      devicesModel.insert(devicesModel.count,
-                          {"name": device.label,
-                           "uid":device.UUID,
-                           "firmware_version": device.FWVer,
-                           "hardware_version": device.HWVer,
-                           "fw_updt_needed": updt_needed
-                          });
 
-       if (updt_needed == "true")
-         showPane = true;
+          devicesModel.insert(devicesModel.count,
+                              {"name": device.label,
+                               "uid":device.UUID,
+                               "firmware_version": device.FWVer,
+                               //"hardware_version": device.HWVer,
+                               "hardware_version": ver,
+                               "fw_updt_needed": updt_needed
+                              });
+
+           if (updt_needed == "true")
+             showPane = true;
      }
      if (showPane)
        deviceMngrVisible = true;
-  }
+    });
+    }
 
   ToolbarStyle {
     Layout.fillWidth: true
@@ -111,6 +118,7 @@ ColumnLayout {
                     anchors.fill: parent
                     onClicked: {
                       // do stuff ...
+                        JSUtils.getFirmware();
                     }
 
                     onEntered: parent.color = '#444'
@@ -147,6 +155,7 @@ ColumnLayout {
 
       Component.onCompleted: {
         deviceManagerListFill();
+        session.downloadFromUrl("https://github-cloud.s3.amazonaws.com/releases/26525695/3fe901bc-7d73-11e5-8c12-7b3a65a3415a.bin?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAISTNZFOVBIJMK3TQ/20151123/us-east-1/s3/aws4_request&X-Amz-Date=20151123T131406Z&X-Amz-Expires=300&X-Amz-Signature=4e2d82283185ccbb1bbbe956c79dac60686eac55acda4c55fe9a3fbcee68348d&X-Amz-SignedHeaders=host&actor_id=3383080&response-content-disposition=attachment; filename=m1000.bin&response-content-type=application/octet-stream");
       }
     }
 

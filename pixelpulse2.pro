@@ -1,6 +1,7 @@
 TEMPLATE = app
 
 QT += qml quick widgets
+QT += network
 CONFIG += c++11
 
 win32 {
@@ -24,7 +25,8 @@ SOURCES += main.cpp \
     Plot/FloatBuffer.cpp \
     libsmu/device_m1000.cpp \
     libsmu/session.cpp \
-    libsmu/device_cee.cpp
+    libsmu/device_cee.cpp \
+    utils/filedownloader.cpp
 
 RESOURCES += qml.qrc
 
@@ -60,7 +62,8 @@ HEADERS += \
     libsmu/device_cee.hpp \
     libsmu/internal.hpp \
     utils/fileio.h \
-    utils/bossac_wrap.h
+    utils/bossac_wrap.h \
+    utils/filedownloader.h
 
 win32:debug {
 #	CONFIG += console
