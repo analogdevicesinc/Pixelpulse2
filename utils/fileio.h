@@ -46,7 +46,7 @@ public slots:
         QFile file(s);
         file.open(QIODevice::WriteOnly);
         QDataStream out(&file);
-        out << data;
+        out.writeRawData(data, data.length());
         return true;
     }
 
