@@ -296,6 +296,10 @@ ColumnLayout {
 
       model: devicesModel
       delegate: devDelegate
+
+      Component.onCompleted: {
+          deviceManagerListFill();
+      }
     }
 
     Connections {
