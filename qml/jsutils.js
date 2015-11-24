@@ -35,6 +35,7 @@ var checkLatestFw = function (callback) {
     request("https://api.github.com/repos/analogdevicesinc/m1k-fw/releases", function(t) {
         var d = JSON.parse(t.responseText)[0];
         callback(d.tag_name);
+    //    callback('v2.02');
     });
 	return '\n\n\n'
 }
@@ -86,7 +87,7 @@ var requestFile = function(url, callback) {
     xhr.send('');
 }
 
-var getFirmware = function() {
+var getFirmwareURL = function(callback) {
 	var releaseURL = 'https://api.github.com/repos/analogdevicesinc/m1k-fw/releases';
 	console.log('LOG: releaseURL: ', releaseURL);
 
@@ -102,15 +103,11 @@ var getFirmware = function() {
             var fileDownloadURL = d.browser_download_url;
 			console.log('LOG: fileDownloadURL: ', fileDownloadURL);
 
-			requestFile(fileDownloadURL, function(t) {
-				console.log('LOG: The file was received!');
-				var arrayBuffer = t.response;
-                console.log('LOG: Response ', t.responseXML);
-				if (arrayBuffer) {
-					var byteArray = new Uint8Array(arrayBuffer);
-					console.log('LOG: Data file is correct!', byteArray.length);
-					return byteArray;
-				}
+			request(fileDownloadURL, function(t) {
+				console.log('LOG: The response was received!');
+				var header = t.getResponseHeader('Location');
+                console.log('LOG: Response ', header);
+                callback(header);
 			});
 		});
 	});

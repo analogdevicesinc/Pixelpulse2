@@ -9,34 +9,92 @@ ColumnLayout {
   id: smpLayout
   spacing: 12
 
+  function addProgModeDeviceToList()
+  {
+    devicesModel.insert(devicesModel.count,
+                        {"name": "[Device In Programming Mode]",
+                         "uid":"N/A",
+                         "firmware_version": "N/A",
+                         "hardware_version": "N/A",
+                         "fw_updt_needed": true && devListView.latestVersion != '0.0',
+                         "updt_in_progress": false,
+                        });
+  }
+
+  function clearProgModeDeviceFromList()
+  {
+    for (var i = 0; i < devicesModel.count; i++) {
+      if (devicesModel.get(i).name === "[Device In Programming Mode]") {
+        devicesModel.remove(i, 1);
+        break;
+      }
+    }
+  }
+
+  function programmingModeDeviceDetect()
+  {
+    var msg = bossac.deviceInformation();
+    var deviceDetected = false;
+
+    clearProgModeDeviceFromList();
+    if (msg.substr(0, 19) === "Device found on COM") {
+      deviceDetected = true;
+      addProgModeDeviceToList();
+    }
+
+    return deviceDetected;
+  }
+
   function deviceManagerListFill() {
     var showPane = false;
-    if (devicesModel.count > 0)
-       devicesModel.clear();
-    JSUtils.checkLatestFw(function(ver) {
-        console.log('fw=', ver);
 
+    if (devicesModel.count > 0) {
+      var n;
+      var updatingDevice = false;
+      for (n = 0; n < devicesModel.count; n++) {
+        if (devicesModel.get(n).updt_in_progress == true)
+            break;
+      }
+      updatingDevice = n < devicesModel.count;
+
+      if (updatingDevice) {
+        var model = devicesModel.get(n);
+        var modelCopy = {"name": model.name,
+                         "uid": model.uid,
+                         "firmware_version": model.firmware_version,
+                         "hardware_version": model.hardware_version,
+                         "fw_updt_needed": model.fw_updt_needed,
+                         "updt_in_progress": model.updt_in_progress};
+      }
+      devicesModel.clear();
+      if (updatingDevice) {
+        modelCopy.updt_in_progress = false;
+        devicesModel.insert(n, modelCopy);
+      }
+    }
     for (var i = 0; i < session.devices.length; i++) {
       var device = session.devices[i];
-      var updt_needed = "true"; // This needs to be replace with something like this: var updt_needed = device.NeedsFWupdate.
+      var updt_needed = false;
+      if (parseFloat(device.FWVer) < parseFloat(devListView.latestVersion.substring(1)))
+        updt_needed = true;
 
+      devicesModel.insert(devicesModel.count,
+                          {"name": device.label,
+                           "uid":device.UUID,
+                           "firmware_version": device.FWVer,
+                           "hardware_version": device.HWVer,
+                           "fw_updt_needed": updt_needed,
+                           "updt_in_progress": false,
+                          });
 
-          devicesModel.insert(devicesModel.count,
-                              {"name": device.label,
-                               "uid":device.UUID,
-                               "firmware_version": device.FWVer,
-                               //"hardware_version": device.HWVer,
-                               "hardware_version": ver,
-                               "fw_updt_needed": updt_needed
-                              });
-
-           if (updt_needed == "true")
-             showPane = true;
-     }
-     if (showPane)
-       deviceMngrVisible = true;
-    });
+      if (updt_needed === true)
+         showPane = true;
     }
+    if (showPane)
+      deviceMngrVisible = true;
+    if (!updatingDevice)
+      programmingModeDeviceDetect();
+  }
 
   ToolbarStyle {
     Layout.fillWidth: true
@@ -44,9 +102,67 @@ ColumnLayout {
   }
 
   Rectangle {
+    id: devListRefreshBtn
+    Layout.fillWidth: true
+    height: 25
+    color: '#333'
+
+    Rectangle {
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.verticalCenter: parent.verticalCenter
+      width: parent.width - 2
+      height: parent.height - 2
+      color: 'black'
+
+      Text {
+        x: 5
+        text: "Refresh Device List"
+        font.pointSize: 10
+        color: 'white'
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+      }
+
+      MouseArea {
+        property color lastColor: 'black'
+
+        hoverEnabled: true
+        anchors.fill: parent
+        onClicked: {
+          logOutput.text = "";
+          deviceManagerListFill();
+        }
+
+        onEntered: parent.color = '#444'
+        onExited: { lastColor = 'black'; parent.color = 'black' }
+        onPressed: { lastColor = parent.color; parent.color =  '#888' }
+        onReleased: parent.color = lastColor
+      }
+    }
+  }
+
+  Rectangle {
+    id: devListView
     Layout.fillHeight: true
     Layout.fillWidth: true
     color: 'black'
+
+    property string latestVersion: '0.0'
+
+    Component.onCompleted: {
+        JSUtils.checkLatestFw(function(ver){
+            latestVersion = ver;
+        });
+    }
+
+    onLatestVersionChanged: {
+      console.log("latestVersion changed to: ", latestVersion);
+      deviceManagerListFill();
+      JSUtils.getFirmwareURL(function(url) {
+        console.log("LOG URL: ", url);
+        session.downloadFromUrl(url);
+      });
+    }
 
     ListModel {
       id: devicesModel
@@ -94,7 +210,7 @@ ColumnLayout {
                 height: parent.height
                 width: 115
                 color: 'white'
-                visible: fw_updt_needed == "true"
+                visible: fw_updt_needed === true
 
                 Rectangle {
                   anchors.horizontalCenter: parent.horizontalCenter
@@ -113,12 +229,39 @@ ColumnLayout {
 
                   MouseArea {
                     property color lastColor: 'black'
+                    visible: !updt_in_progress
 
                     hoverEnabled: true
                     anchors.fill: parent
                     onClicked: {
-                      // do stuff ...
-                        JSUtils.getFirmware();
+                      var ret;
+                      if (name === "[Device In Programming Mode]") {
+                        logOutput.text = "";
+                        ret = bossac.flashByFilename("firmware.bin");
+                        if (ret) {
+                          devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
+                          logOutput.text = "Firmware updated succesfully. Please disconnect the device.";
+                        } else {
+                          logOutput.text = "Failed to load firmware.";
+                        }
+                      } else if (!programmingModeDeviceDetect()) {
+                        logOutput.text = "";
+                        devicesModel.setProperty(index, "updt_in_progress", true);
+                        session.devices[0].ctrl_transfer(0xBB, 0, 0);
+                        ret = bossac.flashByFilename("firmware.bin");
+                        if (ret) {
+                          devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
+                          logOutput.text = "Firmware updated succesfully. Please disconnect the device.";
+                        } else {
+                          logOutput.text = "Failed to load firmware.";
+                        }
+                        devicesModel.setProperty(index, "fw_updt_needed", false);
+                        // TO DO: Now the user needs to unplug the device. App should monitor the COM port to check if the device has been disconnected
+                        // and remove the item in the device list. The monitoring should be done in a separate thread.
+
+                      } else {
+                          logOutput.text = "A device is already in programming mode and needs to be programmed first!";
+                      }
                     }
 
                     onEntered: parent.color = '#444'
@@ -133,6 +276,7 @@ ColumnLayout {
           Item {
             width: parent.width
             height: 20
+            visible: false
             Text { text: "Hardware Version: " + hardware_version;
                    font.pointSize: 10;
                    color: 'white';
@@ -152,11 +296,6 @@ ColumnLayout {
 
       model: devicesModel
       delegate: devDelegate
-
-      Component.onCompleted: {
-        deviceManagerListFill();
-        session.downloadFromUrl("https://github-cloud.s3.amazonaws.com/releases/26525695/3fe901bc-7d73-11e5-8c12-7b3a65a3415a.bin?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAISTNZFOVBIJMK3TQ/20151123/us-east-1/s3/aws4_request&X-Amz-Date=20151123T131406Z&X-Amz-Expires=300&X-Amz-Signature=4e2d82283185ccbb1bbbe956c79dac60686eac55acda4c55fe9a3fbcee68348d&X-Amz-SignedHeaders=host&actor_id=3383080&response-content-disposition=attachment; filename=m1000.bin&response-content-type=application/octet-stream");
-      }
     }
 
     Connections {
