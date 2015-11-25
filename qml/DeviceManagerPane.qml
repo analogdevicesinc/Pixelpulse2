@@ -98,12 +98,16 @@ ColumnLayout {
 
   ToolbarStyle {
     Layout.fillWidth: true
+    Layout.minimumWidth: parent.Layout.minimumWidth
+    Layout.maximumWidth: parent.Layout.maximumWidth
     height: toolbarHeight
   }
 
   Rectangle {
     id: devListRefreshBtn
     Layout.fillWidth: true
+    Layout.minimumWidth: parent.Layout.minimumWidth
+    Layout.maximumWidth: parent.Layout.maximumWidth
     height: 25
     color: '#333'
 
@@ -145,6 +149,8 @@ ColumnLayout {
     id: devListView
     Layout.fillHeight: true
     Layout.fillWidth: true
+    Layout.minimumWidth: parent.Layout.minimumWidth
+    Layout.maximumWidth: parent.Layout.maximumWidth
     color: 'black'
 
     property string latestVersion: '0.0'
@@ -314,6 +320,8 @@ ColumnLayout {
     id: logOutput
     readOnly: true;
     Layout.fillWidth: true
+    Layout.minimumWidth: parent.Layout.minimumWidth
+    Layout.maximumWidth: parent.Layout.maximumWidth
     backgroundVisible: false
     selectByKeyboard: true
     selectByMouse: true

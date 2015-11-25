@@ -11,14 +11,17 @@ ColumnLayout {
 
   ToolbarStyle {
     Layout.fillWidth: true
+    Layout.minimumWidth: parent.Layout.minimumWidth
+    Layout.maximumWidth: parent.Layout.maximumWidth
     height: toolbarHeight
   }
 
   TextArea {
     id: outField
     readOnly: true
-    width: parent.width
     Layout.fillWidth: true
+    Layout.minimumWidth: parent.Layout.minimumWidth
+    Layout.maximumWidth: parent.Layout.maximumWidth
     Layout.fillHeight: true
     selectByKeyboard: true
     selectByMouse: true
@@ -34,8 +37,9 @@ ColumnLayout {
 
   TextInput {
     id: inField
-    width: parent.width
     Layout.fillWidth: true
+    Layout.minimumWidth: parent.Layout.minimumWidth
+    Layout.maximumWidth: parent.Layout.maximumWidth
 	cursorVisible: true
 	text: "type here."
 	color: "#FFF"
