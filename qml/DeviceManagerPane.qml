@@ -32,18 +32,27 @@ ColumnLayout {
     }
   }
 
+  function programmingModeDeviceExists()
+  {
+     var msg = bossac.deviceInformation();
+     var deviceExists = false;
+
+      if (msg.substr(0, 19) === "Device found on COM") {
+        deviceExists = true;
+      }
+
+      return deviceExists;
+  }
+
   function programmingModeDeviceDetect()
   {
-    var msg = bossac.deviceInformation();
-    var deviceDetected = false;
-
+    var ret;
     clearProgModeDeviceFromList();
-    if (msg.substr(0, 19) === "Device found on COM") {
-      deviceDetected = true;
+    ret = programmingModeDeviceExists();
+    if (ret)
       addProgModeDeviceToList();
-    }
 
-    return deviceDetected;
+    return ret;
   }
 
   function deviceManagerListFill() {
@@ -271,6 +280,12 @@ ColumnLayout {
                       var ret;
                       if (name === "[Device In Programming Mode]") {
                         logOutput.text = "";
+                        // Devices in programming mode can be disconnected without us to know about it, so check if the device is still there.
+                        if (!programmingModeDeviceExists()) {
+                          clearProgModeDeviceFromList();
+                          return;
+                        }
+
                         ret = bossac.flashByFilename("firmware.bin");
                         if (ret) {
                           devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
