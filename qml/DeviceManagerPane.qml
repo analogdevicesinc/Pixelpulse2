@@ -18,6 +18,7 @@ ColumnLayout {
                          "hardware_version": "N/A",
                          "fw_updt_needed": true && devListView.latestVersion != '0.0',
                          "updt_in_progress": false,
+                         "status": "prog"
                         });
   }
 
@@ -64,7 +65,8 @@ ColumnLayout {
                          "firmware_version": model.firmware_version,
                          "hardware_version": model.hardware_version,
                          "fw_updt_needed": model.fw_updt_needed,
-                         "updt_in_progress": model.updt_in_progress};
+                         "updt_in_progress": model.updt_in_progress,
+                         "status": model.status};
       }
       devicesModel.clear();
     }
@@ -84,6 +86,7 @@ ColumnLayout {
                            "hardware_version": device.HWVer,
                            "fw_updt_needed": updt_needed,
                            "updt_in_progress": false,
+                           "status": "n/a"
                           });
 
       if (updt_needed === true)
@@ -180,6 +183,14 @@ ColumnLayout {
 
     ListModel {
       id: devicesModel
+      property variant states: { 'ok': 'Succesfully updated. Disconnect device.',
+                                 'error': 'Failed to load firmware.',
+                                 'prog': 'In programming mode.',
+                                 'n/a': '' }
+      property variant statesColor: { 'ok': 'green',
+                                      'error': 'red',
+                                      'prog': 'blue',
+                                      'n/a': 'white' }
     }
 
     Component {
@@ -254,9 +265,9 @@ ColumnLayout {
                         ret = bossac.flashByFilename("firmware.bin");
                         if (ret) {
                           devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
-                          logOutput.text = "Firmware updated succesfully. Please disconnect the device.";
+                          devicesModel.setProperty(index,"status", "ok");
                         } else {
-                          logOutput.text = "Failed to load firmware.";
+                          devicesModel.setProperty(index,"status", "error");
                         }
                       } else if (!programmingModeDeviceDetect()) {
                         logOutput.text = "";
@@ -265,9 +276,9 @@ ColumnLayout {
                         ret = bossac.flashByFilename("firmware.bin");
                         if (ret) {
                           devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
-                          logOutput.text = "Firmware updated succesfully. Please disconnect the device.";
+                          devicesModel.setProperty(index,"status", "ok");
                         } else {
-                          logOutput.text = "Failed to load firmware.";
+                          devicesModel.setProperty(index,"status", "error");
                         }
                         devicesModel.setProperty(index, "fw_updt_needed", false);
                         // TO DO: Now the user needs to unplug the device. App should monitor the COM port to check if the device has been disconnected
@@ -295,6 +306,21 @@ ColumnLayout {
                    font.pointSize: 10;
                    color: 'white';
                    anchors.verticalCenter: parent.verticalCenter}
+          }
+          Item {
+            width: parent.width
+            height: 20
+            visible: status !== 'n/a'
+            Row {
+              Text { text: "Status: ";
+                     font.pointSize: 10;
+                     color: 'white';
+                     anchors.verticalCenter: parent.verticalCenter}
+              Text { text: devicesModel.states[status]
+                     font.pointSize: 10;
+                     color: devicesModel.statesColor[status];
+                     anchors.verticalCenter: parent.verticalCenter}
+            }
           }
         }
       }
