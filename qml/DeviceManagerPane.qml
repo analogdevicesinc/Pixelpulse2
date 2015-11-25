@@ -93,7 +93,7 @@ ColumnLayout {
                            "uid":device.UUID,
                            "firmware_version": device.FWVer,
                            "hardware_version": device.HWVer,
-                           "fw_updt_needed": updt_needed,
+                           "fw_updt_needed": updt_needed && devListView.latestVersion != 'v0.0',
                            "updt_in_progress": false,
                            "status": "n/a"
                           });
