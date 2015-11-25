@@ -75,7 +75,10 @@ ColumnLayout {
     for (var i = 0; i < session.devices.length; i++) {
       var device = session.devices[i];
       var updt_needed = false;
-      if (parseFloat(device.FWVer) < parseFloat(devListView.latestVersion.substring(1)))
+
+      if (device.FWVer.indexOf('.') === -1)   // The firmware might be so old that won't provide the version in the 'major.minor' format
+          updt_needed = true;
+      else if (parseFloat(device.FWVer) < parseFloat(devListView.latestVersion.substring(1)))
         updt_needed = true;
 
       devicesModel.insert(devicesModel.count,
