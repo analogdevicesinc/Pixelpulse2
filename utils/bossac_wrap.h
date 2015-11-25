@@ -7,12 +7,21 @@
 #include <QObject>
 #include <QTextStream>
 #include <QTimer>
+#include <QFileInfo>
 
 #include <QDebug>
 
 class BossacWrapper: public QObject
 {
     Q_OBJECT
+
+private:
+bool checkFileExists(const QString& filepath)
+{
+    QFileInfo fInfo(filepath);
+
+    return fInfo.exists();
+}
 
 public slots:
     QString getBossacPath() {
@@ -27,11 +36,16 @@ public slots:
     #endif
     }
 
-    bool flashByFilename(const QString& image) {
+    QString flashByFilename(const QString& image) {
         QTimer timer;
         bool devReadyToProg = false;
         bool timeout = false;
-        bool ret = true;
+        QString ret = "";
+
+        if (!checkFileExists(image)) {
+            ret = "Cannot find " + image + " file.";
+            return ret;
+        }
 
         // At this point device is set in programming mode. Make sure bossac sees it before
         // attempting to flash it.
@@ -44,10 +58,12 @@ public slots:
             } else {
                 if (timer.remainingTime() == 0) {
                     timeout = true;
-                    qDebug() << "The programming of the device has timeout!";
+                    ret = "The process of programming of the device has timeout!";
                 }
             }
         }
+        if (timeout)
+          return ret;
 
         // Flash the device
         QProcess bossacThread;
@@ -58,9 +74,10 @@ public slots:
 
         if (devReadyToProg) {
             bossacThread.start(program, arguments);
-            ret = bossacThread.waitForFinished();
-            if (ret) {
+            if (bossacThread.waitForFinished()) {
                 qDebug() << bossacThread.readAllStandardOutput();
+            } else {
+                ret = "Failed to run the bossac process.";
             }
         }
 

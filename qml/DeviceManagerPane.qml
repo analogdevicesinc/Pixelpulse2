@@ -290,6 +290,8 @@ ColumnLayout {
                     anchors.fill: parent
                     onClicked: {
                       var ret;
+                      var err;
+
                       if (name === "[Device In Programming Mode]") {
                         // Devices in programming mode can be disconnected without us to know about it, so check if the device is still there.
                         if (!programmingModeDeviceExists()) {
@@ -298,21 +300,23 @@ ColumnLayout {
                         }
 
                         ret = bossac.flashByFilename("firmware.bin");
-                        if (ret) {
+                        if (ret.length === 0) {
                           devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
                           devicesModel.setProperty(index,"status", "ok");
                         } else {
                           devicesModel.setProperty(index,"status", "error");
+                          logOutput.appendMessage(ret);
                         }
                       } else if (!programmingModeDeviceDetect()) {
                         devicesModel.setProperty(index, "updt_in_progress", true);
                         session.devices[index].ctrl_transfer(0xBB, 0, 0);
                         ret = bossac.flashByFilename("firmware.bin");
-                        if (ret) {
+                        if (ret.lenght === 0) {
                           devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
                           devicesModel.setProperty(index,"status", "ok");
                         } else {
                           devicesModel.setProperty(index,"status", "error");
+                          logOutput.appendMessage(ret);
                         }
                         devicesModel.setProperty(index, "fw_updt_needed", false);
                         // TO DO: Now the user needs to unplug the device. App should monitor the COM port to check if the device has been disconnected
