@@ -110,18 +110,25 @@ ColumnLayout {
 
   Rectangle {
     id: devListRefreshBtn
-    Layout.fillWidth: true
-    Layout.minimumWidth: parent.Layout.minimumWidth
-    Layout.maximumWidth: parent.Layout.maximumWidth
+    anchors { left: parent.left;
+              right: parent.right;
+              leftMargin: 5;
+              rightMargin: 5 }
     height: 25
-    color: '#333'
+    radius: 4
 
     Rectangle {
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.verticalCenter: parent.verticalCenter
       width: parent.width - 2
       height: parent.height - 2
-      color: 'black'
+      radius: 4
+      gradient: Gradient {
+        GradientStop { position: 0.0; color: '#565666' }
+        GradientStop { position: 0.15; color: '#6a6a7d' }
+        GradientStop { position: 0.5; color: '#5a5a6a' }
+        GradientStop { position: 1.0; color: '#585868' }
+      }
 
       Text {
         x: 5
@@ -133,8 +140,6 @@ ColumnLayout {
       }
 
       MouseArea {
-        property color lastColor: 'black'
-
         hoverEnabled: true
         anchors.fill: parent
         onClicked: {
@@ -142,10 +147,8 @@ ColumnLayout {
           deviceManagerListFill();
         }
 
-        onEntered: parent.color = '#444'
-        onExited: { lastColor = 'black'; parent.color = 'black' }
-        onPressed: { lastColor = parent.color; parent.color =  '#888' }
-        onReleased: parent.color = lastColor
+        onPressed: parent.opacity = 0.8
+        onReleased: parent.opacity = 1.0
       }
     }
   }
