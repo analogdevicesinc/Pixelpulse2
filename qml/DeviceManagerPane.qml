@@ -256,7 +256,7 @@ ColumnLayout {
                       } else if (!programmingModeDeviceDetect()) {
                         logOutput.text = "";
                         devicesModel.setProperty(index, "updt_in_progress", true);
-                        session.devices[0].ctrl_transfer(0xBB, 0, 0);
+                        session.devices[index].ctrl_transfer(0xBB, 0, 0);
                         ret = bossac.flashByFilename("firmware.bin");
                         if (ret) {
                           devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
