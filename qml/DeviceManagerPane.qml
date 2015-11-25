@@ -67,10 +67,6 @@ ColumnLayout {
                          "updt_in_progress": model.updt_in_progress};
       }
       devicesModel.clear();
-      if (updatingDevice) {
-        modelCopy.updt_in_progress = false;
-        devicesModel.insert(n, modelCopy);
-      }
     }
     for (var i = 0; i < session.devices.length; i++) {
       var device = session.devices[i];
@@ -93,6 +89,12 @@ ColumnLayout {
       if (updt_needed === true)
          showPane = true;
     }
+
+    if (updatingDevice) {
+      modelCopy.updt_in_progress = false;
+      devicesModel.insert(n, modelCopy);
+    }
+
     if (showPane)
       deviceMngrVisible = true;
     if (!updatingDevice)
