@@ -169,6 +169,7 @@ ColumnLayout {
           if (devListView.latestVersion == 'v0.0')
             checkFWversion();
           deviceManagerListFill();
+          logOutput.clearLog();
         }
 
         onPressed: devListRefreshBtn.color = 'black'
