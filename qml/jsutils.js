@@ -33,9 +33,16 @@ var checkLatest = function (target) {
 var checkLatestFw = function (callback) {
 	var text;
     request("https://api.github.com/repos/analogdevicesinc/m1k-fw/releases", function(t) {
-        var d = JSON.parse(t.responseText)[0];
-        callback(d.tag_name);
-    //    callback('v2.02');
+        var msg = t.responseText;
+        var ver;
+
+        if (!msg || msg.length === 0) {
+            ver = 'v0.0';
+        } else {
+          var d = JSON.parse(t.responseText)[0];
+          ver = d.tag_name;
+        }
+        callback(ver);
     });
 	return '\n\n\n'
 }

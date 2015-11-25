@@ -16,7 +16,7 @@ ColumnLayout {
                          "uid":"N/A",
                          "firmware_version": "N/A",
                          "hardware_version": "N/A",
-                         "fw_updt_needed": true && devListView.latestVersion != '0.0',
+                         "fw_updt_needed": true && devListView.latestVersion != 'v0.0',
                          "updt_in_progress": false,
                          "status": "prog"
                         });
@@ -113,6 +113,16 @@ ColumnLayout {
       programmingModeDeviceDetect();
   }
 
+  function checkFWversion()
+  {
+    JSUtils.checkLatestFw(function(ver){
+          devListView.latestVersion = ver;
+          if (ver === 'v0.0')
+            logOutput.appendMessage('Failed to get the latest firmware version.' +
+                             'Check your internet connection and then click the "Refresh" button.');
+    });
+  }
+
   ToolbarStyle {
     Layout.fillWidth: true
     Layout.minimumWidth: parent.Layout.minimumWidth
@@ -156,7 +166,8 @@ ColumnLayout {
         hoverEnabled: true
         anchors.fill: parent
         onClicked: {
-          logOutput.text = "";
+          if (devListView.latestVersion == 'v0.0')
+            checkFWversion();
           deviceManagerListFill();
         }
 
@@ -174,16 +185,17 @@ ColumnLayout {
     Layout.maximumWidth: parent.Layout.maximumWidth
     color: 'black'
 
-    property string latestVersion: '0.0'
+    property string latestVersion: 'v0.0'
 
     Component.onCompleted: {
-        JSUtils.checkLatestFw(function(ver){
-            latestVersion = ver;
-        });
+        checkFWversion();
     }
 
     onLatestVersionChanged: {
       console.log("latestVersion changed to: ", latestVersion);
+      if (latestVersion === 'v0.0')
+        return;
+
       deviceManagerListFill();
       JSUtils.getFirmwareURL(function(url) {
         console.log("LOG URL: ", url);
@@ -279,7 +291,6 @@ ColumnLayout {
                     onClicked: {
                       var ret;
                       if (name === "[Device In Programming Mode]") {
-                        logOutput.text = "";
                         // Devices in programming mode can be disconnected without us to know about it, so check if the device is still there.
                         if (!programmingModeDeviceExists()) {
                           clearProgModeDeviceFromList();
@@ -294,7 +305,6 @@ ColumnLayout {
                           devicesModel.setProperty(index,"status", "error");
                         }
                       } else if (!programmingModeDeviceDetect()) {
-                        logOutput.text = "";
                         devicesModel.setProperty(index, "updt_in_progress", true);
                         session.devices[index].ctrl_transfer(0xBB, 0, 0);
                         ret = bossac.flashByFilename("firmware.bin");
@@ -309,7 +319,7 @@ ColumnLayout {
                         // and remove the item in the device list. The monitoring should be done in a separate thread.
 
                       } else {
-                          logOutput.text = "A device is already in programming mode and needs to be programmed first!";
+                          logOutput.appendMessage("A device is already in programming mode and needs to be programmed first!");
                       }
                     }
 
@@ -373,6 +383,8 @@ ColumnLayout {
   }
 
   TextArea {
+    property int logId: 0
+
     id: logOutput
     readOnly: true;
     Layout.fillWidth: true
@@ -381,7 +393,6 @@ ColumnLayout {
     backgroundVisible: false
     selectByKeyboard: true
     selectByMouse: true
-
     implicitHeight: 51
 
     style: TextAreaStyle {
@@ -389,6 +400,12 @@ ColumnLayout {
       selectionColor: "steelblue"
       selectedTextColor: "#eee"
       backgroundColor: "#eee"
+    }
+
+    function appendMessage(message)
+    {
+      logOutput.append(logId.toString() + ': ' + message + '\n');
+      logId ++;
     }
   }
 }
