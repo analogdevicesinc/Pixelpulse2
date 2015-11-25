@@ -386,6 +386,51 @@ ColumnLayout {
     }
   }
 
+  Rectangle {
+    id: logCleanBtn
+    anchors { right: parent.right;
+              bottom: logOutput.top;
+              rightMargin: 5 }
+    height: 20
+    width: 70
+    radius: 4
+    color: 'grey'
+
+    Rectangle {
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.verticalCenter: parent.verticalCenter
+      width: parent.width - 2
+      height: parent.height - 2
+      radius: 4
+      gradient: Gradient {
+        GradientStop { position: 0.0; color: '#565666' }
+        GradientStop { position: 0.15; color: '#6a6a7d' }
+        GradientStop { position: 0.5; color: '#5a5a6a' }
+        GradientStop { position: 1.0; color: '#585868' }
+      }
+
+      Text {
+        x: 5
+        text: "Clean Log"
+        font.pointSize: 10
+        color: 'white'
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+      }
+
+      MouseArea {
+        hoverEnabled: true
+        anchors.fill: parent
+        onClicked: {
+          logOutput.clearLog();
+        }
+
+        onPressed: logCleanBtn.color = 'black'
+        onReleased: logCleanBtn.color = 'grey'
+      }
+    }
+  }
+
   TextArea {
     property int logId: 0
 
@@ -406,10 +451,20 @@ ColumnLayout {
       backgroundColor: "#eee"
     }
 
+    TextEdit {
+      id: textEdit
+    }
+
     function appendMessage(message)
     {
       logOutput.append(logId.toString() + ': ' + message + '\n');
       logId ++;
+    }
+    function clearLog()
+    {
+        logOutput.cursorPosition = 0;
+        logOutput.text = "";
+        logId = 0;
     }
   }
 }
