@@ -119,6 +119,7 @@ ColumnLayout {
               rightMargin: 5 }
     height: 25
     radius: 4
+    color: 'grey'
 
     Rectangle {
       anchors.horizontalCenter: parent.horizontalCenter
@@ -150,8 +151,8 @@ ColumnLayout {
           deviceManagerListFill();
         }
 
-        onPressed: parent.opacity = 0.8
-        onReleased: parent.opacity = 1.0
+        onPressed: devListRefreshBtn.color = 'black'
+        onReleased: devListRefreshBtn.color = 'grey'
       }
     }
   }
@@ -232,9 +233,11 @@ ColumnLayout {
                      color: 'white';
                      anchors.verticalCenter: parent.verticalCenter}
               Rectangle {
+                id: devUpdateBtn
                 height: parent.height
                 width: 115
-                color: 'white'
+                radius: 4
+                color: 'grey'
                 visible: fw_updt_needed === true
 
                 Rectangle {
@@ -242,7 +245,13 @@ ColumnLayout {
                   anchors.verticalCenter: parent.verticalCenter
                   width: parent.width - 2
                   height: parent.height - 2
-                  color: 'black'
+                  radius: 4
+                  gradient: Gradient {
+                    GradientStop { position: 0.0; color: '#565666' }
+                    GradientStop { position: 0.15; color: '#6a6a7d' }
+                    GradientStop { position: 0.5; color: '#5a5a6a' }
+                    GradientStop { position: 1.0; color: '#585868' }
+                  }
 
                   Text {
                     x: 5
@@ -289,10 +298,8 @@ ColumnLayout {
                       }
                     }
 
-                    onEntered: parent.color = '#444'
-                    onExited: { lastColor = 'black'; parent.color = 'black' }
-                    onPressed: { lastColor = parent.color; parent.color =  '#888' }
-                    onReleased: parent.color = lastColor
+                    onPressed: devUpdateBtn.color = 'black'
+                    onReleased: devUpdateBtn.color = 'grey'
                   }
                 }
               }
