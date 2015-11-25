@@ -312,7 +312,7 @@ ColumnLayout {
                         devicesModel.setProperty(index, "updt_in_progress", true);
                         session.devices[index].ctrl_transfer(0xBB, 0, 0);
                         ret = bossac.flashByFilename("firmware.bin");
-                        if (ret.lenght === 0) {
+                        if (ret.length === 0) {
                           devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
                           devicesModel.setProperty(index,"status", "ok");
                         } else {
