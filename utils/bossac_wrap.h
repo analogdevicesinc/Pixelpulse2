@@ -8,6 +8,7 @@
 #include <QTextStream>
 #include <QTimer>
 #include <QFileInfo>
+#include <QApplication>
 
 #include <QDebug>
 
@@ -52,8 +53,8 @@ public slots:
         timer.setInterval(10000);
         timer.start();
         while (!devReadyToProg && !timeout) {
-            QString output = deviceInformation().left(19);
-            if (output == "Device found on COM") {
+            QString output = deviceInformation();
+            if (output.contains("Device found", Qt::CaseInsensitive)) {
                 devReadyToProg = true;
             } else {
                 if (timer.remainingTime() == 0) {

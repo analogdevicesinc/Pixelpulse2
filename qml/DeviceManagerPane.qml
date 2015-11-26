@@ -37,7 +37,7 @@ ColumnLayout {
      var msg = bossac.deviceInformation();
      var deviceExists = false;
 
-      if (msg.substr(0, 19) === "Device found on COM") {
+      if (msg.indexOf("Device found") > -1) {
         deviceExists = true;
       }
 
