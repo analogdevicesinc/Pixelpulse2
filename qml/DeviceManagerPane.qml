@@ -95,7 +95,7 @@ ColumnLayout {
                            "hardware_version": device.HWVer,
                            "fw_updt_needed": updt_needed && devListView.latestVersion != 'v0.0',
                            "updt_in_progress": false,
-                           "status": "n/a"
+                           "status": (!updt_needed && (devListView.latestVersion != 'v0.0')) ? 'fw_ok' : "n/a"
                           });
 
       if (updt_needed === true)
@@ -209,10 +209,12 @@ ColumnLayout {
       property variant states: { 'ok': 'Succesfully updated. Disconnect device.',
                                  'error': 'Failed to load firmware.',
                                  'prog': 'In programming mode.',
+                                 'fw_ok': 'Firmware is up to date.',
                                  'n/a': '' }
       property variant statesColor: { 'ok': 'green',
                                       'error': 'red',
                                       'prog': 'blue',
+                                      'fw_ok': 'white',
                                       'n/a': 'white' }
     }
 
