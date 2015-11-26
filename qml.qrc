@@ -31,5 +31,6 @@
         <file>icons/play.png</file>
         <file>icons/pause.png</file>
         <file>icons/gear.png</file>
+        <file>qml/DeviceManagerPane.qml</file>
     </qresource>
 </RCC>

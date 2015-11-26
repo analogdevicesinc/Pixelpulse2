@@ -2,6 +2,7 @@
 #include <QtQuick/QQuickItem>
 #include "libsmu/libsmu.hpp"
 #include <memory>
+#include "utils/filedownloader.h"
 
 class SessionItem;
 class DeviceItem;
@@ -36,6 +37,8 @@ public:
 
     Q_INVOKABLE void updateMeasurements();
 
+    Q_INVOKABLE void downloadFromUrl(QString url);
+
     bool getActive() { return m_active; }
     QQmlListProperty<DeviceItem> getDevices() { return QQmlListProperty<DeviceItem>(this, m_devices); }
 
@@ -54,6 +57,7 @@ protected slots:
     void onFinished();
     void onAttached(Device* device);
     void onDetached(Device* device);
+    void handleDownloadedFirmware();
 
 protected:
     Session* m_session;
@@ -61,6 +65,7 @@ protected:
     bool m_continuous;
     unsigned m_sample_rate;
     unsigned m_sample_count;
+    FileDownloader *m_firmware_fd;
     QList<DeviceItem *> m_devices;
 };
 

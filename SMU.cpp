@@ -2,6 +2,7 @@
 #include "libsmu/libsmu.hpp"
 #include "Plot/PhosphorRender.h"
 #include "Plot/FloatBuffer.h"
+#include "utils/fileio.h"
 
 void registerTypes() {
     qmlRegisterType<SessionItem>();
@@ -42,7 +43,6 @@ m_sample_count(0)
     m_session->m_hotplug_detach_callback = [this](Device* device){
         emit detached(device);
     };
-
 }
 
 SessionItem::~SessionItem() {
@@ -154,6 +154,15 @@ void SessionItem::onDetached(Device* device){
     devicesChanged();
 }
 
+void SessionItem::handleDownloadedFirmware()
+{
+    FileIO f;
+    f.writeRawByFilename("firmware.bin",  m_firmware_fd->downloadedData());
+
+    delete m_firmware_fd;
+    m_firmware_fd = NULL;
+}
+
 /// cancel obnoxious amount of redirection
 /// SessionItem::cancel calls Session::cancel calls Device::cancel on each device
 void SessionItem::cancel() {
@@ -213,6 +222,13 @@ void SessionItem::updateMeasurements() {
             }
         }
     }
+}
+
+void SessionItem::downloadFromUrl(QString url)
+{
+    QUrl firmwareUrl(url);
+    m_firmware_fd = new FileDownloader(firmwareUrl, this);
+    connect(m_firmware_fd, SIGNAL (downloaded()), this, SLOT (handleDownloadedFirmware()));
 }
 
 /// DeviceItem constructor

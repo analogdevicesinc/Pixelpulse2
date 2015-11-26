@@ -32,6 +32,23 @@ public slots:
         out << data << "\n";
         return true;
     }
+    /// accept a file handle by URI and source datastring
+    bool writeRawByURI(const QUrl& destination, const QByteArray& data) {
+        auto path = destination.toLocalFile();
+        return writeRawByFilename(path, data);
+    }
+    /// accept a file handle by string and source datastring
+    bool writeRawByFilename(const QString& source, const QByteArray& data)
+    {
+        if (source.isEmpty())
+            return false;
+        QString s = source;
+        QFile file(s);
+        file.open(QIODevice::WriteOnly);
+        QDataStream out(&file);
+        out.writeRawData(data, data.length());
+        return true;
+    }
 
     QString readByURI(const QUrl& source) {
 		auto path = source.toLocalFile();

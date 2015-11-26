@@ -10,6 +10,8 @@ ColumnLayout {
 
   ToolbarStyle {
     Layout.fillWidth: true
+    Layout.minimumWidth: parent.Layout.minimumWidth
+    Layout.maximumWidth: parent.Layout.maximumWidth
     height: toolbarHeight
   }
 

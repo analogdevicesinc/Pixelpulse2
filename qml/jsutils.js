@@ -30,6 +30,95 @@ var checkLatest = function (target) {
 	return '\n\n\n'
 }
 
+var checkLatestFw = function (callback) {
+	var text;
+    request("https://api.github.com/repos/analogdevicesinc/m1k-fw/releases", function(t) {
+        var msg = t.responseText;
+        var ver;
+
+        if (!msg || msg.length === 0) {
+            ver = 'v0.0';
+        } else {
+          var d = JSON.parse(t.responseText)[0];
+          ver = d.tag_name;
+        }
+        callback(ver);
+    });
+	return '\n\n\n'
+}
+
+var requestFile = function(url, callback) {
+    var xhr = new XMLHttpRequest();
+    console.log('LOG: url: ', url);
+
+    xhr.onloadstart = (function(myxhr) {
+        return function() {
+            console.log('LOG: onloadstart: ', myxhr.status);
+        }
+    })(xhr);
+    xhr.onprogress = (function(myxhr) {
+        return function() {
+            console.log('LOG: progress: ', myxhr.status);
+        }
+    })(xhr);
+    xhr.onerror = (function(myxhr) {
+        return function() {
+            console.log('LOG: error: ', myxhr.status);
+        }
+    })(xhr);
+    xhr.ontimeout = (function(myxhr) {
+        return function() {
+            console.log('LOG: timeout: ', myxhr.status);
+        }
+    })(xhr);
+    xhr.onloadend = (function(myxhr) {
+        return function() {
+            console.log('LOG: onloadend: ', myxhr.status);
+        }
+    })(xhr);
+    xhr.onreadystatechange = (function(myxhr) {
+        return function() {
+            if(myxhr) console.log('LOG: status ready: ', myxhr.readyState);//if(myxhr.readyState === 4)
+            if(myxhr.readyState === 4 && myxhr.status  === 200) callback(myxhr)
+	    }
+    })(xhr);
+
+    xhr.onload = (function(myxhr) {
+        return function() {
+            console.log('LOG: status load: ', myxhr.status);
+             if(myxhr.status  === 200) callback(myxhr)
+	    }
+    })(xhr);
+    xhr.open('GET', url, true);
+	//xhr.responseType = "arraybuffer";
+    xhr.send('');
+}
+
+var getFirmwareURL = function(callback) {
+	var releaseURL = 'https://api.github.com/repos/analogdevicesinc/m1k-fw/releases';
+	console.log('LOG: releaseURL: ', releaseURL);
+
+	request(releaseURL, function(t) {
+        var d = JSON.parse(t.responseText)[0];
+        var id = d.id;
+		var releaseAssetURL = releaseURL + '/' + id + '/assets';
+		console.log('LOG: releaseAssetURL: ', releaseAssetURL);
+
+		request(releaseAssetURL, function(t) {
+			var d = JSON.parse(t.responseText)[0];
+			//var fileDownloadURL = "https://github-cloud.s3.amazonaws.com/releases/26525695/3fe901bc-7d73-11e5-8c12-7b3a65a3415a.bin?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAISTNZFOVBIJMK3TQ%2F20151120%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20151120T171256Z&X-Amz-Expires=300&X-Amz-Signature=910d228f306a836ce95e930d4533713fd11019db6e224ef06636b07295384979&X-Amz-SignedHeaders=host&actor_id=0&response-content-disposition=attachment%3B%20filename%3Dm1000.bin&response-content-type=application%2Foctet-stream";//d.browser_download_url;
+            var fileDownloadURL = d.browser_download_url;
+			console.log('LOG: fileDownloadURL: ', fileDownloadURL);
+
+			request(fileDownloadURL, function(t) {
+				console.log('LOG: The response was received!');
+				var header = t.getResponseHeader('Location');
+                console.log('LOG: Response ', header);
+                callback(header);
+			});
+		});
+	});
+};
 
 var toJSON = function(object, objectMaxDepth, arrayMaxLength, indent)
 {
