@@ -27,11 +27,11 @@ bool checkFileExists(const QString& filepath)
 public slots:
     QString getBossacPath() {
     #ifdef Q_OS_LINUX
-        return "bossac";
+        return "./bossac";
     #elif defined(Q_OS_WIN32)
         return "bossac.exe";
     #elif defined(Q_OS_MAC)
-        return "bossac";
+        return "./bossac";
     #else
         #error "We don't support this platform yet."
     #endif
