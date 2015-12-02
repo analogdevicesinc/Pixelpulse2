@@ -5,10 +5,10 @@ QT += network
 CONFIG += c++11
 
 win32 {
-	CONFIG += release
+        CONFIG += release
 }
 unix {
-	CONFIG += release
+        CONFIG += release
 }
 
 QMAKE_CFLAGS_DEBUG += -ggdb
@@ -73,8 +73,9 @@ win32:debug {
 
 osx {
 	ICON = icons/pp2.icns
-	LIBS += -lobjc -framework IOKit -framework CoreFoundation
-	INCLUDEPATH += /usr/local/opt/qt5/include
+        LIBS += -lobjc -framework IOKit -framework CoreFoundation
+        INCLUDEPATH += /usr/local/opt/qt5/include
+        QT_LOGGING_RULES=qt.network.ssl.warning=false
 }
 
 win32 {
@@ -93,7 +94,7 @@ unix {
 # if we do have a locally compiled static version of libusb-1.0 installed, use it
 	exists(/usr/local/lib/libusb-1.0.a) {
 		LIBS += /usr/local/lib/libusb-1.0.a
-		INCLUDEPATH += "/usr/local/include/libusb-1.0"
+                INCLUDEPATH += "/usr/local/include/libusb-1.0"
 	}
 }
 
@@ -108,5 +109,5 @@ unix:!osx {
 	QMAKE_CFLAGS_DEBUG += -rdynamic
 	QMAKE_CXXFLAGS_DEBUG += -rdynamic
 }
- 
+
 

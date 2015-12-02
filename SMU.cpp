@@ -3,6 +3,7 @@
 #include "Plot/PhosphorRender.h"
 #include "Plot/FloatBuffer.h"
 #include "utils/fileio.h"
+#include "utils/bossac_wrap.h"
 
 void registerTypes() {
     qmlRegisterType<SessionItem>();
@@ -157,7 +158,8 @@ void SessionItem::onDetached(Device* device){
 void SessionItem::handleDownloadedFirmware()
 {
     FileIO f;
-    f.writeRawByFilename("firmware.bin",  m_firmware_fd->downloadedData());
+    BossacWrapper bw;
+    f.writeRawByFilename(bw.getTmpPathForFirmware() + "/firmware.bin",  m_firmware_fd->downloadedData());
 
     delete m_firmware_fd;
     m_firmware_fd = NULL;

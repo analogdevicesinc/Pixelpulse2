@@ -302,7 +302,7 @@ ColumnLayout {
                           return;
                         }
 
-                        ret = bossac.flashByFilename("firmware.bin");
+                        ret = bossac.flashByFilename(bossac.getTmpPathForFirmware() + "/firmware.bin");
                         if (ret.length === 0) {
                           devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
                           devicesModel.setProperty(index,"status", "ok");
@@ -313,7 +313,7 @@ ColumnLayout {
                       } else if (!programmingModeDeviceDetect()) {
                         devicesModel.setProperty(index, "updt_in_progress", true);
                         session.devices[index].ctrl_transfer(0xBB, 0, 0);
-                        ret = bossac.flashByFilename("firmware.bin");
+                        ret = bossac.flashByFilename(bossac.getTmpPathForFirmware() + "/firmware.bin");
                         if (ret.length === 0) {
                           devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
                           devicesModel.setProperty(index,"status", "ok");

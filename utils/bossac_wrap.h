@@ -9,6 +9,10 @@
 #include <QTimer>
 #include <QFileInfo>
 #include <QApplication>
+#include <stdlib.h>
+#if defined(Q_OS_MAC)
+#include "CoreFoundation/CoreFoundation.h"
+#endif
 
 #include <QDebug>
 
@@ -24,14 +28,42 @@ bool checkFileExists(const QString& filepath)
     return fInfo.exists();
 }
 
+QString getEnvVar(const QString varName)
+{
+    return getenv(varName.toStdString().c_str());
+}
+
 public slots:
+    QString getTmpPathForFirmware()
+    {
+        #ifdef Q_OS_LINUX
+            return "";
+        #elif defined(Q_OS_WIN32)
+            return "";
+        #elif defined(Q_OS_MAC)
+            return getEnvVar("TMPDIR");
+        #else
+           return "";
+        #endif
+    }
+
     QString getBossacPath() {
     #ifdef Q_OS_LINUX
         return "./bossac";
     #elif defined(Q_OS_WIN32)
         return "bossac.exe";
     #elif defined(Q_OS_MAC)
-        return "./bossac";
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+        CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+        char path[4096];
+        if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, 4096))
+        {
+                // error!
+        }
+        CFRelease(resourcesURL);
+        QString s((const char *)path);
+        s.append("/bossac");
+        return s;
     #else
         #error "We don't support this platform yet."
     #endif
@@ -54,6 +86,7 @@ public slots:
         timer.start();
         while (!devReadyToProg && !timeout) {
             QString output = deviceInformation();
+            qDebug() << output;
             if (output.contains("Device found", Qt::CaseInsensitive)) {
                 devReadyToProg = true;
             } else {
@@ -95,6 +128,7 @@ public slots:
         bossacThread.setProcessChannelMode(QProcess::MergedChannels);
         bossacThread.start(program, arguments);
         bossacThread.waitForFinished();
+
         return bossacThread.readAllStandardOutput();
     }
 

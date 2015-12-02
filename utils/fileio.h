@@ -8,6 +8,7 @@
 #include <QUrl>
 #include <QDebug>
 #include <QTextStream>
+#include<QDataStream>
 
 class FileIO : public QObject
 {
