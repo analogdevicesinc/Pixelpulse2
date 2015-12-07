@@ -10,6 +10,9 @@
 #include <QFileInfo>
 #include <QApplication>
 #include <stdlib.h>
+#include <QStandardPaths>
+#include <QDir>
+
 #if defined(Q_OS_MAC)
 #include "CoreFoundation/CoreFoundation.h"
 #endif
@@ -39,7 +42,11 @@ public slots:
         #ifdef Q_OS_LINUX
             return "";
         #elif defined(Q_OS_WIN32)
-            return "";
+            QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+            QDir dir(path);
+            if (!dir.exists())
+                dir.mkpath(".");
+            return path;
         #elif defined(Q_OS_MAC)
             return getEnvVar("TMPDIR");
         #else
