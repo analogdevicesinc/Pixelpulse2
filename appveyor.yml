@@ -12,8 +12,8 @@ install:
   - set PATH=C:\Program Files (x86)\MSBuild\12.0\bin\;C:\mingw32\bin;C:\msys\bin\;%QTDIR%\bin;%PATH%
   - ps: (new-object System.Net.WebClient).Downloadfile("http://itdaniher.com/static/libusb-1.0-hp.7z", "c:\libusb.7z")
   - 7z x -y "c:\libusb.7z" -o"C:\libusb" > nul
-  - appveyor DownloadFile https://slproweb.com/download/Win32OpenSSL_Light-1_0_2d.exe
-  - Win32OpenSSL_Light-1_0_2d.exe /silent /verysilent /sp- /suppressmsgboxes
+  - appveyor DownloadFile https://slproweb.com/download/Win32OpenSSL_Light-1_0_2e.exe
+  - Win32OpenSSL_Light-1_0_2e.exe /silent /verysilent /sp- /suppressmsgboxes
 
 build_script:
   - git submodule update --init --recursive
