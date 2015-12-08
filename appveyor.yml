@@ -27,8 +27,7 @@ after_build:
       cp C:\OpenSSL-Win32\libeay32.dll distrib
       cp C:\OpenSSL-Win32\libssl32.dll distrib
       cp C:\OpenSSL-Win32\ssleay32.dll distrib
-      cp C:\Windows\System32\msvcr120.dll distrib
-      cp C:\Windows\System32\msvcp120.dll distrib
+      cp C:\OpenSSL-Win32\bin\msvcr120.dll distrib
       7z a -y distrib.zip distrib
     }
     appveyor PushArtifact release\pixelpulse2.exe
