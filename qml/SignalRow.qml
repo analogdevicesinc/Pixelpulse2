@@ -107,6 +107,7 @@ Rectangle {
           id: v1TextBox
           text: signal.isOutput ? signal.src.v1.toFixed(4) : signal.measurement.toFixed(4)
           color: "#FFF"
+          selectByMouse: true
           onAccepted: {
             signal.src.v1 = text
           }
@@ -135,6 +136,7 @@ Rectangle {
           id: v2TextBox
           text: overlay_periodic.visible ? signal.src.v2.toFixed(4) : ""
           color: "#FFF"
+          selectByMouse: true
           onAccepted: {
             signal.src.v2 = text
           }
@@ -153,6 +155,7 @@ Rectangle {
           visible: signal.src.src != 'constant' && signal.isOutput == true
           text: Math.abs(Math.round((controller.sampleRate / signal.src.period)).toExponential())
           color: "#FFF"
+          selectByMouse: true
           onAccepted: {
             text = parseFloat(text).toExponential()
             signal.src.period = controller.sampleRate / text
