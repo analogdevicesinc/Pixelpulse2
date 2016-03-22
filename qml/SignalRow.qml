@@ -121,6 +121,8 @@ Rectangle {
             var value = constrainValue(Number.fromLocaleString(text), axes.ymin, axes.ymax);
             text = value.toFixed(4);
             signal.src.v1 = text;
+
+            signalBlock.updateMode() // enough to call it for V1 (not necessary for V2, Freq - not visible when sourcing current anyway)
           }
           validator: DoubleValidator{}
           anchors.left: parent.left
