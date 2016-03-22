@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.0
 import Plot 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
+import QtQml 2.2
 
 Rectangle {
   id: signalBlock
@@ -11,6 +12,14 @@ Rectangle {
   property var xaxis
   property var signal
   color: '#444'
+
+  function constrainValue(value, min, max) {
+    if (value < min)
+        value = min;
+    else if (value > max)
+        value = max;
+    return value;
+  }
 
   function updateMode() {
     channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
@@ -102,15 +111,65 @@ Rectangle {
     RowLayout {
       id: editWaveform
       anchors.fill: parent
+
+      property bool isVoltageSignal: signal.label === "Voltage" ? true : false
+      property real up_dn_Sensitivity : isVoltageSignal ? 0.01 : 0.001;
+      property real pgUp_pgDn_Sensitivity : isVoltageSignal ? 1.0 : 0.1;
+
         // V1
         TextInput {
           id: v1TextBox
           text: signal.isOutput ? signal.src.v1.toFixed(4) : signal.measurement.toFixed(4)
           color: "#FFF"
-          onAccepted: {
-            signal.src.v1 = text
+          selectByMouse: true
+
+          Binding {
+            target: v1TextBox; property: 'text'
+            value: signal.isOutput ? signal.src.v1.toFixed(4) : signal.measurement.toFixed(4)
           }
-          validator: DoubleValidator{bottom: axes.ymin; top: axes.ymax;}
+
+          onAccepted: {
+            var value = constrainValue(Number.fromLocaleString(text), axes.ymin, axes.ymax);
+            text = value.toFixed(4);
+            signal.src.v1 = text;
+
+            signalBlock.updateMode() // enough to call it for V1 (not necessary for V2, Freq - not visible when sourcing current anyway)
+          }
+
+          Keys.onPressed: {
+            var value;
+
+            switch (event.key) {
+              case Qt.Key_Escape:
+                text = signal.src.v1.toFixed(4);
+                break;
+
+              case Qt.Key_Down:
+                  value = Number.fromLocaleString(text) - editWaveform.up_dn_Sensitivity;
+                  text = value.toFixed(4);
+                  accepted();
+                  break;
+
+              case Qt.Key_Up:
+                  value = Number.fromLocaleString(text) + editWaveform.up_dn_Sensitivity;
+                  text = value.toFixed(4);
+                  accepted();
+                  break;
+
+              case Qt.Key_PageDown:
+                  value = Number.fromLocaleString(text) - editWaveform.pgUp_pgDn_Sensitivity;
+                  text = value.toFixed(4);
+                  accepted();
+                  break;
+
+              case Qt.Key_PageUp:
+                  value = Number.fromLocaleString(text) + editWaveform.pgUp_pgDn_Sensitivity;
+                  text = value.toFixed(4);
+                  accepted();
+                  break;
+            }
+          }
+          validator: DoubleValidator{}
           anchors.left: parent.left
           anchors.leftMargin: 80
         }
@@ -135,10 +194,54 @@ Rectangle {
           id: v2TextBox
           text: overlay_periodic.visible ? signal.src.v2.toFixed(4) : ""
           color: "#FFF"
-          onAccepted: {
-            signal.src.v2 = text
+          selectByMouse: true
+
+          Binding {
+            target: v2TextBox; property: 'text'
+            value: overlay_periodic.visible ? signal.src.v2.toFixed(4) : ""
           }
-          validator: DoubleValidator{bottom: axes.ymin; top: axes.ymax;}
+
+          onAccepted: {
+            var value = constrainValue(Number.fromLocaleString(text), axes.ymin, axes.ymax);
+            text = value.toFixed(4);
+            signal.src.v2 = text;
+          }
+
+          Keys.onPressed: {
+            var value;
+
+            switch (event.key) {
+              case Qt.Key_Escape:
+                text = signal.src.v1.toFixed(4);
+                break;
+
+              case Qt.Key_Down:
+                  value = Number.fromLocaleString(text) - editWaveform.up_dn_Sensitivity;
+                  text = value.toFixed(4);
+                  accepted();
+                  break;
+
+              case Qt.Key_Up:
+                  value = Number.fromLocaleString(text) + editWaveform.up_dn_Sensitivity;
+                  text = value.toFixed(4);
+                  accepted();
+                  break;
+
+              case Qt.Key_PageDown:
+                  value = Number.fromLocaleString(text) - editWaveform.pgUp_pgDn_Sensitivity;
+                  text = value.toFixed(4);
+                  accepted();
+                  break;
+
+              case Qt.Key_PageUp:
+                  value = Number.fromLocaleString(text) + editWaveform.pgUp_pgDn_Sensitivity;
+                  text = value.toFixed(4);
+                  accepted();
+                  break;
+            }
+          }
+
+          validator: DoubleValidator{}
           anchors.left: v1TextBox.right
           anchors.leftMargin: 80
         }
@@ -153,11 +256,52 @@ Rectangle {
           visible: signal.src.src != 'constant' && signal.isOutput == true
           text: Math.abs(Math.round((controller.sampleRate / signal.src.period)).toExponential())
           color: "#FFF"
+          selectByMouse: true
+
+          property real up_dn_freq_Sensivity: 1
+          property real pgUp_pgDn_freq_Sensivity: 100
+
           onAccepted: {
-            text = parseFloat(text).toExponential()
+            var value = constrainValue(Number.fromLocaleString(text), 0, controller.sampleRate/2);
+            text = parseFloat(value).toExponential()
             signal.src.period = controller.sampleRate / text
           }
-          validator: DoubleValidator{bottom: 0; top: controller.sampleRate/2;}
+
+          Keys.onPressed: {
+            var value;
+
+            switch (event.key) {
+              case Qt.Key_Escape:
+                text = signal.src.v1.toFixed(4);
+                break;
+
+              case Qt.Key_Down:
+                  value = Number.fromLocaleString(text) - up_dn_freq_Sensivity;
+                  text = parseFloat(value).toExponential();
+                  accepted();
+                  break;
+
+              case Qt.Key_Up:
+                  value = Number.fromLocaleString(text) + up_dn_freq_Sensivity;
+                  text = parseFloat(value).toExponential();
+                  accepted();
+                  break;
+
+              case Qt.Key_PageDown:
+                  value = Number.fromLocaleString(text) - pgUp_pgDn_freq_Sensivity;
+                  text = parseFloat(value).toExponential();
+                  accepted();
+                  break;
+
+              case Qt.Key_PageUp:
+                  value = Number.fromLocaleString(text) + pgUp_pgDn_freq_Sensivity;
+                  text = parseFloat(value).toExponential();
+                  accepted();
+                  break;
+            }
+          }
+
+          validator: DoubleValidator{}
           anchors.left: v2TextBox.right
           anchors.leftMargin: 80
         }
