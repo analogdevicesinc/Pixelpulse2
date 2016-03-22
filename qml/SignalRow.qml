@@ -123,6 +123,11 @@ Rectangle {
           color: "#FFF"
           selectByMouse: true
 
+          Binding {
+            target: v1TextBox; property: 'text'
+            value: signal.isOutput ? signal.src.v1.toFixed(4) : signal.measurement.toFixed(4)
+          }
+
           onAccepted: {
             var value = constrainValue(Number.fromLocaleString(text), axes.ymin, axes.ymax);
             text = value.toFixed(4);
@@ -130,6 +135,7 @@ Rectangle {
 
             signalBlock.updateMode() // enough to call it for V1 (not necessary for V2, Freq - not visible when sourcing current anyway)
           }
+
           Keys.onPressed: {
             var value;
 
@@ -187,9 +193,13 @@ Rectangle {
         TextInput {
           id: v2TextBox
           text: overlay_periodic.visible ? signal.src.v2.toFixed(4) : ""
-          visible: signal.src.src != 'constant' && signal.isOutput == true
           color: "#FFF"
           selectByMouse: true
+
+          Binding {
+            target: v2TextBox; property: 'text'
+            value: overlay_periodic.visible ? signal.src.v2.toFixed(4) : ""
+          }
 
           onAccepted: {
             var value = constrainValue(Number.fromLocaleString(text), axes.ymin, axes.ymax);
