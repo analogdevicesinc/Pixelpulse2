@@ -24,12 +24,6 @@ class BossacWrapper: public QObject
     Q_OBJECT
 
 private:
-bool checkFileExists(const QString& filepath)
-{
-    QFileInfo fInfo(filepath);
-
-    return fInfo.exists();
-}
 
 QString getEnvVar(const QString varName)
 {
@@ -37,6 +31,14 @@ QString getEnvVar(const QString varName)
 }
 
 public slots:
+
+    bool checkFileExists(const QString& filepath)
+    {
+        QFileInfo fInfo(filepath);
+
+        return fInfo.exists();
+    }
+
     QString getTmpPathForFirmware()
     {
         #ifdef Q_OS_LINUX
@@ -58,7 +60,7 @@ public slots:
     #ifdef Q_OS_LINUX
         return "./bossac";
     #elif defined(Q_OS_WIN32)
-        return "bossac.exe";
+        return QDir::currentPath() + "/" + "bossac.exe";
     #elif defined(Q_OS_MAC)
         CFBundleRef mainBundle = CFBundleGetMainBundle();
         CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);

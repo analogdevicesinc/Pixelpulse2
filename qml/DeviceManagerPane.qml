@@ -294,6 +294,7 @@ ColumnLayout {
                     onClicked: {
                       var ret;
                       var err;
+                      var firmwareFilePath = bossac.getTmpPathForFirmware() + "/firmware.bin";
 
                       if (name === "[Device In Programming Mode]") {
                         // Devices in programming mode can be disconnected without us to know about it, so check if the device is still there.
@@ -302,7 +303,7 @@ ColumnLayout {
                           return;
                         }
 
-                        ret = bossac.flashByFilename(bossac.getTmpPathForFirmware() + "/firmware.bin");
+                        ret = bossac.flashByFilename(firmwareFilePath);
                         if (ret.length === 0) {
                           devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
                           devicesModel.setProperty(index,"status", "ok");
@@ -312,8 +313,16 @@ ColumnLayout {
                         }
                       } else if (!programmingModeDeviceDetect()) {
                         devicesModel.setProperty(index, "updt_in_progress", true);
-                        session.devices[index].ctrl_transfer(0xBB, 0, 0);
-                        ret = bossac.flashByFilename(bossac.getTmpPathForFirmware() + "/firmware.bin");
+
+                        if (!bossac.checkFileExists(bossac.getBossacPath())) {
+                          ret = "Could not find bossac.exe at:" + bossac.getBossacPath();
+                        } else if (!bossac.checkFileExists(firmwareFilePath)) {
+                            ret = "Could not find firmware at:" + firmwareFilePath;
+                        } else {
+                            session.devices[index].ctrl_transfer(0xBB, 0, 0);
+                            ret = bossac.flashByFilename(firmwareFilePath);
+                        }
+
                         if (ret.length === 0) {
                           devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
                           devicesModel.setProperty(index,"status", "ok");
