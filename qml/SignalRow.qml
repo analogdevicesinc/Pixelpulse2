@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.0
 import Plot 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
+import QtQml 2.2
 
 Rectangle {
   id: signalBlock
@@ -11,6 +12,14 @@ Rectangle {
   property var xaxis
   property var signal
   color: '#444'
+
+  function constrainValue(value, min, max) {
+    if (value < min)
+        value = min;
+    else if (value > max)
+        value = max;
+    return value;
+  }
 
   function updateMode() {
     channel.mode = {'Voltage': 1, 'Current': 2}[signal.label];
@@ -109,9 +118,11 @@ Rectangle {
           color: "#FFF"
           selectByMouse: true
           onAccepted: {
-            signal.src.v1 = text
+            var value = constrainValue(Number.fromLocaleString(text), axes.ymin, axes.ymax);
+            text = value.toFixed(4);
+            signal.src.v1 = text;
           }
-          validator: DoubleValidator{bottom: axes.ymin; top: axes.ymax;}
+          validator: DoubleValidator{}
           anchors.left: parent.left
           anchors.leftMargin: 80
         }
@@ -138,9 +149,11 @@ Rectangle {
           color: "#FFF"
           selectByMouse: true
           onAccepted: {
-            signal.src.v2 = text
+            var value = constrainValue(Number.fromLocaleString(text), axes.ymin, axes.ymax);
+            text = value.toFixed(4);
+            signal.src.v2 = text;
           }
-          validator: DoubleValidator{bottom: axes.ymin; top: axes.ymax;}
+          validator: DoubleValidator{}
           anchors.left: v1TextBox.right
           anchors.leftMargin: 80
         }
@@ -157,10 +170,11 @@ Rectangle {
           color: "#FFF"
           selectByMouse: true
           onAccepted: {
-            text = parseFloat(text).toExponential()
+            var value = constrainValue(Number.fromLocaleString(text), 0, controller.sampleRate/2);
+            text = parseFloat(value).toExponential()
             signal.src.period = controller.sampleRate / text
           }
-          validator: DoubleValidator{bottom: 0; top: controller.sampleRate/2;}
+          validator: DoubleValidator{}
           anchors.left: v2TextBox.right
           anchors.leftMargin: 80
         }
