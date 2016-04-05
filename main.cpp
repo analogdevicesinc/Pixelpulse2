@@ -16,6 +16,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Pixelpulse2");
     QCoreApplication::setApplicationName("Pixelpulse2");
 
+    QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
+
     init_signal_handlers(argv[0]);
 
     QGuiApplication app(argc, argv);
