@@ -45,7 +45,7 @@ Item {
     filled: signal.isOutput
     color: "blue"
 
-    x: xaxis.xToPx(phaseZeroNearCenter() + period/periodDivisor())
+    x: constrainValue(xaxis.xToPx(phaseZeroNearCenter() + period/periodDivisor()), xaxis.xToPx(xaxis.visibleMin), xaxis.xToPx(xaxis.visibleMax))
     y: axes.yToPxClamped(value)
 
     dragOn: overlay
@@ -74,7 +74,7 @@ Item {
     filled: signal.isOutput
     color: "blue"
 
-    x: xaxis.xToPx(phaseZeroNearCenter())
+    x: constrainValue(xaxis.xToPx(phaseZeroNearCenter()), xaxis.xToPx(xaxis.visibleMin), xaxis.xToPx(xaxis.visibleMax))
     y: axes.yToPxClamped(value)
 
     dragOn: overlay
@@ -98,7 +98,7 @@ Item {
     filled: signal.isOutput
     color: "blue"
     visible: signal.src.src == 'square'
-    x: xaxis.xToPx(phaseZeroNearCenter() + signal.src.duty*period)
+    x: constrainValue(xaxis.xToPx(phaseZeroNearCenter() + signal.src.duty*period), xaxis.xToPx(xaxis.visibleMin), xaxis.xToPx(xaxis.visibleMax))
     y: axes.yToPxClamped((signal.src.v2 + signal.src.v1)/2)
     z: -1
 
