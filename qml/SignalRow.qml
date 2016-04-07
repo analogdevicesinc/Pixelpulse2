@@ -11,6 +11,7 @@ Rectangle {
   property alias ymax: axes.ymax;
   property var xaxis
   property var signal
+  property int ygridticks: axes.ygridticks
   color: '#444'
 
   function constrainValue(value, min, max) {
@@ -348,7 +349,10 @@ Rectangle {
             var s = Math.pow(1.01, delta)
             var y = axes.pxToY(zoomParams.firstY);
 
-            if (axes.ymax - axes.ymin < signal.resolution * 8 && s < 1) return;
+            var resolution = signal.label === 'Current' ? signal.resolution * 10 : signal.resolution;
+
+
+            if (axes.ymax - axes.ymin < resolution * ygridticks && s < 1) return;
 
             axes.ymin = Math.max(y - s * (y - axes.ymin), signal.min);
             axes.ymax = Math.min(y - s * (y - axes.ymax), signal.max);
@@ -376,7 +380,7 @@ Rectangle {
     xbottom: false
 
     gridColor: '#222'
-    textColor: '#fff'
+    textColor: '#FFF'
 
     states: [
       State {
@@ -435,7 +439,8 @@ Rectangle {
           var s = Math.pow(1.15, -wheel.angleDelta.y/120);
           var y = axes.pxToY(wheel.y);
 
-          if (axes.ymax - axes.ymin < signal.resolution * 8 && s < 1) return;
+          var resolution = signal.label === 'Current' ? signal.resolution * 10 : signal.resolution;
+          if (axes.ymax - axes.ymin < resolution * ygridticks && s < 1) return;
 
           axes.ymin = Math.max(y - s * (y - axes.ymin), signal.min);
           axes.ymax = Math.min(y - s * (y - axes.ymax), signal.max);

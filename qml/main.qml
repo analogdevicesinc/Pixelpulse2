@@ -107,7 +107,7 @@ ApplicationWindow {
 				id: timeline_xaxis
 				anchors.fill: parent
 				anchors.leftMargin: toolbar.width
-				anchors.rightMargin: 48
+                anchors.rightMargin: 78
 
 				boundMin: 0
 				boundMax: controller.sampleTime
@@ -117,7 +117,7 @@ ApplicationWindow {
 		PlotPane {
 			id: xyPane
 			visible: plotsVisible
-			width: 360
+            width: 360
 			Layout.minimumWidth: 0.2*window.width
 			Layout.maximumWidth: 0.4*window.width
 		}
