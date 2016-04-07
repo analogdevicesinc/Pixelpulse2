@@ -41,19 +41,12 @@ public slots:
 
     QString getTmpPathForFirmware()
     {
-        #ifdef Q_OS_LINUX
-            return "";
-        #elif defined(Q_OS_WIN32)
-            QString path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-            QDir dir(path);
-            if (!dir.exists())
-                dir.mkpath(".");
-            return path;
-        #elif defined(Q_OS_MAC)
-            return getEnvVar("TMPDIR");
-        #else
-           return "";
-        #endif
+        QString path = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+        path += "/pixelpulse2/m1k_firmware";
+        QDir dir(path);
+        if (!dir.exists())
+            dir.mkpath(".");
+       return dir.path();
     }
 
     QString getBossacPath() {
