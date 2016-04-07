@@ -5,6 +5,8 @@
 #include <QtQuick/qsgflatcolormaterial.h>
 #include <iostream>
 
+#include <QOpenGLFunctions>
+
 class Shader : public QSGMaterialShader
 {
 public:
@@ -42,19 +44,21 @@ public:
         m_id_matrix = program()->uniformLocation("matrix");
         m_id_opacity = program()->uniformLocation("opacity");
         m_id_color = program()->uniformLocation("color");
+        m_glFuncs = QOpenGLContext::currentContext()->functions();
     }
 
     void updateState(const RenderState &state, QSGMaterial *newMaterial, QSGMaterial *oldMaterial);
 
     void deactivate() {
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glDisable(GL_POINT_SPRITE);
+        m_glFuncs->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        m_glFuncs->glDisable(GL_POINT_SPRITE);
     }
 
 private:
     int m_id_matrix;
     int m_id_opacity;
     int m_id_color;
+    QOpenGLFunctions *m_glFuncs;
 };
 
 class Material : public QSGMaterial
@@ -83,9 +87,9 @@ void Shader::updateState(const RenderState &state, QSGMaterial *newMaterial, QSG
 
     program()->setUniformValue(m_id_color, m->color);
 
-    glBlendFunc(GL_ONE, GL_ONE);
-    glEnable(GL_POINT_SPRITE);
-    glPointSize(m->pointSize);
+    m_glFuncs->glBlendFunc(GL_ONE, GL_ONE);
+    m_glFuncs->glEnable(GL_POINT_SPRITE);
+    // glPointSize(m->pointSize); // Commenting this out since it is not available in QOpenGLFunctions (OpenGL ES 2.0) and apparently does not affect the point size
 }
 
 PhosphorRender::PhosphorRender(QQuickItem *parent)
