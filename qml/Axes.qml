@@ -54,11 +54,22 @@ Item {
   property real xscale: width / (xmax - xmin)
   function xToPx(x) { return (x - xmin) * xscale }
 
+
+  function decimals(x)
+  {
+      var tmp = x
+      if (tmp.indexOf(".")>-1)
+          return tmp.length-tmp.indexOf(".")-1;
+      else
+          return 0;
+  }
+
   Repeater {
     model: ygridticks
 
     Rectangle {
-      property real yval: (ystart + index) * ystep
+      property real yval:  ((ystart + index) * ystep)
+      property string syval: yval.toFixed(decimals(Math.abs(ystep).toString()))
       visible: yval <= ymax
       x: 0
       y: yToPx(yval)
@@ -74,7 +85,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: textSize
         color: textColor
-        text: yval
+        text: syval
       }
 
       Text {
@@ -85,7 +96,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: textSize
         color: textColor
-        text: yval
+        text: syval
       }
     }
   }
@@ -95,6 +106,7 @@ Item {
 
     Rectangle {
       property real xval: (xstart + index) * xstep
+      property string sxval: xval.toFixed(decimals(Math.abs(xstep).toString()))
       visible: xval <= xmax
       x: xToPx(xval)
       y: 0
@@ -110,7 +122,7 @@ Item {
         anchors.topMargin: textSpacing
         font.pixelSize: textSize
         color: textColor
-        text: xval
+        text: sxval
         rotation: -90
       }
     }

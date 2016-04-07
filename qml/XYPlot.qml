@@ -11,12 +11,14 @@ Item {
   property var isignal
   property var xsignal: vsignal;
   property var ysignal: isignal;
+  property int ygridticks: axes.ygridticks;
+  property int xgridticks: axes.xgridticks;
 
   Axes {
     id: axes
 
     anchors.fill: parent
-    anchors.leftMargin: 64
+    anchors.leftMargin: 94
     anchors.rightMargin: 32
     anchors.topMargin: 32
     anchors.bottomMargin: 32
@@ -41,7 +43,7 @@ Item {
           var s = Math.pow(1.15, -wheel.angleDelta.y/120);
           var y = axes.pxToY(wheel.y);
 
-          if (axes.ymax - axes.ymin < ysignal.resolution * 8 && s < 1) return;
+          if (axes.ymax - axes.ymin < ysignal.resolution * ygridticks * 8 && s < 1) return;
 
           axes.ymin = Math.max(y - s * (y - axes.ymin), ysignal.min);
           axes.ymax = Math.min(y - s * (y - axes.ymax), ysignal.max);
@@ -50,7 +52,7 @@ Item {
           var s = Math.pow(1.15, -wheel.angleDelta.y/120);
           var x = axes.pxToX(wheel.x);
 
-          if (axes.xmax - axes.xmin < xsignal.resolution * 8 && s < 1) return;
+          if (axes.xmax - axes.xmin < xsignal.resolution * xgridticks && s < 1) return;
           axes.xmin = Math.max(x - s * (x - axes.xmin), xsignal.min);
           axes.xmax = Math.min(x - s * (x - axes.xmax), xsignal.max);
 		}
@@ -114,7 +116,7 @@ Item {
             var s = Math.pow(1.01, delta)
             var y = axes.pxToY((zoomParams.firstY))
 
-            if (axes.ymax - axes.ymin < ysignal.resolution * 8 && s < 1) return;
+            if (axes.ymax - axes.ymin < ysignal.resolution * ygridticks * 8 && s < 1) return;
 
             axes.ymin = Math.max(y - s * (y - axes.ymin), ysignal.min);
             axes.ymax = Math.min(y - s * (y - axes.ymax), ysignal.max);
@@ -157,7 +159,7 @@ Item {
             var s = Math.pow(1.01, delta)
             var x = axes.pxToX((zoomParams.firstX))
 
-            if (axes.xmax - axes.xmin < xsignal.resolution * 8 && s < 1) return;
+            if (axes.xmax - axes.xmin < xsignal.resolution * xgridticks  && s < 1) return;
 
             axes.xmin = Math.max(x - s * (x - axes.xmin), xsignal.min);
             axes.xmax = Math.min(x - s * (x - axes.xmax), xsignal.max);
