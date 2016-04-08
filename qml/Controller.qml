@@ -19,6 +19,15 @@ Item {
     }
   }
 
+  onSampleTimeChanged: {
+    if (continuous && enabled) {
+      enabled = false;
+      restartAfterStop = true;
+      session.cancel();
+      enabled = true;
+    }
+  }
+
   Timer {
     id: timer
     interval: 100
