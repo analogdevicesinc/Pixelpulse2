@@ -255,7 +255,7 @@ Rectangle {
         TextInput {
           id: perTextBox
           visible: signal.src.src != 'constant' && signal.isOutput == true
-          text: Math.abs(Math.round((controller.sampleRate / signal.src.period)).toExponential())
+          text: Math.abs(Math.round((controller.sampleRate / signal.src.period))).toFixed(3)
           color: "#FFF"
           selectByMouse: true
 
@@ -264,7 +264,7 @@ Rectangle {
 
           onAccepted: {
             var value = constrainValue(Number.fromLocaleString(text), 0, controller.sampleRate/2);
-            text = parseFloat(value).toExponential()
+            text = parseFloat(value).toFixed(3)
             signal.src.period = controller.sampleRate / text
           }
 
@@ -278,25 +278,25 @@ Rectangle {
 
               case Qt.Key_Down:
                   value = Number.fromLocaleString(text) - up_dn_freq_Sensivity;
-                  text = parseFloat(value).toExponential();
+                  text = parseFloat(value).toFixed(3);
                   accepted();
                   break;
 
               case Qt.Key_Up:
                   value = Number.fromLocaleString(text) + up_dn_freq_Sensivity;
-                  text = parseFloat(value).toExponential();
+                  text = parseFloat(value).toFixed(3);
                   accepted();
                   break;
 
               case Qt.Key_PageDown:
                   value = Number.fromLocaleString(text) - pgUp_pgDn_freq_Sensivity;
-                  text = parseFloat(value).toExponential();
+                  text = parseFloat(value).toFixed(3);
                   accepted();
                   break;
 
               case Qt.Key_PageUp:
                   value = Number.fromLocaleString(text) + pgUp_pgDn_freq_Sensivity;
-                  text = parseFloat(value).toExponential();
+                  text = parseFloat(value).toFixed(3);
                   accepted();
                   break;
             }
