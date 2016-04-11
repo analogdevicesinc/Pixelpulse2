@@ -13,6 +13,7 @@ Rectangle {
   property var signal
   property int ygridticks: axes.ygridticks
   color: '#444'
+  property int currentFontSize: 11;
 
   function constrainValue(value, min, max) {
     if (value < min)
@@ -96,11 +97,10 @@ Rectangle {
   }
 
   Rectangle {
+    id: idRectangle
     z: -1
-
     x: parent.width
     width: xaxis.width
-
     anchors.top: parent.top
     height: timelinePane.spacing
 
@@ -112,7 +112,6 @@ Rectangle {
     RowLayout {
       id: editWaveform
       anchors.fill: parent
-
       property bool isVoltageSignal: signal.label === "Voltage" ? true : false
       property real up_dn_Sensitivity : isVoltageSignal ? 0.01 : 0.001;
       property real pgUp_pgDn_Sensitivity : isVoltageSignal ? 1.0 : 0.1;
@@ -123,6 +122,9 @@ Rectangle {
           text: signal.isOutput ? signal.src.v1.toFixed(4) : signal.measurement.toFixed(4)
           color: "#FFF"
           selectByMouse: true
+          font.pixelSize: currentFontSize
+          property real position: idRectangle.x + idRectangle.width * 10/100;
+
 
           Binding {
             target: v1TextBox; property: 'text'
@@ -170,15 +172,20 @@ Rectangle {
                   break;
             }
           }
+
           validator: DoubleValidator{}
           anchors.left: parent.left
-          anchors.leftMargin: 80
+          anchors.leftMargin: idRectangle.width * 10/100;
         }
         Text {
            id: v1UnitLabel
            color: 'white'
            text: (signal.label == "Voltage" ? " Volts" : " Amperes")
            anchors.left: v1TextBox.right
+           anchors.leftMargin: idRectangle.width * 1/100
+           font.pixelSize: currentFontSize
+           property real position: v1TextBox.position + v1TextBox.width + idRectangle.width * 1/100;
+
         }
         // Resistance
         Text {
@@ -189,6 +196,9 @@ Rectangle {
              (Math.abs(channel.signals[1].measurement) > 0.001) ? "    " + r + " Ohms" : ""
           }
           anchors.left: v1UnitLabel.right
+          anchors.leftMargin: idRectangle.width * 1/100
+          font.pixelSize: currentFontSize
+          property real position: v1TextBox.position + v1TextBox.width + idRectangle.width * 1/100;
         }
         // V2
         TextInput {
@@ -196,6 +206,8 @@ Rectangle {
           text: overlay_periodic.visible ? signal.src.v2.toFixed(4) : ""
           color: "#FFF"
           selectByMouse: true
+          font.pixelSize: currentFontSize
+          property real position: v1UnitLabel.position + v1UnitLabel.width + idRectangle.width * 10/100
 
           Binding {
             target: v2TextBox; property: 'text'
@@ -243,22 +255,29 @@ Rectangle {
           }
 
           validator: DoubleValidator{}
-          anchors.left: v1TextBox.right
-          anchors.leftMargin: 80
+          anchors.left: v1UnitLabel.right
+          anchors.leftMargin: idRectangle.width * 10/100
         }
         Text {
+           id: v2UnitLabel
            color: 'white'
            text: overlay_periodic.visible ? (signal.label == "Voltage" ? " Volts" : " Amperes") : ""
            anchors.left: v2TextBox.right
+           anchors.leftMargin: idRectangle.width * 1/100
+           font.pixelSize: currentFontSize
+           property real position: v2TextBox.position + v2TextBox.width + idRectangle.width * 1/100;
         }
+
         // Freq
         TextInput {
           id: perTextBox
-          visible: signal.src.src != 'constant' && signal.isOutput == true
+          visible: signal.src.src != 'constant' && signal.isOutput == true && perUnitLabel.position + perUnitLabel.width <= idRectangle.x + idRectangle.width
           text: Math.abs(Math.round((controller.sampleRate / signal.src.period))).toFixed(3)
           color: "#FFF"
           selectByMouse: true
+          font.pixelSize: currentFontSize
 
+          property real position: v2UnitLabel.position + v2UnitLabel.width + idRectangle.width * 10/100
           property real up_dn_freq_Sensivity: 1
           property real pgUp_pgDn_freq_Sensivity: 100
 
@@ -303,14 +322,18 @@ Rectangle {
           }
 
           validator: DoubleValidator{}
-          anchors.left: v2TextBox.right
-          anchors.leftMargin: 80
+          anchors.left: v2UnitLabel.right
+          anchors.leftMargin: idRectangle.width * 10/100
         }
         Text {
+           id: perUnitLabel
            color: 'white'
-           visible: signal.src.src != 'constant' && signal.isOutput == true
+           visible: signal.src.src != 'constant' && signal.isOutput == true && perUnitLabel.position + perUnitLabel.width <= idRectangle.x + idRectangle.width
            anchors.left: perTextBox.right
+           anchors.leftMargin: idRectangle.width * 1/100
            text: " Hertz"
+           font.pixelSize: currentFontSize
+           property real position: perTextBox.position + perTextBox.width + idRectangle.width * 1/100;
         }
      }
   }
