@@ -30,11 +30,12 @@ Rectangle {
     }
 
     function updateMode() {
-       var chIdx = {A: 1, B: 2}[channel.label];
-       var offs = 1 + deviceRepeater.count + parent.parent.parent.currentIndex * 2;
+      var chIdx = {A: 0, B: 1}[channel.label];
+      var devIdx = parent.parent.parent.currentIndex * 2;
+      var xyPlot = xyPane.devRep.itemAt(parent.parent.parent.currentIndex).itemAt(chIdx);
 
-       xyPane.children[offs+chIdx].ysignal = (channel.mode == 1) ? xyPane.children[offs+chIdx].isignal : xyPane.children[offs+chIdx].vsignal;
-       xyPane.children[offs+chIdx].xsignal = (channel.mode == 1) ? xyPane.children[offs+chIdx].vsignal : xyPane.children[offs+chIdx].isignal;
+      xyPlot.ysignal = (channel.mode == 1) ? xyPlot.isignal : xyPlot.vsignal;
+      xyPlot.xsignal = (channel.mode == 1) ? xyPlot.vsignal : xyPlot.isignal;
     }
 
     menu: Menu {
