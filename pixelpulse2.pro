@@ -28,13 +28,6 @@ equals(TEMPLATE, "vcapp") {
   RC_DEFINES -= BUILD_DATE
 }
 
-win32 {
-        CONFIG += release
-}
-unix {
-        CONFIG += release
-}
-
 QMAKE_CFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -ggdb
 
