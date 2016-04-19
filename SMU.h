@@ -1,6 +1,6 @@
 #pragma once
 #include <QtQuick/QQuickItem>
-#include "libsmu/libsmu.hpp"
+#include "libsmu/src/libsmu.hpp"
 #include <memory>
 #include "utils/filedownloader.h"
 
