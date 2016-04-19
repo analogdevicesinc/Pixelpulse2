@@ -14,12 +14,12 @@ isEmpty(LIBUSB_INCLUDE_PATH) {
 
 equals(TEMPLATE, "app") {
   DEFINES += GIT_VERSION='"\\\"$${system(git -C $$PWD describe --always --tags --abbrev)}\\\""'
-  DEFINES += BUILD_DATE='"\\\"$${system(date /t +%F)}\\\""'
+  DEFINES += BUILD_DATE='"\\\"$${system(date +%F)}\\\""'
 }
 
 equals(TEMPLATE, "vcapp") {
   DEFINES += GIT_VERSION='"$${system(git -C $$PWD describe --always --tags --abbrev)}"'
-  DEFINES += BUILD_DATE='"$${system(date /t +%F)}"'
+  DEFINES += BUILD_DATE='"$${system(date +%F)}"'
 
   # It is needed to remove the GIT_VERSION and BUILD_DATE defines from the RC preprocessor macros,
   # otherwise the RC compiler will fail.
