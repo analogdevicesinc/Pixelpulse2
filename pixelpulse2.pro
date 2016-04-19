@@ -65,12 +65,6 @@ HEADERS += \
     utils/bossac_wrap.h \
     utils/filedownloader.h
 
-win32:debug {
-#	CONFIG += console
-	LIBS += -limagehlp -ldbghelp
-}
-
-
 osx {
 	ICON = icons/pp2.icns
         LIBS += -lobjc -framework IOKit -framework CoreFoundation

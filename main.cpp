@@ -6,7 +6,7 @@
 #include <QThreadPool>
 #include "SMU.h"
 
-#include "utils/backtracing.h"
+//#include "utils/backtracing.h"
 #include "utils/bossac_wrap.h"
 #include "utils/fileio.h"
 
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
 
-    init_signal_handlers(argv[0]);
+//    init_signal_handlers(argv[0]);
 
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
