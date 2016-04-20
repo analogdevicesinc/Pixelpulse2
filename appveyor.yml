@@ -12,6 +12,9 @@ install:
   - git clone https://github.com/analogdevicesinc/libusb.git "C:\libusb"
 
 build_script:
+  - ps: $env:Pixelpulse2BuildDate=get-date -format "yyyy-MM-dd"
+  - ps: $env:Pixelpulse2GitCommit=git describe --always --tags --abbrev
+
   # build our own libusb version with hotplug support until upstream merges related patches
   - ps: pushd "C:\libusb"
   - git checkout hotplug
@@ -21,12 +24,12 @@ build_script:
 
   - mkdir c:\projects\pixelpulse2\32
   - cd c:\projects\pixelpulse2\32
-  - C:\Qt\5.6\msvc2015\bin\qmake "CONFIG+=release" -spec win32-msvc2015 -tp vc "LIBUSB_LIBRARY = C:\libusb\Win32\Release\dll\libusb-1.0.lib" "LIBUSB_INCLUDE_PATH = C:\libusb\libusb" ..\pixelpulse2.pro
+  - C:\Qt\5.6\msvc2015\bin\qmake "CONFIG+=release" "BUILD_DATE=%Pixelpulse2BuildDate%" "GIT_COMMIT=%Pixelpulse2GitCommit%" -spec win32-msvc2015 -tp vc "LIBUSB_LIBRARY = C:\libusb\Win32\Release\dll\libusb-1.0.lib" "LIBUSB_INCLUDE_PATH = C:\libusb\libusb" ..\pixelpulse2.pro
   - msbuild pixelpulse2.vcxproj /p:Platform=Win32 /p:Configuration=Release
 
   - mkdir c:\projects\pixelpulse2\64
   - cd c:\projects\pixelpulse2\64
-  - C:\Qt\5.6\msvc2015_64\bin\qmake "CONFIG+=release" -spec win32-msvc2015 -tp vc "LIBUSB_LIBRARY = C:\libusb\x64\Release\dll\libusb-1.0.lib" "LIBUSB_INCLUDE_PATH = C:\libusb\libusb" ..\pixelpulse2.pro
+  - C:\Qt\5.6\msvc2015_64\bin\qmake "CONFIG+=release" "BUILD_DATE=%Pixelpulse2BuildDate%" "GIT_COMMIT=%Pixelpulse2GitCommit%" -spec win32-msvc2015 -tp vc "LIBUSB_LIBRARY = C:\libusb\x64\Release\dll\libusb-1.0.lib" "LIBUSB_INCLUDE_PATH = C:\libusb\libusb" ..\pixelpulse2.pro
   - msbuild pixelpulse2.vcxproj /p:Platform=x64 /p:Configuration=Release
 
 after_build:

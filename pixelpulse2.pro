@@ -12,8 +12,17 @@ isEmpty(LIBUSB_INCLUDE_PATH) {
   LIBUSB_INCLUDE_PATH = "C:\libusb\libusb"
 }
 
-DEFINES += GIT_VERSION=$${system(git -C $$PWD describe --always --tags --abbrev)}
-DEFINES += BUILD_DATE=$${system(date +%F)}
+isEmpty(BUILD_DATE) {
+    unix: BUILD_DATE=$(shell date +%F)
+    win32: BUILD_DATE=Not_Defined
+}
+
+isEmpty(GIT_VERSION) {
+    unix: GIT_VERSION=$(shell git -C $$PWD describe --always --tags --abbrev)
+    win32: GIT_VERSION=Not_Defined
+}
+
+DEFINES += BUILD_DATE=$${BUILD_DATE} GIT_VERSION=$${GIT_VERSION}
 
 QMAKE_CFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -ggdb
