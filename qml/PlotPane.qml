@@ -8,6 +8,8 @@ ColumnLayout {
   Layout.minimumWidth: 0.3*parent.width
   Layout.maximumWidth: 0.6*parent.width
 
+  property alias devRep: dev_rep
+
   ToolbarStyle {
     Layout.fillWidth: true
     Layout.minimumWidth: parent.Layout.minimumWidth
@@ -16,6 +18,7 @@ ColumnLayout {
   }
 
   Repeater {
+    id: dev_rep
     model: session.devices
 
     Repeater {
