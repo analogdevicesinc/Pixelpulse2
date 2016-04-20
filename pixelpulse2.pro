@@ -12,21 +12,8 @@ isEmpty(LIBUSB_INCLUDE_PATH) {
   LIBUSB_INCLUDE_PATH = "C:\libusb\libusb"
 }
 
-equals(TEMPLATE, "app") {
-  DEFINES += GIT_VERSION='"\\\"$${system(git -C $$PWD describe --always --tags --abbrev)}\\\""'
-  DEFINES += BUILD_DATE='"\\\"$${system(date +%F)}\\\""'
-}
-
-equals(TEMPLATE, "vcapp") {
-  DEFINES += GIT_VERSION='"$${system(git -C $$PWD describe --always --tags --abbrev)}"'
-  DEFINES += BUILD_DATE='"$${system(date +%F)}"'
-
-  # It is needed to remove the GIT_VERSION and BUILD_DATE defines from the RC preprocessor macros,
-  # otherwise the RC compiler will fail.
-  RC_DEFINES += DEFINES
-  RC_DEFINES -= GIT_VERSION
-  RC_DEFINES -= BUILD_DATE
-}
+DEFINES += GIT_VERSION=$${system(git -C $$PWD describe --always --tags --abbrev)}
+DEFINES += BUILD_DATE=$${system(date +%F)}
 
 QMAKE_CFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -ggdb

@@ -10,6 +10,9 @@
 #include "utils/bossac_wrap.h"
 #include "utils/fileio.h"
 
+#define _DEFINE_STRINGIFY(x) #x
+#define DEFINE_STRINGIFY(x) _DEFINE_STRINGIFY(x)
+
 int main(int argc, char *argv[])
 {
     // Prevent config being written to ~/.config/Unknown Organization/pixelpulse2.conf
@@ -32,14 +35,14 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("session", &smu_session);
 
     QVariantMap versions;
-    versions.insert("build_date", BUILD_DATE);
-    versions.insert("git_version", GIT_VERSION);
+    versions.insert("build_date", DEFINE_STRINGIFY(BUILD_DATE));
+    versions.insert("git_version", DEFINE_STRINGIFY(GIT_VERSION));
     engine.rootContext()->setContextProperty("versions", versions);
     engine.rootContext()->setContextProperty("fileio", &fileIO);
     engine.rootContext()->setContextProperty("bossac", &bossacWrapper);
     if (argc > 1) {
         if (strcmp(argv[1], "-v") || strcmp(argv[1], "--version")) {
-            std::cout << GIT_VERSION << ": Built on " << BUILD_DATE << std::endl;
+            std::cout << DEFINE_STRINGIFY(GIT_VERSION) << ": Built on " << DEFINE_STRINGIFY(BUILD_DATE) << std::endl;
             return 0;
         }
         engine.load(argv[1]);
