@@ -1,10 +1,6 @@
 os: Visual Studio 2015
 
 install:
-  - ps: (new-object System.Net.WebClient).Downloadfile("http://sourceforge.net/projects/mingw-w64/files/External%20binary%20packages%20%28Win64%20hosted%29/MSYS%20%2832-bit%29/MSYS-20111123.zip", "c:\msys.zip")
-  - 7z x -y "c:\msys.zip" -o"C:\" > nul
-  - set PATH=C:\msys\bin\;%PATH%
-
   # update libsmu submodule
   - git submodule update --init --recursive
 
