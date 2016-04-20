@@ -13,12 +13,12 @@ isEmpty(LIBUSB_INCLUDE_PATH) {
 }
 
 isEmpty(BUILD_DATE) {
-    unix: BUILD_DATE=$(shell date +%F)
+    unix: BUILD_DATE='"\\\"$(shell date +%F)\\\""'
     win32: BUILD_DATE=Not_Defined
 }
 
 isEmpty(GIT_VERSION) {
-    unix: GIT_VERSION=$(shell git -C $$PWD describe --always --tags --abbrev)
+    unix: GIT_VERSION='"\\\"$(shell git -C $$PWD describe --always --tags --abbrev)\\\""'
     win32: GIT_VERSION=Not_Defined
 }
 
