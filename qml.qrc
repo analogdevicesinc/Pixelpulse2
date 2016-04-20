@@ -32,5 +32,7 @@
         <file>icons/pause.png</file>
         <file>icons/gear.png</file>
         <file>qml/DeviceManagerPane.qml</file>
+        <file>qml/ColorControlDialog.qml</file>
+        <file>qml/StyleSlider.qml</file>
     </qresource>
 </RCC>

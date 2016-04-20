@@ -12,8 +12,12 @@ Rectangle {
   property var xaxis
   property var signal
   property int ygridticks: axes.ygridticks
-  color: '#444'
+  color: window.signalColor //'#444'
   property int currentFontSize: 11;
+
+  property color gradColor: window.gradColor
+  property color gradColor2: window.gradColor2
+
 
   function constrainValue(value, min, max) {
     if (value < min)
@@ -105,8 +109,8 @@ Rectangle {
     height: timelinePane.spacing
 
     gradient: Gradient {
-        GradientStop { position: 1.0; color: Qt.rgba(1,1,1,0.08) }
-        GradientStop { position: 0.0; color: Qt.rgba(0,0,0,0.0) }
+        GradientStop { position: 1.0; color: gradColor }
+        GradientStop { position: 0.0; color: gradColor2 }
     }
 
     RowLayout {
@@ -402,7 +406,7 @@ Rectangle {
     yright: true
     xbottom: false
 
-    gridColor: '#222'
+    gridColor: window.signalAxesColor//'#222'
     textColor: '#FFF'
 
     states: [
@@ -479,7 +483,7 @@ Rectangle {
       anchors.left: parent.left
       anchors.right: parent.right
       height: 2
-      color: "#282828"
+      color: window.signalAxesColor
     }
 
     Rectangle {
@@ -487,7 +491,14 @@ Rectangle {
       anchors.left: parent.left
       anchors.right: parent.right
       height: 1
-      color: "#282828"
+      color: window.signalAxesColor
+    }
+
+    Rectangle {
+      id: bg
+      anchors.fill: parent
+      color: window.signalRowColor
+      z: -1
     }
 
     PhosphorRender {

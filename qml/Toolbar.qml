@@ -3,6 +3,8 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
 import QtQuick.Dialogs 1.0
+import QtQuick.Dialogs 1.2
+import QtGraphicalEffects 1.0
 import "dataexport.js" as CSVExport
 import "sesssave.js" as StateSave
 
@@ -39,6 +41,10 @@ ToolbarStyle {
     title: "Please select a session to restore."
     nameFilters: [ "JSON files (*.json)", "All files (*)" ]
     onAccepted: { StateSave.restoreState(JSON.parse(fileio.readByURI(sessRestoreDialog.fileUrls[0])));}
+  }
+
+  ColorControlDialog {
+    id: sessColorDialog
   }
 
   Button {
@@ -92,7 +98,7 @@ ToolbarStyle {
         onTriggered: dataDialog.visible = true
       }
       MenuItem {
-	    id: sessionSaveVisibleItem
+        id: sessionSaveVisibleItem
         text: "Save Session"
         onTriggered: sessSaveDialog.visible = true
       }
@@ -101,6 +107,12 @@ ToolbarStyle {
         text: "Restore Session"
         onTriggered: sessRestoreDialog.visible = true
       }
+      MenuItem {
+        id: colorControlVisibleItem
+        text: "Color Control Panel"
+        onTriggered: sessColorDialog.visible = true
+      }
+
       MenuSeparator{}
       MenuItem { text: "Exit"; onTriggered: Qt.quit() }
     }
@@ -121,3 +133,4 @@ ToolbarStyle {
     }
   }
 }
+

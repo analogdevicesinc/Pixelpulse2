@@ -2,6 +2,7 @@ import QtQuick 2.1
 import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
+import QtGraphicalEffects 1.0
 import "sesssave.js" as StateSave
 
 ApplicationWindow {
@@ -13,6 +14,7 @@ ApplicationWindow {
     visible: true
     property var toolbarHeight: 56
     id: window
+    property real  brightness: 3.0
 
     property alias repeatedSweep: toolbar.repeatedSweep
     property alias plotsVisible: toolbar.plotsVisible
@@ -20,12 +22,25 @@ ApplicationWindow {
     property alias deviceMngrVisible: toolbar.deviceMngrVisible
     property var lastConfig: {}
 
+    property color signalColor: '#444'
+    property color channelColor: '#333'
+    property color deviceColor: '#222'
+    property color gradColor: Qt.rgba(1,1,1,0.08)
+    property color gradColor2: Qt.rgba(0,0,0,0.0)
+    property color xyplotColor: Qt.rgba(0.12, 0.12, 0.12, 0.0 )
+    property color gridAxesColor: '#222'
+    //signal row
+    property color signalRowColor: '#0c0c0c'
+    property color signalAxesColor: '#222'
+
     Controller {
         id: controller
         continuous: !repeatedSweep
     }
 
+
     Rectangle {
+        id: background
         anchors.fill: parent
         color: '#000'
     }

@@ -58,12 +58,13 @@ Item {
 		}
       }
     }
-    gridColor: '#222'
+    gridColor: window.gridAxesColor
     textColor: '#fff'
 
     Rectangle {
+      id: axesBackground
       anchors.fill: parent
-      color: '#0c0c0c'
+      color: window.xyplotColor
       z: -1
     }
 

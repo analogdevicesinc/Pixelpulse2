@@ -6,7 +6,7 @@ Rectangle {
   property var device
   property alias channelRepeater: channelRepeater
   property var currentIndex
-  color: '#222'
+  color: window.deviceColor //'#222'
 
   Text {
     text: device.label
