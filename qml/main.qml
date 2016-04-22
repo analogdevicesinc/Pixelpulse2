@@ -21,7 +21,7 @@ ApplicationWindow {
     property alias contentVisible: toolbar.contentVisible
     property alias deviceMngrVisible: toolbar.deviceMngrVisible
     property var lastConfig: {}
-
+/*Color control properties*/
     property color signalColor: '#444'
     property color channelColor: '#333'
     property color deviceColor: '#222'
@@ -32,6 +32,15 @@ ApplicationWindow {
     //signal row
     property color signalRowColor: '#0c0c0c'
     property color signalAxesColor: '#222'
+    //Phosphor render
+    property color dotSignalCurrent: Qt.rgba(0.2, 0.2, 0.03, 1);
+    property color dotSignalVoltage: Qt.rgba(0.03, 0.3, 0.03, 1);
+    property color dotPlotsCurrent: Qt.rgba(0.2, 0.2, 0.03, 1);
+    property color dotPlotsVoltage: Qt.rgba(0.03, 0.3, 0.03, 1);
+    //Dot size
+    property real dotSizeSignal: 0.1;
+    property real dotSizePlots: 0.1;
+
 
     Controller {
         id: controller

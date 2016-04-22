@@ -75,8 +75,8 @@ Item {
 
         xBuffer: xsignal.buffer
         buffer: ysignal.buffer
-        pointSize: 2
-
+        pointSize: Math.min(25, Math.max(2, axes.xscale/session.sampleRate*3) * window.dotSizePlots * 10)
+        color: ysignal.label == 'Current' ? window.dotPlotsCurrent : window.dotPlotsVoltage //Qt.rgba(0.2, 0.2, 0.03, 1) : Qt.rgba(0.03, 0.3, 0.03, 1)
         xmin: axes.xmin
         xmax: axes.xmax
         ymin: axes.ymin

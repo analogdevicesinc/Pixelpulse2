@@ -38,7 +38,7 @@ Dialog {
                 focus: true
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.topMargin: 50
+                anchors.topMargin: 5/100 * parent.height
                 anchors.leftMargin:15/100 * parent.width
                 style: CheckBoxStyle {
                     label: Text {
@@ -47,7 +47,7 @@ Dialog {
                         font.pixelSize: 14
                     }
                 }
-                onClicked: sliderContrast.valueHasChanged(signalCheckBox)
+                onClicked: { sliderContrast.valueHasChanged(signalCheckBox); sliderPhosphorRender.valueHasChanged(signalCheckBox); sliderDotSize.valueHasChanged(signalCheckBox); }
             }
             CheckBox {
                 id: plotsCheckBox
@@ -55,10 +55,8 @@ Dialog {
                 focus: true
                 anchors.top: parent.top
                 anchors.left: signalCheckBox.right
-                anchors.topMargin: 50
+                anchors.topMargin: 5/100 * parent.height
                 anchors.leftMargin: 30
-                y: 0
-                x: 150
                 style: CheckBoxStyle {
                     label: Text {
                         color: "white"
@@ -66,7 +64,7 @@ Dialog {
                         font.pixelSize: 14
                     }
                 }
-                onClicked: { sliderContrast.valueHasChanged(plotsCheckBox) }
+                onClicked: { sliderContrast.valueHasChanged(plotsCheckBox); sliderPhosphorRender.valueHasChanged(plotsCheckBox); sliderDotSize.valueHasChanged(plotsCheckBox); }
             }
 
             Text{
@@ -77,13 +75,13 @@ Dialog {
                 color: 'white'
                 anchors.top: plotsCheckBox.bottom
                 anchors.left: signalCheckBox.left
-                anchors.topMargin: 50
+                anchors.topMargin: 5/100 * parent.height
             }
             Slider {
                 id: sliderBrightness
                 focus: true
                 anchors.top: brightLabel.bottom
-                anchors.topMargin: 20
+                anchors.topMargin: 1/100 * parent.height
                 anchors.left: signalCheckBox.left
                 value: 0.0
                 minimumValue: 0.0
@@ -128,14 +126,12 @@ Dialog {
                 color: 'white'
                 anchors.top: sliderBrightness.bottom
                 anchors.left: signalCheckBox.left
-                anchors.topMargin: 50
+                anchors.topMargin: 5/100 * parent.height
             }
             Slider {
                 id: sliderContrast
                 anchors.top: contrastLabel.bottom
-                anchors.topMargin: 20
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 50
+                anchors.topMargin: 1/100 * parent.height
                 anchors.left: signalCheckBox.left
                 value: 0.0
                 minimumValue: 0.0
@@ -174,6 +170,94 @@ Dialog {
                 }
                 style: StyleSlider { }
                 onValueChanged: sliderContrast.valueHasChanged(sliderContrast)
+            }
+            Text{
+                id: phosphorLabel
+                visible: true
+                text: 'Phosphor Render Contrast'
+                font.pixelSize: 14
+                color: 'white'
+                anchors.top: sliderContrast.bottom
+                anchors.left: signalCheckBox.left
+                anchors.topMargin: 5/100 * parent.height
+            }
+            Slider {
+                id: sliderPhosphorRender
+                anchors.top: phosphorLabel.bottom
+                anchors.topMargin: 1/100 * parent.height
+                anchors.left: signalCheckBox.left
+                value: 0.0
+                minimumValue: 0.0
+                focus: true
+                maximumValue: 1.0
+                stepSize: 0.01
+                width: 70/100 * parent.width
+                activeFocusOnTab: true
+                activeFocusOnPress: true
+                updateValueWhileDragging: true
+                property real factor;
+                property color dotCurrent: Qt.rgba(0.2, 0.2, 0.03, 1);
+                property color dotVoltage: Qt.rgba(0.03, 0.3, 0.03, 1);
+
+                function valueHasChanged(obj){
+                    factor = (sliderPhosphorRender.value)
+                    var rCurrent = dotCurrent.r + (300 * factor) / 255
+                    var gCurrent = dotCurrent.g + (500 * factor) / 255
+                    var bCurrent = dotCurrent.b + (100 * factor) / 255
+
+                    var rVoltage = dotVoltage.r + (100 * factor) / 255
+                    var gVoltage = dotVoltage.g + (500 * factor) / 255
+                    var bVoltage = dotVoltage.b + (100 * factor) / 255
+                    if (plotsCheckBox.checked && (obj !== signalCheckBox)) {
+                        window.dotPlotsCurrent = Qt.rgba(rCurrent, gCurrent, bCurrent, 1.0)
+                        window.dotPlotsVoltage = Qt.rgba(rVoltage, gVoltage,  bVoltage, 1.0)
+                    }
+                    if(signalCheckBox.checked && (obj !== plotsCheckBox)){
+                        window.dotSignalCurrent = Qt.rgba(rCurrent, gCurrent, bCurrent, 1.0)
+                        window.dotSignalVoltage = Qt.rgba(rVoltage, gVoltage,  bVoltage, 1.0)
+                    }
+                }
+                style: StyleSlider { }
+                onValueChanged: sliderPhosphorRender.valueHasChanged(sliderPhosphorRender)
+            }
+            Text{
+                id: dotSizeLabel
+                visible: true
+                text: 'Dot Size'
+                font.pixelSize: 14
+                color: 'white'
+                anchors.top: sliderPhosphorRender.bottom
+                anchors.left: signalCheckBox.left
+                anchors.topMargin: 5/100 * parent.height
+            }
+            Slider {
+                id: sliderDotSize
+                anchors.top: dotSizeLabel.bottom
+                anchors.topMargin: 1/100 * parent.height
+                anchors.left: signalCheckBox.left
+                value: 0.1
+                minimumValue: 0.1
+                focus: true
+                maximumValue: 1.0
+                stepSize: 0.1
+                width: 70/100 * parent.width
+                activeFocusOnTab: true
+                activeFocusOnPress: true
+                updateValueWhileDragging: true
+                property real factor;
+
+                function valueHasChanged(obj){
+                    factor = sliderDotSize.value
+                    if (plotsCheckBox.checked && (obj !== signalCheckBox)){
+                        window.dotSizePlots = factor
+                    }
+                    if (signalCheckBox.checked && (obj !== plotsCheckBox)){
+                        window.dotSizeSignal = factor
+                    }
+
+                }
+                style: StyleSlider { }
+                onValueChanged: sliderDotSize.valueHasChanged(sliderDotSize)
             }
         }
     }

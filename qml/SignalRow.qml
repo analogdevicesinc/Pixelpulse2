@@ -507,8 +507,8 @@ Rectangle {
         clip: true
 
         buffer: signal.buffer
-        pointSize: Math.max(2, Math.min(xaxis.xscale/session.sampleRate*3, 20))
-        color: signal.label == 'Current' ? Qt.rgba(0.2, 0.2, 0.03, 1) : Qt.rgba(0.03, 0.3, 0.03, 1)
+        pointSize: Math.min(25, Math.max(2, xaxis.xscale/session.sampleRate*3) * window.dotSizeSignal * 10)
+        color: signal.label == 'Current' ? window.dotSignalCurrent : window.dotSignalVoltage //Qt.rgba(0.2, 0.2, 0.03, 1) : Qt.rgba(0.03, 0.3, 0.03, 1)
 
         xmin: xaxis.visibleMin
         xmax: xaxis.visibleMax
