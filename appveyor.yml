@@ -34,6 +34,6 @@ after_build:
     appveyor PushArtifact distrib.zip
 
 cache:
- - distrib.zip -> appveyor.yml
  - c:\mingw.7z -> appveyor.yml
+ - distrib.zip -> appveyor.yml
  - c:\msys.zip -> appveyor.yml
