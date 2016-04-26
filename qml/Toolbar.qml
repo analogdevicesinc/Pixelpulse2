@@ -110,7 +110,7 @@ ToolbarStyle {
       }
       MenuItem {
         id: colorControlVisibleItem
-        text: "Color Control Panel"
+        text: "Display Settings"
         onTriggered: sessColorDialog.visible = true
       }
 
