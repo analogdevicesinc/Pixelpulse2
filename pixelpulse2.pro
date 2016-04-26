@@ -23,9 +23,9 @@ SOURCES += main.cpp \
     SMU.cpp \
     Plot/PhosphorRender.cpp \
     Plot/FloatBuffer.cpp \
-    libsmu/device_m1000.cpp \
-    libsmu/session.cpp \
-    libsmu/device_cee.cpp \
+    libsmu/src/device_m1000.cpp \
+    libsmu/src/session.cpp \
+    libsmu/src/device_cee.cpp \
     utils/filedownloader.cpp
 
 RESOURCES += qml.qrc
@@ -56,11 +56,11 @@ HEADERS += \
     SMU.h \
     Plot/PhosphorRender.h \
     Plot/FloatBuffer.h \
-    libsmu/device_m1000.hpp \
-    libsmu/libsmu.h \
-    libsmu/libsmu.hpp \
-    libsmu/device_cee.hpp \
-    libsmu/internal.hpp \
+    libsmu/src/device_m1000.hpp \
+    libsmu/src/libsmu.h \
+    libsmu/src/libsmu.hpp \
+    libsmu/src/device_cee.hpp \
+    libsmu/src/internal.hpp \
     utils/fileio.h \
     utils/bossac_wrap.h \
     utils/filedownloader.h

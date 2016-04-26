@@ -1,5 +1,4 @@
 #include "SMU.h"
-#include "libsmu/libsmu.hpp"
 #include "Plot/PhosphorRender.h"
 #include "Plot/FloatBuffer.h"
 #include "utils/fileio.h"
