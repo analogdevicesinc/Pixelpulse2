@@ -22,11 +22,6 @@ ApplicationWindow {
     property alias deviceMngrVisible: toolbar.deviceMngrVisible
     property var lastConfig: {}
 /*Color control properties*/
-    property color signalColor: '#444'
-    property color channelColor: '#333'
-    property color deviceColor: '#222'
-    property color gradColor: Qt.rgba(1,1,1,0.08)
-    property color gradColor2: Qt.rgba(0,0,0,0.0)
     property color xyplotColor: Qt.rgba(0.12, 0.12, 0.12, 0.0 )
     property color gridAxesColor: '#222'
     //signal row
@@ -40,7 +35,6 @@ ApplicationWindow {
     //Dot size
     property real dotSizeSignal: 0.1;
     property real dotSizePlots: 0.1;
-
 
     Controller {
         id: controller

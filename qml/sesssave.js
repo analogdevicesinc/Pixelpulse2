@@ -19,11 +19,19 @@ var saveState = function () {
 				signalState.xscale = signalItem.xaxis.xscale;
 				signalState.ymin = signalItem.ymin;
 				signalState.ymax = signalItem.ymax;
-				signalState.mode = channel.mode;
+                signalState.mode = channel.mode;
 				signalStates[label] = signalState;
 			}
 		}
 	}
+    var generalState = {}
+    generalState.signalCheckBox = toolbar.colorDialog.sigCheckBox.checked;
+    generalState.plotsCheckBox = toolbar.colorDialog.plotCheckBox.checked;
+    generalState.sliderBrightness = toolbar.colorDialog.sliderB.value;
+    generalState.sliderContrast = toolbar.colorDialog.sliderC.value;
+    generalState.sliderPhosphor = toolbar.colorDialog.sliderPh.value;
+    generalState.sliderDotSize = toolbar.colorDialog.sliderDot.value;
+    signalStates['generalSettings'] = generalState;
 	return signalStates;
 };
 
@@ -44,12 +52,20 @@ var restoreState = function (signalStates){
 				signal.src.v1 = signalState.v1;
 				signal.src.v2 = signalState.v2;
 				signal.src.period = signalState.period;
-				signal.src.phase = signalState.phase;
+                signal.src.phase = signalState.phase;
 				signal.src.duty = signalState.duty;
 				signalItem.ymin = signalState.ymin;
 				signalItem.ymax = signalState.ymax;
 				signalItem.xaxis.xscale = signalState.xscale;
+
 			}
 		}
 	}
+    var generalState = signalStates['generalSettings']
+    toolbar.colorDialog.sigCheckBox.checked = generalState.signalCheckBox;
+    toolbar.colorDialog.plotCheckBox.checked = generalState.plotsCheckBox;
+    toolbar.colorDialog.sliderB.value = generalState.sliderBrightness;
+    toolbar.colorDialog.sliderC.value = generalState.sliderContrast;
+    toolbar.colorDialog.sliderPh.value = generalState.sliderPhosphor;
+    toolbar.colorDialog.sliderDot.value = generalState.sliderDotSize;
 }

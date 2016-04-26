@@ -7,7 +7,7 @@ import QtQuick.Controls.Styles 1.1
 Rectangle {
   property var channel
   property alias signalRepeater:signalRepeater
-  color: window.channelColor //'#333'
+  color: '#333'
 
   Button {
     anchors.top: parent.top

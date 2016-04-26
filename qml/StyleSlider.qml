@@ -6,8 +6,8 @@ SliderStyle {
         implicitWidth: 200
         implicitHeight: 8
         gradient: Gradient {
-            GradientStop { position: 1.0; color: window.gradColor }
-            GradientStop { position: 0.0; color: window.gradColor2 }
+            GradientStop { position: 1.0; color: Qt.rgba(1,1,1,0.08)}
+            GradientStop { position: 0.0; color: Qt.rgba(0,0,0,0.0)}
         }
         radius: 8
     }

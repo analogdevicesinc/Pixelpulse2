@@ -12,11 +12,11 @@ Rectangle {
   property var xaxis
   property var signal
   property int ygridticks: axes.ygridticks
-  color: window.signalColor //'#444'
+  color: '#444'
   property int currentFontSize: 11;
 
-  property color gradColor: window.gradColor
-  property color gradColor2: window.gradColor2
+  property color gradColor: Qt.rgba(1,1,1,0.08)
+  property color gradColor2: Qt.rgba(0,0,0,0.0)
 
 
   function constrainValue(value, min, max) {

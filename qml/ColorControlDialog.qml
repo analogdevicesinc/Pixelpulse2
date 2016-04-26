@@ -11,6 +11,13 @@ Dialog {
     width: 300
     height: 300
     modality: Qt.NonModal
+    property alias plotCheckBox: plotsCheckBox
+    property alias sigCheckBox: signalCheckBox
+    property alias sliderB: sliderBrightness
+    property alias sliderC: sliderContrast
+    property alias sliderDot: sliderDotSize
+    property alias sliderPh: sliderPhosphorRender
+
     contentItem:
         RowLayout {
         id: layout
@@ -34,8 +41,8 @@ Dialog {
 
             CheckBox {
                 id: signalCheckBox
-                checked: true;
                 focus: true
+                checked: true
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.topMargin: 5/100 * parent.height
@@ -47,12 +54,17 @@ Dialog {
                         font.pixelSize: 14
                     }
                 }
-                onClicked: { sliderContrast.valueHasChanged(signalCheckBox); sliderPhosphorRender.valueHasChanged(signalCheckBox); sliderDotSize.valueHasChanged(signalCheckBox); }
+                onClicked: {
+                    sliderContrast.valueHasChanged(signalCheckBox);
+                    sliderPhosphorRender.valueHasChanged(signalCheckBox);
+                    sliderDotSize.valueHasChanged(signalCheckBox);
+
+                }
             }
             CheckBox {
                 id: plotsCheckBox
-                checked: toolbar.plotsVisible ? true : false;
                 focus: true
+                checked: xyPane.visible ? true : false
                 anchors.top: parent.top
                 anchors.left: signalCheckBox.right
                 anchors.topMargin: 5/100 * parent.height
@@ -64,7 +76,12 @@ Dialog {
                         font.pixelSize: 14
                     }
                 }
-                onClicked: { sliderContrast.valueHasChanged(plotsCheckBox); sliderPhosphorRender.valueHasChanged(plotsCheckBox); sliderDotSize.valueHasChanged(plotsCheckBox); }
+                onClicked: {
+                    sliderContrast.valueHasChanged(plotsCheckBox);
+                    sliderPhosphorRender.valueHasChanged(plotsCheckBox);
+                    sliderDotSize.valueHasChanged(plotsCheckBox);
+
+                }
             }
 
             Text{
@@ -254,14 +271,10 @@ Dialog {
                     if (signalCheckBox.checked && (obj !== plotsCheckBox)){
                         window.dotSizeSignal = factor
                     }
-
                 }
                 style: StyleSlider { }
                 onValueChanged: sliderDotSize.valueHasChanged(sliderDotSize)
             }
         }
     }
-    onAccepted: {close()}
-
-
 }
