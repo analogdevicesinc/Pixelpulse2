@@ -7,7 +7,7 @@ import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.0
 
 Dialog {
-    title: "Color control panel"
+    title: "Display settings"
     width: 300
     height: 300
     modality: Qt.NonModal
@@ -50,7 +50,7 @@ Dialog {
                 style: CheckBoxStyle {
                     label: Text {
                         color: "white"
-                        text: 'Signal Row'
+                        text: 'Time Plots'
                         font.pixelSize: 14
                     }
                 }
@@ -72,7 +72,7 @@ Dialog {
                 style: CheckBoxStyle {
                     label: Text {
                         color: "white"
-                        text: 'XYPlot'
+                        text: 'XY Plots'
                         font.pixelSize: 14
                     }
                 }
