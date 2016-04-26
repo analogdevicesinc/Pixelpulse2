@@ -17,6 +17,7 @@ ToolbarStyle {
   property alias plotsVisible: plotsVisibleItem.checked
   property alias contentVisible: contentVisibleItem.checked
   property alias deviceMngrVisible: deviceMngrVisibleItem.checked
+  property alias colorDialog: sessColorDialog
 
   FileDialog {
     id: dataDialog
