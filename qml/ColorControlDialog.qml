@@ -191,7 +191,7 @@ Dialog {
             Text{
                 id: phosphorLabel
                 visible: true
-                text: 'Phosphor Render Contrast'
+                text: 'Dot Brightness'
                 font.pixelSize: 14
                 color: 'white'
                 anchors.top: sliderContrast.bottom
