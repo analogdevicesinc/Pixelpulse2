@@ -31,6 +31,14 @@ Item {
     dragging = null;
   }
 
+  function constrainInterval(value, center, radius){
+    if (Math.abs(value) < radius){
+      if (value < center){ value = -radius; }
+      if (value >= center) { value = radius; }
+    }
+    return value;
+  }
+
   function mapY(pos) {
     var y = Math.min(Math.max(axes.pxToY(pos.y), signal.min), signal.max);
     if (pos.modifiers & Qt.AltModifier) {
@@ -50,7 +58,11 @@ Item {
 
     dragOn: overlay
     onPressed: overlay.dragStart('d1')
-    onReleased: overlay.dragEnd()
+    onReleased: {
+      //50000 -> maximum frequency value
+      signal.src.period = constrainInterval(signal.src.period, 0, controller.sampleRate / 50000);
+      overlay.dragEnd();
+    }
     onDrag: {
       var lx = xaxis.pxToX(Math.max(0, Math.min(pos.x, xaxis.width)));
       var oldPeriod = signal.src.period;
