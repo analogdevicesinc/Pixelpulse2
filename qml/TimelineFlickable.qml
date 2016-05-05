@@ -33,7 +33,7 @@ MouseArea {
 
     onBoundMaxChanged: {
       if (boundMax < visibleMax || timeline_flickable.atXEnd) {
-        setVisible(visibleMin, boundMax)
+        setVisible(0, boundMax)
       }
     }
 
