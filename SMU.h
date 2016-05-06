@@ -195,10 +195,12 @@ public:
     SrcItem(SignalItem*);
     Q_INVOKABLE void update();
     void setPhase(double phase) {
-        phase = fmod(fmod(phase, m_period)+m_period, m_period);
-        if (phase != m_phase) {
-            m_phase = phase;
-            phaseChanged(m_phase);
+        if (m_src.compare("constant") != 0){
+            phase = fmod(fmod(phase, m_period)+m_period, m_period);
+            if (phase != m_phase) {
+                m_phase = phase;
+                phaseChanged(m_phase);
+            }
         }
     }
 
