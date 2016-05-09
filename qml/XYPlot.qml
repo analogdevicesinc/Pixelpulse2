@@ -19,8 +19,8 @@ Item {
 
     anchors.fill: parent
     anchors.leftMargin: 94
-    anchors.rightMargin: 32
-    anchors.topMargin: 32
+    anchors.rightMargin: 52
+    anchors.topMargin: 42
     anchors.bottomMargin: 32
 
     xmin: xsignal.min
@@ -89,7 +89,7 @@ Item {
 
       anchors.top: parent.top
       anchors.bottom: parent.bottom
-      anchors.left: parent.lefts
+      anchors.left: parent.left
       anchors.bottomMargin: axes.anchors.bottomMargin
       width: axes.anchors.leftMargin
 
@@ -123,6 +123,19 @@ Item {
             axes.ymax = Math.min(y - s * (y - axes.ymax), ysignal.max);
           }
         }
+      }
+  }
+
+  Item {
+      id: labelVert
+      anchors.left: parent.left
+      anchors.leftMargin: 43
+      anchors.top: parent.top
+      anchors.topMargin: 0
+      Text {
+        font.pixelSize: 20
+        color: '#fff'
+        text: ysignal.label == 'Current' ? '[A]' : '[V]'
       }
   }
 
@@ -166,6 +179,19 @@ Item {
             axes.xmax = Math.min(x - s * (x - axes.xmax), xsignal.max);
           }
         }
+      }
+  }
+
+  Item {
+      id: labelHoriz
+      anchors.right: parent.right
+      anchors.rightMargin: 32
+      anchors.bottom: parent.bottom
+      anchors.bottomMargin: 30
+      Text {
+        font.pixelSize: 20
+        color: '#fff'
+        text: xsignal.label == 'Current' ? '[A]' : '[V]'
       }
   }
 }
