@@ -59,8 +59,7 @@ Item {
     dragOn: overlay
     onPressed: overlay.dragStart('d1')
     onReleased: {
-      //50000 -> maximum frequency value
-      signal.src.period = constrainInterval(signal.src.period, 0, controller.sampleRate / 50000);
+      signal.src.period = constrainInterval(signal.src.period, 0, controller.sampleRate / controller.maxOutSignalFreq);
       overlay.dragEnd();
     }
     onDrag: {

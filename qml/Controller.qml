@@ -6,6 +6,7 @@ Item {
   property bool continuous: false
   property bool repeat: true
   property real sampleRate: session.devices.length ? session.devices[0].DefaultRate : 0
+  property real maxOutSignalFreq: sampleRate / 5 // A period of a signal should contain at least 5 samples
   property real sampleTime: 0.1
   readonly property int sampleCount: sampleTime * sampleRate
   property bool restartAfterStop: false

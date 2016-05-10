@@ -286,7 +286,7 @@ Rectangle {
           property real pgUp_pgDn_freq_Sensivity: 100
 
           onAccepted: {
-            var value = constrainValue(Number.fromLocaleString(text), 0, controller.sampleRate/2);
+            var value = constrainValue(Number.fromLocaleString(text), 0, controller.maxOutSignalFreq);
             text = parseFloat(value).toFixed(3)
             signal.src.period = controller.sampleRate / text
           }
