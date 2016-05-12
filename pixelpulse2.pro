@@ -74,7 +74,6 @@ win32:debug {
 osx {
 	ICON = icons/pp2.icns
         LIBS += -lobjc -framework IOKit -framework CoreFoundation
-        INCLUDEPATH += /usr/local/opt/qt5/include
         QT_LOGGING_RULES=qt.network.ssl.warning=false
 }
 
