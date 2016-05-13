@@ -72,7 +72,7 @@ Item {
           newPeriod = 1
         }
       }
-      signal.src.period = newPeriod;
+      signal.src.period = constrainInterval(newPeriod, 0, controller.sampleRate / controller.maxOutSignalFreq);
       signal.src.v1 = overlay.mapY(pos);
       // Adjust phase so the signal stays in the same position relative to the other dot
       signal.src.phase = -relX/sampleTick;
