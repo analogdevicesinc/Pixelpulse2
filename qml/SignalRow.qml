@@ -291,6 +291,11 @@ Rectangle {
             signal.src.period = controller.sampleRate / text
           }
 
+          Binding {
+            target: perTextBox; property: 'text';
+            value: Math.abs(Math.round((controller.sampleRate / signal.src.period))).toFixed(3);
+          }
+
           Keys.onPressed: {
             var value;
 
