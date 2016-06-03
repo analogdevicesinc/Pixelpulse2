@@ -55,9 +55,7 @@ var restoreState = function (signalStates){
                 signal.src.phase = signalState.phase;
 				signal.src.duty = signalState.duty;
 				signalItem.ymin = signalState.ymin;
-				signalItem.ymax = signalState.ymax;
-				signalItem.xaxis.xscale = signalState.xscale;
-
+                signalItem.ymax = signalState.ymax;
 			}
 		}
 	}
