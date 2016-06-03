@@ -23,6 +23,16 @@ Item {
     anchors.rightMargin: 12
     text: label ? value.toFixed(4):""
     color: 'white'
+    visible: parent.x <= 50 ? false : true;
+  }
+
+  Text {
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.left: parent.right
+    anchors.leftMargin: 12
+    text: label ? value.toFixed(4):""
+    color: 'white'
+    visible: parent.x <= 50 ? true : false;
   }
 
   Rectangle {
