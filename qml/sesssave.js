@@ -31,6 +31,7 @@ var saveState = function () {
     generalState.sliderContrast = toolbar.colorDialog.sliderC.value;
     generalState.sliderPhosphor = toolbar.colorDialog.sliderPh.value;
     generalState.sliderDotSize = toolbar.colorDialog.sliderDot.value;
+    generalState.xy_checked = plotsVisibleItem.checked;
     signalStates['generalSettings'] = generalState;
 	return signalStates;
 };
@@ -66,4 +67,5 @@ var restoreState = function (signalStates){
     toolbar.colorDialog.sliderC.value = generalState.sliderContrast;
     toolbar.colorDialog.sliderPh.value = generalState.sliderPhosphor;
     toolbar.colorDialog.sliderDot.value = generalState.sliderDotSize;
+    plotsVisibleItem.checked = generalState.xy_checked;
 }
