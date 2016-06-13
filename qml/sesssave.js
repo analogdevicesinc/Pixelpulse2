@@ -32,6 +32,7 @@ var saveState = function () {
     generalState.sliderPhosphor = toolbar.colorDialog.sliderPh.value;
     generalState.sliderDotSize = toolbar.colorDialog.sliderDot.value;
     generalState.xy_checked = plotsVisible;
+    generalState.repeatedSweep = repeatedSweep;
     signalStates['generalSettings'] = generalState;
 	return signalStates;
 };
@@ -68,4 +69,5 @@ var restoreState = function (signalStates){
     toolbar.colorDialog.sliderPh.value = generalState.sliderPhosphor;
     toolbar.colorDialog.sliderDot.value = generalState.sliderDotSize;
     plotsVisible = generalState.xy_checked;
+    repeatedSweep = generalState.repeatedSweep;
 }
