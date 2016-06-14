@@ -4,7 +4,8 @@
 #include <numeric>
 #include <math.h>
 #include <QtQuick/qsgnode.h>
-
+#include <iostream>
+using namespace std;
 class FloatBuffer : public QObject
 {
     Q_OBJECT
@@ -91,6 +92,35 @@ public:
         Q_UNUSED(sample);
         // m_start and m_length are adjusted in shift()
         dataChanged();
+    }
+
+
+    template<typename T>
+    struct square
+    {
+        T operator()(const T& Left, const T& Right) const
+        {
+            return (Left + Right*Right);
+        }
+    };
+
+    double rms() {
+        std::vector<float> tmp = dif_mean(mean());
+        return std::sqrt(accumulate(tmp.begin(), tmp.end(), 0.0, square<long double>()) / tmp.size());
+    }
+
+    double peak_to_peak(){
+        double min = *std::min_element(m_data.begin(), m_data.end());
+        double max = *std::max_element(m_data.begin(), m_data.end());
+        return max - min;
+    }
+
+    std::vector<float> dif_mean(double avg){
+        std::vector<float> tmp;
+        for (std::vector<float>::iterator it = m_data.begin(); it != m_data.end(); ++it){
+                    tmp.push_back(*it - avg);
+        }
+        return tmp;
     }
 
     double mean() {

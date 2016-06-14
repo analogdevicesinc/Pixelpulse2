@@ -123,7 +123,7 @@ Rectangle {
         // V1
         TextInput {
           id: v1TextBox
-          text: signal.isOutput ? signal.src.v1.toFixed(4) : signal.measurement.toFixed(4)
+          text: signal.isOutput ? signal.src.v1.toFixed(4) : signal.peak_to_peak.toFixed(4)
           color: "#FFF"
           selectByMouse: true
           font.pixelSize: currentFontSize
@@ -132,7 +132,7 @@ Rectangle {
 
           Binding {
             target: v1TextBox; property: 'text'
-            value: signal.isOutput ? signal.src.v1.toFixed(4) : signal.measurement.toFixed(4)
+            value: signal.isOutput ? signal.src.v1.toFixed(4) : signal.peak_to_peak.toFixed(4)
           }
 
           onAccepted: {
@@ -184,7 +184,7 @@ Rectangle {
         Text {
            id: v1UnitLabel
            color: 'white'
-           text: (signal.label == "Voltage" ? " Volts" : " Amperes")
+           text: (signal.label == "Voltage" ? " Volts" : " Amperes") + (signal.isOutput ? "" : " (peak to peak)");
            anchors.left: v1TextBox.right
            anchors.leftMargin: idRectangle.width * 1/100
            font.pixelSize: currentFontSize
@@ -207,7 +207,8 @@ Rectangle {
         // V2
         TextInput {
           id: v2TextBox
-          text: overlay_periodic.visible ? signal.src.v2.toFixed(4) : ""
+          visible: signal.isOutput ;
+          text: overlay_periodic.visible? signal.src.v2.toFixed(4) : "";
           color: "#FFF"
           selectByMouse: true
           font.pixelSize: currentFontSize
@@ -215,7 +216,7 @@ Rectangle {
 
           Binding {
             target: v2TextBox; property: 'text'
-            value: overlay_periodic.visible ? signal.src.v2.toFixed(4) : ""
+            value: overlay_periodic.visible ? signal.src.v2.toFixed(4) : "";
           }
 
           onAccepted: {
@@ -275,8 +276,8 @@ Rectangle {
         // Freq
         TextInput {
           id: perTextBox
-          visible: signal.src.src != 'constant' && signal.isOutput == true && perUnitLabel.position + perUnitLabel.width <= idRectangle.x + idRectangle.width
-          text: Math.abs(Math.round((controller.sampleRate / signal.src.period))).toFixed(3)
+          visible: perUnitLabel.position + perUnitLabel.width <= idRectangle.x + idRectangle.width
+          text: signal.isOutput ? (signal.src.src != 'constant' ? Math.abs(Math.round((controller.sampleRate / signal.src.period))).toFixed(3) : ""): signal.measurement.toFixed(4);
           color: "#FFF"
           selectByMouse: true
           font.pixelSize: currentFontSize
@@ -293,7 +294,7 @@ Rectangle {
 
           Binding {
             target: perTextBox; property: 'text';
-            value: Math.abs(Math.round((controller.sampleRate / signal.src.period))).toFixed(3);
+            value: signal.isOutput ? (signal.src.src != 'constant' ? Math.abs(Math.round((controller.sampleRate / signal.src.period))).toFixed(3) : ""): signal.measurement.toFixed(4);
           }
 
           Keys.onPressed: {
@@ -337,10 +338,10 @@ Rectangle {
         Text {
            id: perUnitLabel
            color: 'white'
-           visible: signal.src.src != 'constant' && signal.isOutput == true && perUnitLabel.position + perUnitLabel.width <= idRectangle.x + idRectangle.width
+           visible: perUnitLabel.position + perUnitLabel.width <= idRectangle.x + idRectangle.width;
            anchors.left: perTextBox.right
            anchors.leftMargin: idRectangle.width * 1/100
-           text: " Hertz"
+           text: signal.isOutput ? (signal.src.src != 'constant' ? "Hertz" : ""): "RMS";
            font.pixelSize: currentFontSize
            property real position: perTextBox.position + perTextBox.width + idRectangle.width * 1/100;
         }

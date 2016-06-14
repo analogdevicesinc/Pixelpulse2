@@ -3,6 +3,7 @@
 #include "Plot/FloatBuffer.h"
 #include "utils/fileio.h"
 #include "utils/bossac_wrap.h"
+#include "qdebug.h"
 
 void registerTypes() {
     qmlRegisterType<SessionItem>();
@@ -116,8 +117,8 @@ void SessionItem::start(bool continuous)
             }
         }
     }
-
     m_session->start(continuous ? 0 : m_sample_count);
+
 }
 
 /// handles hotplug attach condition
@@ -139,8 +140,8 @@ void SessionItem::onDetached(Device* device){
             this->cancel();
     }
     // wait for completion and teardown relevant state
-	// cut out the middleman, ensure completion is handled
-	// don't rely on nondeterministic race condition between Detached and Finished
+    // cut out the middleman, ensure completion is handled
+    // don't rely on nondeterministic race condition between Detached and Finished
     onFinished();
     m_session->remove_device(device);
     if ((int) m_session->m_devices.size() < m_devices.size()) {
@@ -186,6 +187,7 @@ void SessionItem::onFinished()
                 disconnect(sig->m_src, &SrcItem::changed, 0, 0);
                 if (!m_continuous) {
                     sig->updateMeasurementMean();
+                    sig->updatePeakToPeak();
                 }
             }
         }
@@ -264,7 +266,8 @@ m_channel(parent),
 m_signal(sig),
 m_buffer(new FloatBuffer(this)),
 m_src(new SrcItem(this)),
-m_measurement(0.0)
+m_measurement(0.0),
+m_peak_to_peak(0.0)
 {
     auto sig_info = sig->info();
     Q_UNUSED(sig_info);
@@ -279,7 +282,7 @@ void SignalItem::onParentModeChanged(int) {
 
 /// updates label in constant src mode
 void SignalItem::updateMeasurementMean(){
-    m_measurement = m_buffer->mean();
+    m_measurement = m_buffer->rms();
     measurementChanged(m_measurement);
 }
 
@@ -287,6 +290,12 @@ void SignalItem::updateMeasurementLatest(){
     m_measurement = m_signal->measure_instantaneous();
     measurementChanged(m_measurement);
 }
+
+void SignalItem::updatePeakToPeak() {
+    m_peak_to_peak = m_buffer->peak_to_peak();
+    peakChanged(m_peak_to_peak);
+}
+
 
 /// SrcItem initialisation
 SrcItem::SrcItem(SignalItem* parent):
