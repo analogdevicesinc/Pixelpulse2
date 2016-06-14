@@ -3,6 +3,7 @@
 #include "libsmu/src/libsmu.hpp"
 #include <memory>
 #include "utils/filedownloader.h"
+#include <iostream>
 
 class SessionItem;
 class DeviceItem;
@@ -134,6 +135,7 @@ class SignalItem : public QObject {
     Q_PROPERTY(bool isOutput READ getIsOutput NOTIFY isOutputChanged);
     Q_PROPERTY(bool isInput READ getIsInput NOTIFY isInputChanged);
     Q_PROPERTY(double measurement READ getMeasurement NOTIFY measurementChanged);
+    Q_PROPERTY(double peak_to_peak READ getPeak NOTIFY peakChanged);
 
 public:
     SignalItem(ChannelItem*, int index, Signal*);
@@ -152,11 +154,15 @@ public:
     double getMeasurement() {
         return m_measurement;
     }
+    double getPeak(){
+        return m_peak_to_peak;
+    }
 
 signals:
     void isOutputChanged(bool);
     void isInputChanged(bool);
     void measurementChanged(double);
+    void peakChanged(double);
 
 protected slots:
     void onParentModeChanged(int);
@@ -168,11 +174,13 @@ protected:
     FloatBuffer* m_buffer;
     SrcItem* m_src;
     double m_measurement;
+    double m_peak_to_peak;
     friend class SessionItem;
     friend class SrcItem;
 
     void updateMeasurementMean();
     void updateMeasurementLatest();
+    void updatePeakToPeak();
 };
 
 /// Should be used for handling mode switches in continuous mode.
