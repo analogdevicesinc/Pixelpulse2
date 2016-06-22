@@ -2,7 +2,7 @@ import QtQuick 2.1
 import QtQuick.Layouts 1.0
 import QtQml.Models 2.1
 import QtQuick.Controls 1.1
-import QtQuick.Controls.Styles 1.3
+import QtQuick.Controls.Styles 1.1
 import "jsutils.js" as JSUtils
 
 ColumnLayout {

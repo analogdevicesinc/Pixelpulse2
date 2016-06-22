@@ -22,7 +22,6 @@ ToolbarStyle {
   FileDialog {
     id: dataDialog
     selectExisting: false
-    sidebarVisible: false
     title: "Please enter a location to save your data."
     nameFilters: [ "CSV files (*.csv)", "All files (*)" ]
     onAccepted: { CSVExport.saveData(dataDialog.fileUrls[0]);}
@@ -30,7 +29,6 @@ ToolbarStyle {
   FileDialog {
     id: sessSaveDialog
     selectExisting: false
-    sidebarVisible: false
     title: "Please enter a location to save your session."
     nameFilters: [ "JSON files (*.json)", "All files (*)" ]
     onAccepted: { fileio.writeByURI(sessSaveDialog.fileUrls[0], JSON.stringify(StateSave.saveState(), 0, 2));}
@@ -38,7 +36,6 @@ ToolbarStyle {
   FileDialog {
     id: sessRestoreDialog
     selectExisting: true
-    sidebarVisible: false
     title: "Please select a session to restore."
     nameFilters: [ "JSON files (*.json)", "All files (*)" ]
     onAccepted: { StateSave.restoreState(JSON.parse(fileio.readByURI(sessRestoreDialog.fileUrls[0])));}
