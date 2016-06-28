@@ -50,10 +50,12 @@ public slots:
     }
 
     QString getBossacPath() {
+	QString current_path = QCoreApplication::applicationDirPath() + "/";
+
     #ifdef Q_OS_LINUX
-        return "./bossac";
+        return (current_path + "bossac");
     #elif defined(Q_OS_WIN32)
-        return QDir::currentPath() + "/" + "bossac.exe";
+        return (current_path + "bossac.exe");
     #elif defined(Q_OS_MAC)
         CFBundleRef mainBundle = CFBundleGetMainBundle();
         CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
