@@ -398,6 +398,8 @@ Rectangle {
   Axes {
     id: axes
 
+    property real overrangeSpan: (signal.max - signal.min) * 0.02 // 2% of full range
+
     x: parent.width
     width: xaxis.width
 
@@ -405,8 +407,8 @@ Rectangle {
     anchors.bottom: parent.bottom
     anchors.topMargin: timelinePane.spacing
 
-    ymin: signal.min
-    ymax: signal.max
+    ymin: signal.min - overrangeSpan
+    ymax: signal.max + overrangeSpan
     xgridticks: 2
     yleft: false
     yright: true
@@ -475,8 +477,8 @@ Rectangle {
           var resolution = signal.label === 'Current' ? signal.resolution * 10 : signal.resolution;
           if (axes.ymax - axes.ymin < resolution * ygridticks && s < 1) return;
 
-          axes.ymin = Math.max(y - s * (y - axes.ymin), signal.min);
-          axes.ymax = Math.min(y - s * (y - axes.ymax), signal.max);
+          axes.ymin = Math.max(y - s * (y - axes.ymin), signal.min - axes.overrangeSpan);
+          axes.ymax = Math.min(y - s * (y - axes.ymax), signal.max + axes.overrangeSpan);
         }
         else {
           wheel.accepted = false
