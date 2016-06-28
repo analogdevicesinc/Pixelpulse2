@@ -110,9 +110,10 @@ public:
     }
 
     double peak_to_peak(){
-        double min = *std::min_element(m_data.begin(), m_data.end());
-        double max = *std::max_element(m_data.begin(), m_data.end());
-        return max - min;
+        if(m_data.size() != 0) {
+            return *std::max_element(m_data.begin(), m_data.end()) - *std::min_element(m_data.begin(), m_data.end());
+        }
+        return 0;
     }
 
     std::vector<float> dif_mean(double avg){
