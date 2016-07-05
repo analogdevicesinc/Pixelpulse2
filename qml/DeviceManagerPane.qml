@@ -115,12 +115,20 @@ ColumnLayout {
 
   function checkFWversion()
   {
-    JSUtils.checkLatestFw(function(ver){
-          devListView.latestVersion = ver;
-          if (ver === 'v0.0')
-            logOutput.appendMessage('Failed to get the latest firmware version.' +
-                             'Check your internet connection and then click the "Refresh" button.');
-    });
+    JSUtils.checkLatestFw(
+      function(ver) {
+        devListView.latestVersion = ver;
+      },
+      function(err) {
+        if (err === JSUtils.GIT_RATE_LIMIT_EXCEEDED) {
+          logOutput.appendMessage('Failed to get the latest firmware version. ' +
+              'Number of requests to GIT was exceeded. A new request will be possible in an hour.');
+        } else {
+          logOutput.appendMessage('Failed to get the latest firmware version. ' +
+              'Check your internet connection and then click the "Refresh" button.');
+        }
+      }
+    ); // end JSUtils.checkLatestFw()
   }
 
   ToolbarStyle {
