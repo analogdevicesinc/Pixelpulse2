@@ -9,6 +9,13 @@
  * @param {string} indent the string to use for indentation
  * @return {string} the JSON representation
  */
+
+var HTTP_REQUEST_NO_RESPONSE = 0
+var HTTP_REQUEST_NOT_FOUND = 404
+var HTTP_REQUEST_OK = 200
+
+var GIT_RATE_LIMIT_EXCEEDED = 777
+
 var request = function (url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = (function(myxhr) {
@@ -20,36 +27,53 @@ var request = function (url, callback) {
     xhr.send('');
 }
 
-var checkLatest = function (target) {
-	var text;
-    request("https://api.github.com/repos/analogdevicesinc/pixelpulse2/releases", function(t) {
-        var d = JSON.parse(t.responseText)[0];
-        text = "The most recent release is " + d.tag_name + ", published at " + (new Date(d.published_at)).toString() + "." + '\n\n' + "It is available for download at " + d.html_url + ".";
-		target.text += text;
+var checkRateLimitExceeded = function (callback, fail_callback) {
+    request("https://api.github.com/rate_limit", function(t) {
+        if (t.status === HTTP_REQUEST_OK) {
+            var d = JSON.parse(t.responseText);
+
+            if (d.resources.core.remaining > 0) {
+                callback();
+            } else {
+                if (fail_callback)
+                fail_callback(GIT_RATE_LIMIT_EXCEEDED);
+            }
+        } else {
+            if (fail_callback)
+            fail_callback(t.status);
+        }
     });
-	return '\n\n\n'
 }
 
-var checkLatestFw = function (callback) {
-	var text;
-    request("https://api.github.com/repos/analogdevicesinc/m1k-fw/releases", function(t) {
-        var msg = t.responseText;
-        var ver;
-
-        if (!msg || msg.length === 0) {
-            ver = 'v0.0';
-        } else {
-          var d = JSON.parse(t.responseText)[0];
-          ver = d.tag_name;
-        }
-        callback(ver);
+var checkLatest = function (target) {
+    var text;
+    checkRateLimitExceeded( function() {
+        request("https://api.github.com/repos/analogdevicesinc/pixelpulse2/releases", function(t) {
+            var d = JSON.parse(t.responseText)[0];
+            text = "The most recent release is " + d.tag_name + ", published at " + (new Date(d.published_at)).toString() + "." + '\n\n' + "It is available for download at " + d.html_url + ".";
+            target.text += text;
+        });
     });
-	return '\n\n\n'
+
+    return '\n\n\n';
+}
+
+var checkLatestFw = function (callback, fail_callback) {
+    checkRateLimitExceeded( function() {
+        var text;
+        request("https://api.github.com/repos/analogdevicesinc/m1k-fw/releases", function(t) {
+            var d = JSON.parse(t.responseText)[0];
+            callback(d.tag_name);
+        });
+    },
+    fail_callback
+    );
+
+    return '\n\n\n';
 }
 
 var requestFile = function(url, callback) {
     var xhr = new XMLHttpRequest();
-    console.log('LOG: url: ', url);
 
     xhr.onloadstart = (function(myxhr) {
         return function() {
@@ -96,24 +120,18 @@ var requestFile = function(url, callback) {
 
 var getFirmwareURL = function(callback) {
 	var releaseURL = 'https://api.github.com/repos/analogdevicesinc/m1k-fw/releases';
-	console.log('LOG: releaseURL: ', releaseURL);
 
 	request(releaseURL, function(t) {
         var d = JSON.parse(t.responseText)[0];
         var id = d.id;
 		var releaseAssetURL = releaseURL + '/' + id + '/assets';
-		console.log('LOG: releaseAssetURL: ', releaseAssetURL);
 
 		request(releaseAssetURL, function(t) {
 			var d = JSON.parse(t.responseText)[0];
-			//var fileDownloadURL = "https://github-cloud.s3.amazonaws.com/releases/26525695/3fe901bc-7d73-11e5-8c12-7b3a65a3415a.bin?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAISTNZFOVBIJMK3TQ%2F20151120%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20151120T171256Z&X-Amz-Expires=300&X-Amz-Signature=910d228f306a836ce95e930d4533713fd11019db6e224ef06636b07295384979&X-Amz-SignedHeaders=host&actor_id=0&response-content-disposition=attachment%3B%20filename%3Dm1000.bin&response-content-type=application%2Foctet-stream";//d.browser_download_url;
             var fileDownloadURL = d.browser_download_url;
-			console.log('LOG: fileDownloadURL: ', fileDownloadURL);
 
 			request(fileDownloadURL, function(t) {
-				console.log('LOG: The response was received!');
 				var header = t.getResponseHeader('Location');
-                console.log('LOG: Response ', header);
                 callback(header);
 			});
 		});
