@@ -19,6 +19,10 @@ ToolbarStyle {
   property alias deviceMngrVisible: deviceMngrVisibleItem.checked
   property alias colorDialog: sessColorDialog
 
+  AcquisitionSettingsDialog {
+    id: sessAcqSettDialog
+  }
+
   FileDialog {
     id: dataDialog
     selectExisting: false
@@ -91,6 +95,11 @@ ToolbarStyle {
 
       MenuSeparator{}
       MenuItem {
+        id: acquisVisibleItem
+        text: "Acqusition Settings"
+        onTriggered: sessAcqSettDialog.visible = true
+      }
+      MenuItem {
         id: dataSaveVisibleItem
         text: "Export Data"
         onTriggered: dataDialog.visible = true
@@ -131,4 +140,3 @@ ToolbarStyle {
     }
   }
 }
-

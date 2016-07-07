@@ -6,7 +6,7 @@ Item {
 
   property real sampleTick: 1/controller.sampleRate
   property real period: signal.src.period * sampleTick
-  property real phase: (signal.src.phase % signal.src.period) * sampleTick
+  property real phase: ((signal.src.phase + controller.delaySampleCount) % signal.src.period) * sampleTick
 
   function phaseZeroNearCenter() {
     if (dragging && relX != null) return relX
@@ -75,7 +75,7 @@ Item {
       signal.src.period = constrainInterval(newPeriod, 0, controller.sampleRate / controller.maxOutSignalFreq);
       signal.src.v1 = overlay.mapY(pos);
       // Adjust phase so the signal stays in the same position relative to the other dot
-      signal.src.phase = -relX/sampleTick;
+      signal.src.phase = -relX/sampleTick - controller.delaySampleCount;
     }
   }
 
@@ -97,7 +97,7 @@ Item {
       if (pos.modifiers & Qt.ControlModifier) {
         signal.src.phase = axes.snapx(-relX/sampleTick)
       } else {
-        signal.src.phase = -relX/sampleTick
+        signal.src.phase = -relX/sampleTick - controller.delaySampleCount;
       }
       signal.src.v2 = overlay.mapY(pos)
     }
