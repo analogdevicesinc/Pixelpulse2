@@ -12,6 +12,8 @@ Dialog {
   height: 200
   modality: Qt.NonModal
 
+  property real timeDelay: delay.value
+
   contentItem:
     Rectangle{
       id: rectangle

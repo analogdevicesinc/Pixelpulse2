@@ -18,6 +18,7 @@ ToolbarStyle {
   property alias contentVisible: contentVisibleItem.checked
   property alias deviceMngrVisible: deviceMngrVisibleItem.checked
   property alias colorDialog: sessColorDialog
+  property alias acqusitionDialog: sessAcqSettDialog
 
   AcquisitionSettingsDialog {
     id: sessAcqSettDialog
