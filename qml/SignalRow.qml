@@ -102,7 +102,6 @@ Rectangle {
 
   Rectangle {
     id: idRectangle
-//    z: -1
     x: parent.width
     width: xaxis.width
     anchors.top: parent.top
@@ -403,7 +402,6 @@ Rectangle {
   Axes {
     id: axes
     property real overrangeSpan: (signal.max - signal.min) * 0.02 // 2% of full range
-//    z: 2
     x: parent.width
     width: xaxis.width
 
