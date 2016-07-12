@@ -22,6 +22,16 @@ public:
         return m_length;
     }
 
+    Q_INVOKABLE unsigned long ignoredFirstSamplesCount()
+    {
+        return m_first_samples_ignored;
+    }
+
+    Q_INVOKABLE void setIgnoredFirstSamplesCount(unsigned long count)
+    {
+        m_first_samples_ignored = count;
+    }
+
     Q_INVOKABLE float get(unsigned i) {
         return m_data[wrapIndex(i)];
     }
@@ -111,21 +121,21 @@ public:
 
     double peak_to_peak(){
         if(m_data.size() != 0) {
-            return *std::max_element(m_data.begin(), m_data.end()) - *std::min_element(m_data.begin(), m_data.end());
+            return *std::max_element(data_begin(), m_data.end()) - *std::min_element(data_begin(), m_data.end());
         }
         return 0;
     }
 
     std::vector<float> dif_mean(double avg){
         std::vector<float> tmp;
-        for (std::vector<float>::iterator it = m_data.begin(); it != m_data.end(); ++it){
+        for (std::vector<float>::iterator it = data_begin(); it != m_data.end(); ++it){
                     tmp.push_back(*it - avg);
         }
         return tmp;
     }
 
     double mean() {
-        return accumulate(m_data.begin(), m_data.end(), 0.0) / m_data.size();
+        return accumulate(data_begin(), m_data.end(), 0.0) / data_size();
     }
 
 signals:
@@ -141,6 +151,7 @@ private:
     std::vector<float> m_data;
     size_t m_start;
     size_t m_length;
+    size_t m_first_samples_ignored;
 
     unsigned unwrapIndex(unsigned index) {
         if (index >= m_start) {
@@ -151,7 +162,7 @@ private:
     }
 
     unsigned wrapIndex(unsigned index) {
-        return (index + m_start) % m_data.size();
+        return (index + m_start + m_first_samples_ignored) % m_data.size();
     }
 
     unsigned timeToIndex(double time) {
@@ -163,5 +174,17 @@ private:
 
     double indexToTime(unsigned index) {
         return index * m_secondsPerSample;
+    }
+
+    /* A number of samples at the beginning of the buffer can be ignored by
+     * the application. Use data_begin() and data_size() to access the rest of data */
+    std::vector<float>::iterator data_begin()
+    {
+	return (m_data.begin() + m_first_samples_ignored);
+    }
+
+    float data_size()
+    {
+	return (m_data.size() - m_first_samples_ignored);
     }
 };

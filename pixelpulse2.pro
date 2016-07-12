@@ -50,7 +50,8 @@ OTHER_FILES += \
     qml/Axes.qml \
     qml/OverlayPeriodic.qml \
     qml/DragDot.qml \
-    qml/DeviceRow.qml
+    qml/DeviceRow.qml \
+    qml/AcquisitionSettingsDialog.qml
 
 HEADERS += \
     SMU.h \

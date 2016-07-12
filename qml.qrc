@@ -34,5 +34,6 @@
         <file>qml/DeviceManagerPane.qml</file>
         <file>qml/ColorControlDialog.qml</file>
         <file>qml/StyleSlider.qml</file>
+        <file>qml/AcquisitionSettingsDialog.qml</file>
     </qresource>
 </RCC>

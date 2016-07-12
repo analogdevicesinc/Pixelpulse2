@@ -105,7 +105,7 @@ ApplicationWindow {
                     id: signalsPane
                     Layout.fillHeight: true
                     width: toolbar.width
-                    color: '#111'
+                    color: '#000'
 
                     ColumnLayout {
                         anchors.fill: parent
@@ -127,6 +127,65 @@ ApplicationWindow {
                                         StateSave.restoreState(lastConfig);
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+
+                Item {
+                    id: statusBar
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    height: 30
+                    visible: toolbar.acqusitionDialog.showStatusBar
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        spacing: 0
+
+                        Rectangle {
+                            id: hiddenBar
+                            Layout.fillWidth: true
+                            height: 5
+                            color: '#000'
+                        }
+                        Rectangle {
+                            id: statusBarRect
+                            Layout.fillWidth: true
+                            height: 25
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: '#404040' }
+                                GradientStop { position: 0.15; color: '#5a5a5a' }
+                                GradientStop { position: 0.5; color: '#444444' }
+                                GradientStop { position: 1.0; color: '#424242' }
+                            }
+
+                            // Left vertical separator
+                            Rectangle {
+                                id: leftSeparator
+                                height: parent.height
+                                width: 1
+                                color: '#333333'
+                                x: signalsPane.width
+                            }
+
+                            Text {
+                                id: delayText
+                                text: "Delay: " + toolbar.acqusitionDialog.timeDelay.toFixed(2) + " ms"
+                                color: 'white'
+                                anchors.left: leftSeparator.right
+                                anchors.leftMargin: 10
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+
+                            // Right vertical separator
+                            Rectangle {
+                                id: rightSeparator
+                                height: parent.height
+                                width: 1
+                                color: '#333333'
+                                x: signalsPane.width + timeline_xaxis.width
                             }
                         }
                     }
