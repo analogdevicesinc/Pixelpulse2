@@ -1,44 +1,49 @@
 import QtQuick 2.0
+import QtQuick.Window 2.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
-import QtQuick.Dialogs 1.0
-import QtQuick.Dialogs 1.2
-import QtGraphicalEffects 1.0
 
-Dialog {
+Window {
   title: "Acquisition Settings"
-  width: 300
-  height: 200
+  minimumWidth: 400
+  minimumHeight: 180
+  maximumWidth: minimumWidth
+  maximumHeight: minimumHeight
   modality: Qt.NonModal
+  flags: Qt.Dialog
 
   property real timeDelay: delay.value
   property bool showStatusBar: toggleStatusBar.checked
 
-  contentItem:
-    Rectangle {
-      id: rectangle
+  Rectangle {
+    id: rectangle
+    anchors.fill: parent
+    color: '#222'
+
+    ColumnLayout {
       anchors.fill: parent
-      color: '#222'
+      anchors.leftMargin: 25
+      anchors.rightMargin: 25
+      anchors.topMargin: 35
+      anchors.bottomMargin: 35
+      spacing: 0
 
-      ColumnLayout {
-        anchors.fill: parent
-        anchors.topMargin: 40
-        anchors.bottomMargin: 40
-        anchors.leftMargin: 40
-        anchors.rightMargin: 40
-        spacing: 25
+      Text {
+        text: "Amount of time the received data should be delayed with:"
+        color: 'white'
+        font.pixelSize: 14
+      }
 
-        RowLayout {
-          anchors.fill: parent
-          spacing: 25
+      RowLayout {
+        spacing: 15
 
-          Text {
-            id: delayLabel
-            text: "Delay (ms)"
-            color: 'white'
-            font.pixelSize: 14
-          }
+        Text {
+          id: delayLabel
+          text: "Delay (ms)"
+          color: 'white'
+          font.pixelSize: 14
+        }
 
         SpinBox {
           id: delay
@@ -46,36 +51,21 @@ Dialog {
           minimumValue: 0
           decimals: 2
           stepSize: 0.01
-          activeFocusOnPress: true
-          activeFocusOnTab: true
-
-          implicitWidth: 75
-
-//          style: SpinBoxStyle {
-//            background: Rectangle {
-//              //anchors.fill: parent
-//              implicitWidth: 100
-//              implicitHeight: 30
-//              color: rectangle.color
-//            }
-//            textColor: 'white'
-//          }
 
           onValueChanged: {
-              var timeInSeconds = delay.value / 1000.0;
-              var sampleCount = controller.sampleRate * timeInSeconds;
+            var timeInSeconds = delay.value / 1000.0;
+            var sampleCount = controller.sampleRate * timeInSeconds;
 
-              if (sampleCount !== controller.delaySampleCount) {
-                controller.delaySampleCount = sampleCount;
-                for (var i = 0; i < session.devices.length; i++) {
-                  for (var j = 0; j < session.devices[i].channels.length; j++) {
-                    session.devices[i].channels[j].signals[0].buffer.setIgnoredFirstSamplesCount(sampleCount);
-                    session.devices[i].channels[j].signals[1].buffer.setIgnoredFirstSamplesCount(sampleCount);
-                  }
+            if (sampleCount !== controller.delaySampleCount) {
+              controller.delaySampleCount = sampleCount;
+              for (var i = 0; i < session.devices.length; i++) {
+                for (var j = 0; j < session.devices[i].channels.length; j++) {
+                  session.devices[i].channels[j].signals[0].buffer.setIgnoredFirstSamplesCount(sampleCount);
+                  session.devices[i].channels[j].signals[1].buffer.setIgnoredFirstSamplesCount(sampleCount);
                 }
               }
             }
-
+          }
           Keys.onPressed: {
             switch (event.key) {
             case Qt.Key_PageDown:
@@ -86,19 +76,19 @@ Dialog {
               break;
             }
           }
-        }
-      }
+        } // SpinBox
+      } // RowLayout
 
-       CheckBox {
+      CheckBox {
         id: toggleStatusBar
         style: CheckBoxStyle {
-                label: Label {
-                        color: 'white';
-                        text: 'Show delay value on main window'
-                        font.pixelSize: 14
-                      }
-              }
+          label: Label {
+                  color: 'white';
+                  text: 'Show delay value on main window'
+                  font.pixelSize: 14
+                }
         }
-      }
-    }
-}
+      } // Checkbox
+    } // ColumnLayout
+  } // Rectangle
+} // Window
