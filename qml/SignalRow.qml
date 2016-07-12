@@ -102,7 +102,7 @@ Rectangle {
 
   Rectangle {
     id: idRectangle
-    z: -1
+//    z: -1
     x: parent.width
     width: xaxis.width
     anchors.top: parent.top
@@ -110,8 +110,8 @@ Rectangle {
 
     Rectangle {
         anchors.fill: parent;
-        z: -1;
-        color: "#0c0c0c"
+        z: -3;
+        color: "#0c0c0c";
     }
 
     gradient: Gradient {
@@ -403,7 +403,7 @@ Rectangle {
   Axes {
     id: axes
     property real overrangeSpan: (signal.max - signal.min) * 0.02 // 2% of full range
-
+//    z: 2
     x: parent.width
     width: xaxis.width
 
@@ -447,6 +447,20 @@ Rectangle {
       property var panStart
       onPressed: {
         if (mouse.button == Qt.MiddleButton) {
+          for(var d = 0; d < deviceRepeater.count; d++) {
+            var dev = deviceRepeater.itemAt(d);
+            dev.z = -2;
+            for(var c = 0; c < channelRepeater.count; c++){
+              var ch = dev.channelRepeater.itemAt(c);
+              ch.z = -2;
+              for(var s = 0; s < signalRepeater.count; s++){
+                ch.signalRepeater.itemAt(s).z = -2;
+              }
+            }
+          }
+          signalBlock.parent.parent.parent.z = 2;
+          signalBlock.parent.parent.z = 2;
+          signalBlock.z = 2;
           axes.state = "floating"
         } else if (mouse.button == Qt.LeftButton && mouse.modifiers & Qt.ShiftModifier) {
           panStart = {
@@ -510,7 +524,7 @@ Rectangle {
         id: line
         anchors.fill: parent
         clip: true
-
+        z: 2
         buffer: signal.buffer
         pointSize: Math.min(25, Math.max(2, xaxis.xscale/session.sampleRate*3) * window.dotSizeSignal * 10)
         color: signal.label == 'Current' ? window.dotSignalCurrent : window.dotSignalVoltage
