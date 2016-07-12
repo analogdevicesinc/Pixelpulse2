@@ -108,6 +108,12 @@ Rectangle {
     anchors.top: parent.top
     height: timelinePane.spacing
 
+    Rectangle {
+        anchors.fill: parent;
+        z: -1;
+        color: "#0c0c0c"
+    }
+
     gradient: Gradient {
         GradientStop { position: 1.0; color: gradColor }
         GradientStop { position: 0.0; color: gradColor2 }
@@ -350,7 +356,6 @@ Rectangle {
 
   Item {
       id: vertAxes
-
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.left: axes.right
@@ -397,7 +402,6 @@ Rectangle {
 
   Axes {
     id: axes
-
     property real overrangeSpan: (signal.max - signal.min) * 0.02 // 2% of full range
 
     x: parent.width
@@ -414,7 +418,7 @@ Rectangle {
     yright: true
     xbottom: false
 
-    gridColor: window.signalAxesColor//'#222'
+    gridColor: window.signalAxesColor
     textColor: '#FFF'
 
     states: [
@@ -502,13 +506,6 @@ Rectangle {
       color: window.signalAxesColor
     }
 
-    Rectangle {
-      id: bg
-      anchors.fill: parent
-      color: window.signalRowColor
-      z: -1
-    }
-
     PhosphorRender {
         id: line
         anchors.fill: parent
@@ -516,8 +513,7 @@ Rectangle {
 
         buffer: signal.buffer
         pointSize: Math.min(25, Math.max(2, xaxis.xscale/session.sampleRate*3) * window.dotSizeSignal * 10)
-        color: signal.label == 'Current' ? window.dotSignalCurrent : window.dotSignalVoltage //Qt.rgba(0.2, 0.2, 0.03, 1) : Qt.rgba(0.03, 0.3, 0.03, 1)
-
+        color: signal.label == 'Current' ? window.dotSignalCurrent : window.dotSignalVoltage
         xmin: xaxis.visibleMin
         xmax: xaxis.visibleMax
         ymin: axes.ymin

@@ -67,6 +67,15 @@ ApplicationWindow {
 
                 spacing: 0
 
+                Rectangle {
+                    id: signalBackground
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    width: timeline_xaxis.width + signalsPane.width
+                    color: window.signalRowColor;
+                }
+
                 RowLayout {
                     Layout.fillWidth: true
                     Layout.minimumHeight: toolbarHeight
