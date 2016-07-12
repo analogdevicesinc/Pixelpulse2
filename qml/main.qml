@@ -129,6 +129,7 @@ ApplicationWindow {
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
                     height: 30
+                    visible: toolbar.acqusitionDialog.showStatusBar
 
                     ColumnLayout {
                         anchors.fill: parent

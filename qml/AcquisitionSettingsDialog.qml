@@ -13,14 +13,15 @@ Dialog {
   modality: Qt.NonModal
 
   property real timeDelay: delay.value
+  property bool showStatusBar: toggleStatusBar.checked
 
   contentItem:
-    Rectangle{
+    Rectangle {
       id: rectangle
       anchors.fill: parent
       color: '#222'
 
-      RowLayout {
+      ColumnLayout {
         anchors.fill: parent
         anchors.topMargin: 40
         anchors.bottomMargin: 40
@@ -28,12 +29,16 @@ Dialog {
         anchors.rightMargin: 40
         spacing: 25
 
-        Text {
-          id: delayLabel
-          text: "Delay (ms)"
-          color: 'white'
-          font.pixelSize: 14
-        }
+        RowLayout {
+          anchors.fill: parent
+          spacing: 25
+
+          Text {
+            id: delayLabel
+            text: "Delay (ms)"
+            color: 'white'
+            font.pixelSize: 14
+          }
 
         SpinBox {
           id: delay
@@ -81,6 +86,18 @@ Dialog {
               break;
             }
           }
+        }
+      }
+
+       CheckBox {
+        id: toggleStatusBar
+        style: CheckBoxStyle {
+                label: Label {
+                        color: 'white';
+                        text: 'Show delay value on main window'
+                        font.pixelSize: 14
+                      }
+              }
         }
       }
     }
