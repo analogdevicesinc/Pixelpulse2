@@ -60,6 +60,17 @@ Item {
     // Restart the session so the new sampling mode takes effect
     restartAfterStop = true;
     session.cancel();
+
+    toolbar.acqusitionDialog.onContinuousModeChanged(continuous);
+  }
+
+  onDelaySampleCountChanged: {
+    for (var i = 0; i < session.devices.length; i++) {
+      for (var j = 0; j < session.devices[i].channels.length; j++) {
+        session.devices[i].channels[j].signals[0].buffer.setIgnoredFirstSamplesCount(delaySampleCount);
+        session.devices[i].channels[j].signals[1].buffer.setIgnoredFirstSamplesCount(delaySampleCount);
+      }
+    }
   }
 
   Connections {

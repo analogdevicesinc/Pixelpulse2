@@ -16,6 +16,33 @@ Window {
   property real timeDelay: delay.value
   property bool showStatusBar: toggleStatusBar.checked
 
+  property real timeDelayOld: 0;
+
+  function delayToSamples(delayVal)
+  {
+    var timeInSeconds = delayVal / 1000.0;
+    var sampleCount = Math.floor(controller.sampleRate * timeInSeconds + 0.5);
+
+    return sampleCount;
+  }
+
+  function samplesToSecondsDelay(samplesCount)
+  {
+    return (samplesCount / controller.sampleRate);
+  }
+
+  function onContinuousModeChanged(continuous)
+  {
+    if (continuous) {
+      timeDelayOld = timeDelay;
+      delay.value = 0;
+    } else {
+      delay.value = timeDelayOld;
+    }
+
+    delay.enabled = !continuous;
+  }
+
   Rectangle {
     id: rectangle
     anchors.fill: parent
@@ -53,17 +80,10 @@ Window {
           stepSize: 0.01
 
           onValueChanged: {
-            var timeInSeconds = delay.value / 1000.0;
-            var sampleCount = controller.sampleRate * timeInSeconds;
+            var sampleCount = delayToSamples(delay.value);
 
             if (sampleCount !== controller.delaySampleCount) {
               controller.delaySampleCount = sampleCount;
-              for (var i = 0; i < session.devices.length; i++) {
-                for (var j = 0; j < session.devices[i].channels.length; j++) {
-                  session.devices[i].channels[j].signals[0].buffer.setIgnoredFirstSamplesCount(sampleCount);
-                  session.devices[i].channels[j].signals[1].buffer.setIgnoredFirstSamplesCount(sampleCount);
-                }
-              }
             }
           }
           Keys.onPressed: {
