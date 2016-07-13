@@ -528,7 +528,6 @@ Rectangle {
         id: line
         anchors.fill: parent
         clip: true
-        z: 2
         buffer: signal.buffer
         pointSize: Math.min(25, Math.max(2, xaxis.xscale/session.sampleRate*3) * window.dotSizeSignal * 10)
         color: signal.label == 'Current' ? window.dotSignalCurrent : window.dotSignalVoltage
