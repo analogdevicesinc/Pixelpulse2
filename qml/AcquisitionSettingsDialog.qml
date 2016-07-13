@@ -11,7 +11,7 @@ Window {
   maximumWidth: minimumWidth
   maximumHeight: minimumHeight
   modality: Qt.NonModal
-  flags: Qt.Dialog
+  flags: Qt.Window | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.WindowTitleHint
 
   property real timeDelay: delay.value
   property bool showStatusBar: toggleStatusBar.checked
