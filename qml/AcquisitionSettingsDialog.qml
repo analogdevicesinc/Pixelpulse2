@@ -74,7 +74,7 @@ Window {
 
         SpinBox {
           id: delay
-          maximumValue: 50
+          maximumValue: 1000
           minimumValue: 0
           decimals: 2
           stepSize: 0.01
