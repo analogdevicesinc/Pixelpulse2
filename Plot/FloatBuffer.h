@@ -116,7 +116,7 @@ public:
 
     double rms() {
         std::vector<float> tmp = dif_mean(mean());
-        return std::sqrt(accumulate(tmp.begin(), tmp.end(), 0.0, square<long double>()) / tmp.size());
+        return sqrt(accumulate(tmp.begin(), tmp.end(), 0.0, square<long double>()) / tmp.size());
     }
 
     double peak_to_peak(){
