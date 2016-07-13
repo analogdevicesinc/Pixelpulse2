@@ -536,6 +536,10 @@ Rectangle {
         xmax: xaxis.visibleMax
         ymin: axes.ymin
         ymax: axes.ymax
+
+        Component.onCompleted: {
+          signal.buffer.setIgnoredFirstSamplesCount(controller.delaySampleCount)
+        }
     }
 
     OverlayPeriodic {

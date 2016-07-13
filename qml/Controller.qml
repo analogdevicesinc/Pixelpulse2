@@ -12,9 +12,22 @@ Item {
   property bool restartAfterStop: false
   property int delaySampleCount: 0
 
+  property bool dlySmplCntChanged: false
+
   function trigger() {
     session.sampleRate = sampleRate
     session.sampleCount = sampleCount
+
+      if (dlySmplCntChanged) {
+          for (var i = 0; i < session.devices.length; i++) {
+            for (var j = 0; j < session.devices[i].channels.length; j++) {
+              session.devices[i].channels[j].signals[0].buffer.setIgnoredFirstSamplesCount(delaySampleCount);
+              session.devices[i].channels[j].signals[1].buffer.setIgnoredFirstSamplesCount(delaySampleCount);
+            }
+          }
+          dlySmplCntChanged = false;
+      }
+
     session.start(continuous);
     if ( session.devices.length > 0 ) {
       lastConfig = StateSave.saveState();
@@ -60,6 +73,12 @@ Item {
     // Restart the session so the new sampling mode takes effect
     restartAfterStop = true;
     session.cancel();
+
+    toolbar.acqusitionDialog.onContinuousModeChanged(continuous);
+  }
+
+  onDelaySampleCountChanged: {
+      dlySmplCntChanged = true;
   }
 
   Connections {
