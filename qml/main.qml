@@ -61,16 +61,6 @@ ApplicationWindow {
             // column width
             property real spacing: 40
 
-            Rectangle {
-                id: signalBackground
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 10 +  (statusBar.visible ? statusBar.height : 0)
-                width: timeline_xaxis.width + signalsPane.width
-                color: window.signalRowColor;
-            }
-
             ColumnLayout {
                 anchors.fill: parent
                 id: signals_column

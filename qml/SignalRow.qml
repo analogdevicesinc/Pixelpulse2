@@ -107,12 +107,6 @@ Rectangle {
     anchors.top: parent.top
     height: timelinePane.spacing
 
-    Rectangle {
-        anchors.fill: parent;
-        z: -3;
-        color: "#0c0c0c";
-    }
-
     gradient: Gradient {
         GradientStop { position: 1.0; color: gradColor }
         GradientStop { position: 0.0; color: gradColor2 }
@@ -445,6 +439,7 @@ Rectangle {
       property var panStart
       onPressed: {
         if (mouse.button == Qt.MiddleButton) {
+          axesBackground.opacity = 0;
           for(var d = 0; d < deviceRepeater.count; d++) {
             var dev = deviceRepeater.itemAt(d);
             dev.z = -2;
@@ -459,6 +454,7 @@ Rectangle {
           signalBlock.parent.parent.parent.z = 2;
           signalBlock.parent.parent.z = 2;
           signalBlock.z = 2;
+
           axes.state = "floating"
         } else if (mouse.button == Qt.LeftButton && mouse.modifiers & Qt.ShiftModifier) {
           panStart = {
@@ -471,6 +467,7 @@ Rectangle {
         }
       }
       onReleased: {
+        axesBackground.opacity = 1;
         axes.state = ""
         panStart = null
       }
@@ -516,6 +513,15 @@ Rectangle {
       anchors.right: parent.right
       height: 1
       color: window.signalAxesColor
+    }
+
+
+    Rectangle {
+      id: axesBackground
+      anchors.fill: parent
+      color: window.signalRowColor
+      z: -1
+      opacity: 1
     }
 
     PhosphorRender {
