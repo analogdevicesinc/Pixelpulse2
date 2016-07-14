@@ -15,9 +15,10 @@ Rectangle {
   color: '#444'
   property int currentFontSize: 11;
 
+  visible: !(signal.label === "Current" && channel.mode === 0)
+
   property color gradColor: Qt.rgba(1,1,1,0.08)
   property color gradColor2: Qt.rgba(0,0,0,0.0)
-
 
   function constrainValue(value, min, max) {
     if (value < min)

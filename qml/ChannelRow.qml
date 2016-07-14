@@ -5,6 +5,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Controls.Styles 1.1
 
 Rectangle {
+  id: channelBlock
   property var channel
   property alias signalRepeater:signalRepeater
   color: '#333'
@@ -74,6 +75,7 @@ Rectangle {
       SignalRow {
         Layout.fillHeight: true
         Layout.fillWidth: true
+        Layout.minimumHeight: channelBlock.height / 2
 
         signal: model
         xaxis: timeline_xaxis
