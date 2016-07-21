@@ -136,7 +136,7 @@ Rectangle {
           }
 
           onAccepted: {
-            var value = constrainValue(Number.fromLocaleString(text), axes.ymin, axes.ymax);
+            var value = constrainValue(Number.fromLocaleString(text), axes.ymin + axes.overrangeSpan, axes.ymax - axes.overrangeSpan);
             text = value.toFixed(4);
             signal.src.v1 = text;
 
@@ -220,7 +220,7 @@ Rectangle {
           }
 
           onAccepted: {
-            var value = constrainValue(Number.fromLocaleString(text), axes.ymin, axes.ymax);
+            var value = constrainValue(Number.fromLocaleString(text), axes.ymin + axes.overrangeSpan, axes.ymax - axes.overrangeSpan);
             text = value.toFixed(4);
             signal.src.v2 = text;
           }
