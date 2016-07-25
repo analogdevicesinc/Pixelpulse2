@@ -277,7 +277,7 @@ Rectangle {
         TextInput {
           id: perTextBox
           visible: perUnitLabel.position + perUnitLabel.width <= idRectangle.x + idRectangle.width
-          text: signal.isOutput ? (signal.src.src != 'constant' ? Math.abs(Math.round((controller.sampleRate / signal.src.period))).toFixed(3) : ""): signal.measurement.toFixed(4);
+          text: signal.isOutput ? (signal.src.src != 'constant' ? Math.abs(controller.sampleRate / signal.src.period).toFixed(3) : "") : signal.measurement.toFixed(4);
           color: "#FFF"
           selectByMouse: true
           font.pixelSize: currentFontSize
@@ -294,7 +294,7 @@ Rectangle {
 
           Binding {
             target: perTextBox; property: 'text';
-            value: signal.isOutput ? (signal.src.src != 'constant' ? Math.abs(Math.round((controller.sampleRate / signal.src.period))).toFixed(3) : ""): signal.measurement.toFixed(4);
+            value: signal.isOutput ? (signal.src.src != 'constant' ? Math.abs(controller.sampleRate / signal.src.period).toFixed(3) : ""): signal.measurement.toFixed(4);
           }
 
           Keys.onPressed: {
