@@ -33,6 +33,7 @@ var saveState = function () {
     generalState.sliderDotSize = toolbar.colorDialog.sliderDot.value;
     generalState.xy_checked = plotsVisible;
     generalState.repeatedSweep = repeatedSweep;
+    generalState.sampleTime = controller.sampleTime;
     signalStates['generalSettings'] = generalState;
 	return signalStates;
 };
@@ -70,4 +71,5 @@ var restoreState = function (signalStates){
     toolbar.colorDialog.sliderDot.value = generalState.sliderDotSize;
     plotsVisible = generalState.xy_checked;
     repeatedSweep = generalState.repeatedSweep;
+    controller.sampleTime = generalState.sampleTime;
 }

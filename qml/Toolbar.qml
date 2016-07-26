@@ -66,13 +66,13 @@ ToolbarStyle {
 
       Menu {
         title: "Sample Time"
-        MenuItem { exclusiveGroup: timeGroup; checkable: true;
+        MenuItem { exclusiveGroup: timeGroup; checkable: true; checked: controller.sampleTime == 0.01 ? true : false
           onTriggered: controller.sampleTime = 0.01; text: '10 ms' }
-        MenuItem { exclusiveGroup: timeGroup; checkable: true; checked: true;
+        MenuItem { exclusiveGroup: timeGroup; checkable: true; checked: controller.sampleTime == 0.1 ? true : false
           onTriggered: controller.sampleTime = 0.1; text: '100 ms' }
-        MenuItem { exclusiveGroup: timeGroup; checkable: true;
+        MenuItem { exclusiveGroup: timeGroup; checkable: true; checked: controller.sampleTime == 1 ? true : false
           onTriggered: controller.sampleTime = 1; text: '1 s' }
-        MenuItem { exclusiveGroup: timeGroup; checkable: true;
+        MenuItem { exclusiveGroup: timeGroup; checkable: true; checked: controller.sampleTime == 10 ? true : false
           onTriggered: controller.sampleTime = 10; text: '10 s' }
       }
 
