@@ -188,6 +188,7 @@ void SessionItem::onFinished()
                 if (!m_continuous) {
                     sig->updateMeasurementMean();
                     sig->updatePeakToPeak();
+                    sig->updateRms();
                 }
             }
         }
@@ -267,7 +268,8 @@ m_signal(sig),
 m_buffer(new FloatBuffer(this)),
 m_src(new SrcItem(this)),
 m_measurement(0.0),
-m_peak_to_peak(0.0)
+m_peak_to_peak(0.0),
+m_rms(0.0)
 {
     auto sig_info = sig->info();
     Q_UNUSED(sig_info);
@@ -282,7 +284,7 @@ void SignalItem::onParentModeChanged(int) {
 
 /// updates label in constant src mode
 void SignalItem::updateMeasurementMean(){
-    m_measurement = m_buffer->rms();
+    m_measurement = m_buffer->mean();
     measurementChanged(m_measurement);
 }
 
@@ -294,6 +296,11 @@ void SignalItem::updateMeasurementLatest(){
 void SignalItem::updatePeakToPeak() {
     m_peak_to_peak = m_buffer->peak_to_peak();
     peakChanged(m_peak_to_peak);
+}
+
+void SignalItem::updateRms() {
+    m_rms = m_buffer->rms();
+    rmsChanged(m_rms);
 }
 
 

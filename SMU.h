@@ -136,6 +136,7 @@ class SignalItem : public QObject {
     Q_PROPERTY(bool isInput READ getIsInput NOTIFY isInputChanged);
     Q_PROPERTY(double measurement READ getMeasurement NOTIFY measurementChanged);
     Q_PROPERTY(double peak_to_peak READ getPeak NOTIFY peakChanged);
+    Q_PROPERTY(double rms READ getRms NOTIFY rmsChanged);
 
 public:
     SignalItem(ChannelItem*, int index, Signal*);
@@ -157,12 +158,16 @@ public:
     double getPeak(){
         return m_peak_to_peak;
     }
+    double getRms() {
+        return m_rms;
+    }
 
 signals:
     void isOutputChanged(bool);
     void isInputChanged(bool);
     void measurementChanged(double);
     void peakChanged(double);
+    void rmsChanged(double);
 
 protected slots:
     void onParentModeChanged(int);
@@ -175,12 +180,14 @@ protected:
     SrcItem* m_src;
     double m_measurement;
     double m_peak_to_peak;
+    double m_rms;
     friend class SessionItem;
     friend class SrcItem;
 
     void updateMeasurementMean();
     void updateMeasurementLatest();
     void updatePeakToPeak();
+    void updateRms();
 };
 
 /// Should be used for handling mode switches in continuous mode.

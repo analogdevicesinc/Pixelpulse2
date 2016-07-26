@@ -277,12 +277,12 @@ Rectangle {
         TextInput {
           id: perTextBox
           visible: perUnitLabel.position + perUnitLabel.width <= idRectangle.x + idRectangle.width
-          text: signal.isOutput ? (signal.src.src != 'constant' ? Math.abs(controller.sampleRate / signal.src.period).toFixed(3) : "") : signal.measurement.toFixed(4);
+          text: signal.isOutput ? (signal.src.src != 'constant' ? Math.abs(controller.sampleRate / signal.src.period).toFixed(3) : "") : signal.rms.toFixed(4);
           color: "#FFF"
           selectByMouse: true
           font.pixelSize: currentFontSize
 
-          property real position: v2UnitLabel.position + v2UnitLabel.width + idRectangle.width * 10/100
+          property real position: (signal.isOutput ? v2UnitLabel.position + v2UnitLabel.width : v1UnitLabel.position + v1UnitLabel.width) + idRectangle.width * 10/100
           property real up_dn_freq_Sensivity: 1
           property real pgUp_pgDn_freq_Sensivity: 100
 
@@ -294,7 +294,7 @@ Rectangle {
 
           Binding {
             target: perTextBox; property: 'text';
-            value: signal.isOutput ? (signal.src.src != 'constant' ? Math.abs(controller.sampleRate / signal.src.period).toFixed(3) : ""): signal.measurement.toFixed(4);
+            value: signal.isOutput ? (signal.src.src != 'constant' ? Math.abs(controller.sampleRate / signal.src.period).toFixed(3) : ""): signal.rms.toFixed(4);
           }
 
           Keys.onPressed: {
@@ -332,7 +332,7 @@ Rectangle {
           }
 
           validator: DoubleValidator{}
-          anchors.left: v2UnitLabel.right
+          anchors.left: signal.isOutput ? v2UnitLabel.right : v1UnitLabel.right;
           anchors.leftMargin: idRectangle.width * 10/100
         }
         Text {
@@ -341,9 +341,37 @@ Rectangle {
            visible: perUnitLabel.position + perUnitLabel.width <= idRectangle.x + idRectangle.width;
            anchors.left: perTextBox.right
            anchors.leftMargin: idRectangle.width * 1/100
-           text: signal.isOutput ? (signal.src.src != 'constant' ? "Hertz" : ""): "RMS";
+           text: signal.isOutput ? (signal.src.src != 'constant' ? "Hertz" : ""): "RMS (AC)";
            font.pixelSize: currentFontSize
            property real position: perTextBox.position + perTextBox.width + idRectangle.width * 1/100;
+        }
+
+        Text {
+            id: averageTextBox
+            visible: averageLabel.position + averageLabel.width <= idRectangle.x + idRectangle.width;
+            text: signal.isOutput ? "" : signal.measurement.toFixed(4);
+            color: "#FFF"
+            font.pixelSize: currentFontSize
+
+            property real position: perUnitLabel.position + perUnitLabel.width + idRectangle.width * 10/100
+
+            Binding {
+              target: averageTextBox; property: 'text';
+              value: signal.isOutput ? "" : signal.measurement.toFixed(4);
+            }
+
+            anchors.left: perUnitLabel.right
+            anchors.leftMargin: idRectangle.width * 10/100
+        }
+        Text {
+            id: averageLabel;
+            color: "white";
+            visible: averageLabel.position + averageLabel.width <= idRectangle.x + idRectangle.width;
+            anchors.left: averageTextBox.right;
+            anchors.leftMargin: idRectangle.width * 1/100;
+            text: signal.isOutput ? "" : "Average";
+            font.pixelSize: currentFontSize;
+            property real position: averageTextBox.position + averageTextBox.width + idRectangle.width * 1/100;
         }
      }
   }
