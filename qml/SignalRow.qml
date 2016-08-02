@@ -1,4 +1,4 @@
-import QtQuick 2.1
+import QtQuick 2.2
 import QtQuick.Layouts 1.0
 import Plot 1.0
 import QtQuick.Controls 1.0
@@ -127,6 +127,7 @@ Rectangle {
           color: "#FFF"
           selectByMouse: true
           font.pixelSize: currentFontSize
+          readOnly: !signal.isOutput
           property real position: idRectangle.x + idRectangle.width * 10/100;
 
 
@@ -135,7 +136,10 @@ Rectangle {
             value: signal.isOutput ? signal.src.v1.toFixed(4) : signal.peak_to_peak.toFixed(4)
           }
 
-          onAccepted: {
+          onEditingFinished: {
+            if (readOnly)
+              return;
+
             var value = constrainValue(Number.fromLocaleString(text), axes.ymin + axes.overrangeSpan, axes.ymax - axes.overrangeSpan);
             text = value.toFixed(4);
             signal.src.v1 = text;
@@ -145,6 +149,9 @@ Rectangle {
 
           Keys.onPressed: {
             var value;
+
+            if (readOnly)
+              return;
 
             switch (event.key) {
               case Qt.Key_Escape:
@@ -219,7 +226,10 @@ Rectangle {
             value: overlay_periodic.visible ? signal.src.v2.toFixed(4) : "";
           }
 
-          onAccepted: {
+          onEditingFinished: {
+            if (readOnly)
+              return;
+
             var value = constrainValue(Number.fromLocaleString(text), axes.ymin + axes.overrangeSpan, axes.ymax - axes.overrangeSpan);
             text = value.toFixed(4);
             signal.src.v2 = text;
@@ -227,6 +237,9 @@ Rectangle {
 
           Keys.onPressed: {
             var value;
+
+            if (readOnly)
+              return;
 
             switch (event.key) {
               case Qt.Key_Escape:
@@ -281,12 +294,16 @@ Rectangle {
           color: "#FFF"
           selectByMouse: true
           font.pixelSize: currentFontSize
+          readOnly: !signal.isOutput
 
           property real position: (signal.isOutput ? v2UnitLabel.position + v2UnitLabel.width : v1UnitLabel.position + v1UnitLabel.width) + idRectangle.width * 10/100
           property real up_dn_freq_Sensivity: 1
           property real pgUp_pgDn_freq_Sensivity: 100
 
-          onAccepted: {
+          onEditingFinished: {
+            if (readOnly)
+              return;
+
             var value = constrainValue(Number.fromLocaleString(text), 0, controller.maxOutSignalFreq);
             text = parseFloat(value).toFixed(3)
             signal.src.period = controller.sampleRate / text
@@ -299,6 +316,9 @@ Rectangle {
 
           Keys.onPressed: {
             var value;
+
+            if (readOnly)
+              return;
 
             switch (event.key) {
               case Qt.Key_Escape:
