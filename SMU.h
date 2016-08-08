@@ -48,13 +48,13 @@ signals:
     void activeChanged();
     void sampleRateChanged();
     void sampleCountChanged();
-    void progress(sample_t);
+    void progress(uint64_t);
     void finished(unsigned status);
     void attached(Device* device);
     void detached(Device* device);
 
 protected slots:
-    void onProgress(sample_t);
+    void onProgress(uint64_t);
     void onFinished();
     void onAttached(Device* device);
     void onDetached(Device* device);

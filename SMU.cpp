@@ -15,8 +15,6 @@ void registerTypes() {
 
     qmlRegisterType<PhosphorRender>("Plot", 1, 0, "PhosphorRender");
     qmlRegisterType<FloatBuffer>("Plot", 1, 0, "FloatBuffer");
-
-    qRegisterMetaType<sample_t>("sample_t");
 }
 
 SessionItem::SessionItem():
@@ -35,7 +33,7 @@ m_sample_count(0)
         emit finished(status);
     };
 
-    m_session->m_progress_callback = [this](sample_t n) {
+    m_session->m_progress_callback = [this](uint64_t n) {
         emit progress(n);
     };
     m_session->m_hotplug_attach_callback = [this](Device* device){
@@ -197,7 +195,7 @@ void SessionItem::onFinished()
 
 /// progress handler
 /// called over Queue, updates BufferItem with new data as appropriate
-void SessionItem::onProgress(sample_t sample) {
+void SessionItem::onProgress(uint64_t sample) {
 
     if (!m_continuous && sample > m_sample_count) {
         // libsmu rounds up to the packet size and can report a sample count higher than requested,
