@@ -4,7 +4,7 @@
 [![OSX Status](https://api.travis-ci.org/analogdevicesinc/Pixelpulse2.svg?branch=master&label=OSX)](https://travis-ci.org/analogdevicesinc/Pixelpulse2)
 [![License](https://img.shields.io/badge/license-MPL-blue.svg)](https://github.com/analogdevicesinc/Pixelpulse2/blob/master/LICENSE)
 
-Pixelpulse is a powerful user interface for visualizing and manipulating signals while exploring systems attached to affordable analog interface devices, such as Analog Devices' ADALM1000 or the Nonolith Labs' CEE.
+Pixelpulse is a powerful user interface for visualizing and manipulating signals while exploring systems attached to affordable analog interface devices, such as Analog Devices' ADALM1000.
 
 Fully cross-platform using the Qt5 graphics toolkit and OpenGL accelerated density-gradiated rendering, it provides a powerful and accessible tool for initial interactive explorations.
 

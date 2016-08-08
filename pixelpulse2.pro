@@ -25,7 +25,6 @@ SOURCES += main.cpp \
     Plot/FloatBuffer.cpp \
     libsmu/src/device_m1000.cpp \
     libsmu/src/session.cpp \
-    libsmu/src/device_cee.cpp \
     utils/filedownloader.cpp
 
 RESOURCES += qml.qrc
@@ -60,7 +59,6 @@ HEADERS += \
     libsmu/src/device_m1000.hpp \
     libsmu/src/libsmu.h \
     libsmu/src/libsmu.hpp \
-    libsmu/src/device_cee.hpp \
     libsmu/src/internal.hpp \
     utils/fileio.h \
     utils/bossac_wrap.h \
