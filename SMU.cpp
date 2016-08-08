@@ -15,6 +15,8 @@ void registerTypes() {
 
     qmlRegisterType<PhosphorRender>("Plot", 1, 0, "PhosphorRender");
     qmlRegisterType<FloatBuffer>("Plot", 1, 0, "FloatBuffer");
+
+    qRegisterMetaType<uint64_t>("uint64_t");
 }
 
 SessionItem::SessionItem():
