@@ -289,7 +289,7 @@ Rectangle {
         // Freq
         TextInput {
           id: perTextBox
-          visible: perUnitLabel.position + perUnitLabel.width <= idRectangle.x + idRectangle.width
+          visible: (perUnitLabel.position + perUnitLabel.width <= idRectangle.x + idRectangle.width) && !(signal.isOutput && signal.src.src === 'constant')
           text: signal.isOutput ? (signal.src.src != 'constant' ? Math.abs(controller.sampleRate / signal.src.period).toFixed(3) : "") : signal.rms.toFixed(4);
           color: "#FFF"
           selectByMouse: true
