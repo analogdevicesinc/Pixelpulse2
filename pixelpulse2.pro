@@ -57,7 +57,6 @@ HEADERS += \
     Plot/PhosphorRender.h \
     Plot/FloatBuffer.h \
     libsmu/src/device_m1000.hpp \
-    libsmu/src/libsmu.h \
     libsmu/src/libsmu.hpp \
     libsmu/src/internal.hpp \
     utils/fileio.h \
