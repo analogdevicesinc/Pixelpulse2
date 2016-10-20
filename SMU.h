@@ -37,6 +37,7 @@ public:
     int getActiveDevices() { return m_session->m_devices.size(); }
 
     Q_INVOKABLE void updateMeasurements();
+    Q_INVOKABLE void updateAllMeasurements();
 
     Q_INVOKABLE void downloadFromUrl(QString url);
 
@@ -137,6 +138,7 @@ class SignalItem : public QObject {
     Q_PROPERTY(double measurement READ getMeasurement NOTIFY measurementChanged);
     Q_PROPERTY(double peak_to_peak READ getPeak NOTIFY peakChanged);
     Q_PROPERTY(double rms READ getRms NOTIFY rmsChanged);
+    Q_PROPERTY(double mean READ getMean NOTIFY meanChanged);
 
 public:
     SignalItem(ChannelItem*, int index, Signal*);
@@ -161,6 +163,9 @@ public:
     double getRms() {
         return m_rms;
     }
+    double getMean() {
+	return m_mean;
+    }
 
 signals:
     void isOutputChanged(bool);
@@ -168,6 +173,7 @@ signals:
     void measurementChanged(double);
     void peakChanged(double);
     void rmsChanged(double);
+    void meanChanged(double);
 
 protected slots:
     void onParentModeChanged(int);
@@ -181,6 +187,7 @@ protected:
     double m_measurement;
     double m_peak_to_peak;
     double m_rms;
+    double m_mean;
     friend class SessionItem;
     friend class SrcItem;
 

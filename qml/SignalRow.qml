@@ -369,7 +369,7 @@ Rectangle {
         Text {
             id: averageTextBox
             visible: averageLabel.position + averageLabel.width <= idRectangle.x + idRectangle.width;
-            text: signal.isOutput ? "" : signal.measurement.toFixed(4);
+            text: signal.isOutput ? "" : signal.mean.toFixed(4);
             color: "#FFF"
             font.pixelSize: currentFontSize
 
@@ -377,7 +377,7 @@ Rectangle {
 
             Binding {
               target: averageTextBox; property: 'text';
-              value: signal.isOutput ? "" : signal.measurement.toFixed(4);
+              value: signal.isOutput ? "" : signal.mean.toFixed(4);
             }
 
             anchors.left: perUnitLabel.right
