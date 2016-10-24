@@ -108,6 +108,10 @@ void SessionItem::start(bool continuous)
                         sig->m_src->update();
                         dev->m_device->unlock();
                     });
+
+                    sig->updateMeasurementMean();
+                    sig->updatePeakToPeak();
+		    sig->updateRms();
                 } else {
                     sig->m_buffer->startSweep();
                     sig->m_signal->measure_buffer(sig->m_buffer->data(), m_sample_count);
@@ -185,11 +189,9 @@ void SessionItem::onFinished()
         for (auto chan: dev->m_channels) {
             for (auto sig: chan->m_signals) {
                 disconnect(sig->m_src, &SrcItem::changed, 0, 0);
-                if (!m_continuous) {
-                    sig->updateMeasurementMean();
-                    sig->updatePeakToPeak();
-                    sig->updateRms();
-                }
+                sig->updateMeasurementMean();
+                sig->updatePeakToPeak();
+                sig->updateRms();
             }
         }
     }
@@ -223,6 +225,18 @@ void SessionItem::updateMeasurements() {
         for (auto chan: dev->m_channels) {
             for (auto sig: chan->m_signals) {
                 sig->updateMeasurementLatest();
+            }
+        }
+    }
+}
+
+void SessionItem::updateAllMeasurements() {
+    for (auto dev: m_devices) {
+        for (auto chan: dev->m_channels) {
+            for (auto sig: chan->m_signals) {
+                sig->updateMeasurementMean();
+                sig->updatePeakToPeak();
+                sig->updateRms();
             }
         }
     }
@@ -269,7 +283,8 @@ m_buffer(new FloatBuffer(this)),
 m_src(new SrcItem(this)),
 m_measurement(0.0),
 m_peak_to_peak(0.0),
-m_rms(0.0)
+m_rms(0.0),
+m_mean(0.0)
 {
     auto sig_info = sig->info();
     Q_UNUSED(sig_info);
@@ -284,8 +299,8 @@ void SignalItem::onParentModeChanged(int) {
 
 /// updates label in constant src mode
 void SignalItem::updateMeasurementMean(){
-    m_measurement = m_buffer->mean();
-    measurementChanged(m_measurement);
+    m_mean = m_buffer->mean();
+    meanChanged(m_mean);
 }
 
 void SignalItem::updateMeasurementLatest(){
