@@ -2,7 +2,7 @@ import QtQuick 2.0
 import "sesssave.js" as StateSave
 
 Item {
-  property bool enabled: false
+  property bool enabled: session.active
   property bool continuous: false
   property bool repeat: true
   property real sampleRate: session.devices.length ? session.devices[0].DefaultRate : 0
@@ -14,100 +14,111 @@ Item {
 
   property bool dlySmplCntChanged: false
 
-  function trigger() {
-    session.sampleRate = sampleRate
-    session.sampleCount = sampleCount
+//  function trigger() {
+//    session.sampleRate = sampleRate
+//    session.sampleCount = sampleCount
 
-      if (dlySmplCntChanged) {
-          for (var i = 0; i < session.devices.length; i++) {
-            for (var j = 0; j < session.devices[i].channels.length; j++) {
-              session.devices[i].channels[j].signals[0].buffer.setIgnoredFirstSamplesCount(delaySampleCount);
-              session.devices[i].channels[j].signals[1].buffer.setIgnoredFirstSamplesCount(delaySampleCount);
-            }
-          }
-          dlySmplCntChanged = false;
-      }
+//      if (dlySmplCntChanged) {
+//          for (var i = 0; i < session.devices.length; i++) {
+//            for (var j = 0; j < session.devices[i].channels.length; j++) {
+//              session.devices[i].channels[j].signals[0].buffer.setIgnoredFirstSamplesCount(delaySampleCount);
+//              session.devices[i].channels[j].signals[1].buffer.setIgnoredFirstSamplesCount(delaySampleCount);
+//            }
+//          }
+//          dlySmplCntChanged = false;
+//      }
 
-    session.start(continuous);
-    if ( session.devices.length > 0 ) {
-      lastConfig = StateSave.saveState();
-    }
-  }
+//    session.start(continuous);
+//    if ( session.devices.length > 0 ) {
+//      lastConfig = StateSave.saveState();
+//    }
+//  }
 
-  onSampleTimeChanged: {
-    if (continuous && enabled) {
-      enabled = false;
-      restartAfterStop = true;
-      session.cancel();
-      enabled = true;
-    }
-  }
+//  onSampleTimeChanged: {
+//    if (continuous && enabled) {
+//      enabled = false;
+//      restartAfterStop = true;
+//      session.cancel();
+//      enabled = true;
+//    }
+//  }
 
-  Timer {
-    id: timer
-    interval: 100
-    onTriggered: { trigger() }
-  }
+//  Timer {
+//    id: timer
+//    interval: 100
+//    onTriggered: { trigger() }
+//  }
+
+//  function toggle() {
+//    if (!enabled) {
+//      trigger();
+//      enabled = true;
+//    } else {
+//      enabled = false;
+//      if (continuous || sampleTime > 0.1) {
+//        session.cancel();
+//      }
+//    }
+//  }
 
   function toggle() {
-    if (!enabled) {
-      trigger();
-      enabled = true;
-    } else {
-      enabled = false;
-      if (continuous || sampleTime > 0.1) {
-        session.cancel();
+      if (!session.active) {
+          session.sampleRate = sampleRate
+          session.sampleCount = sampleCount
+          session.start(continuous);
+      } else {
+          session.cancel();
       }
-    }
   }
 
-  Timer {
-    id: updateMeasurementsTimer
-    interval: 50
-    repeat: true
-    running: enabled && continuous
-    onTriggered: session.updateMeasurements()
-  }
+//  Timer {
+//    id: updateMeasurementsTimer
+//    interval: 50
+//    repeat: true
+//    running: enabled && continuous
+//    onTriggered: session.updateMeasurements()
+//  }
 
-  Timer {
-    id: updateLabelsTimer
-    interval: 500
-    repeat: true
-    running: enabled
-    onTriggered: session.updateAllMeasurements()
-  }
+//  Timer {
+//    id: updateLabelsTimer
+//    interval: 500
+//    repeat: true
+//    running: enabled
+//    onTriggered: session.updateAllMeasurements()
+//  }
 
-  onContinuousChanged: {
-    // Restart the session so the new sampling mode takes effect
-    restartAfterStop = true;
-    session.cancel();
+//  onContinuousChanged: {
+//    // Restart the session so the new sampling mode takes effect
+//    restartAfterStop = true;
+//    session.cancel();
 
-    toolbar.acqusitionDialog.onContinuousModeChanged(continuous);
-  }
+//    toolbar.acqusitionDialog.onContinuousModeChanged(continuous);
+//  }
 
-  onDelaySampleCountChanged: {
-      dlySmplCntChanged = true;
-  }
+//  onDelaySampleCountChanged: {
+//      dlySmplCntChanged = true;
+//  }
 
-  Connections {
-    target: session
-    onFinished: {
-      if (enabled && restartAfterStop) {
-        restartAfterStop = false;
-        timer.start()
-        return;
-      }
+//  Connections {
+//    target: session
 
-      if (!continuous && repeat && enabled) {
-        timer.start();
-      }
-    }
+//    onFinished: {
+//      if (enabled && restartAfterStop) {
+//        restartAfterStop = false;
+//        timer.start()
+//        return;
+//      }
 
-    onDetached: {
-      enabled = false;
-      continuous = false;
-    }
-  }
+//      if (!continuous && repeat && enabled) {
+//        timer.start();
+//      }
+//    }
+
+//    onDetached: {
+//      enabled = false;
+//      continuous = false;
+//    }
+//  }
 
   Repeater {
     model: session.devices
@@ -118,10 +129,7 @@ Item {
           Connections {
             target: modelData
             onModeChanged: {
-              if (continuous) {
-                  restartAfterStop = true;
-                  session.cancel();
-              }
+                session.restart();
             }
           }
         }

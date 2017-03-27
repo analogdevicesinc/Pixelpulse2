@@ -36,14 +36,45 @@ public:
         return m_data[wrapIndex(i)];
     }
 
-    void shift(float d) {
-        m_data[(m_start + m_length) % m_data.size()] = d;
+// Not needed anymore
+//    void shift(float d) {
+//        m_data[(m_start + m_length) % m_data.size()] = d;
 
-        if (m_length < m_data.size()) {
-            m_length += 1;
-        } else {
-            m_start = (m_start + 1) % m_data.size();
+//        if (m_length < m_data.size()) {
+//            m_length += 1;
+//        } else {
+//            m_start = (m_start + 1) % m_data.size();
+//        }
+//    }
+
+    void append_samples(const std::vector<std::array<float, 4>>& samples, int signal_index)
+    {
+        size_t free_buffer_space = m_data.size() - m_start_test;
+        int num_samples_to_add = std::min(samples.size(), free_buffer_space);
+
+        for (int i = 0; i < num_samples_to_add; i++) {
+            m_data[(m_start_test +  i) % m_data.size()] = samples[i][signal_index];
         }
+        m_start_test += num_samples_to_add;
+        if (m_length < m_start_test)
+            m_length = m_start_test;
+
+        emit dataChanged();
+    }
+
+    void append_samples_circular(const std::vector<std::array<float, 4>>& samples, int signal_index)
+    {
+        int num_samples_to_add = samples.size();
+
+        for (int i = 0; i < num_samples_to_add; i++) {
+            m_data[(m_start_test +  i) % m_data.size()] = samples[i][signal_index];
+        }
+
+        m_start_test += num_samples_to_add;
+        if (m_length < m_start_test)
+            m_length = m_start_test;
+
+        emit dataChanged();
     }
 
     void toVertexData(double start, double end, QSGGeometry::Point2D *vertices, unsigned n_verticies) {
@@ -89,20 +120,23 @@ public:
             m_length = 0;
             dataChanged();
         }
+        m_start_test = 0;
     }
 
-    void sweepProgress(unsigned sample) {
-        if (m_length < sample) {
-             m_length = sample;
-        }
-        dataChanged();
-    }
+// Not needed anymore
+//    void sweepProgress(unsigned sample) {
+//        if (m_length < sample) {
+//             m_length = sample;
+//        }
+//        dataChanged();
+//    }
 
-    void continuousProgress(unsigned sample) {
-        Q_UNUSED(sample);
-        // m_start and m_length are adjusted in shift()
-        dataChanged();
-    }
+// Not needed anymore
+//    void continuousProgress(unsigned sample) {
+//        Q_UNUSED(sample);
+//        // m_start and m_length are adjusted in shift()
+//        dataChanged();
+//    }
 
 
     template<typename T>
@@ -152,6 +186,7 @@ private:
     size_t m_start;
     size_t m_length;
     size_t m_first_samples_ignored;
+    size_t m_start_test;
 
     unsigned unwrapIndex(unsigned index) {
         if (index >= m_start) {

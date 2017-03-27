@@ -4,12 +4,12 @@ QT += qml quick widgets
 QT += network
 CONFIG += c++11
 
-win32 {
-        CONFIG += release
-}
-unix {
-        CONFIG += release
-}
+#win32 {
+#        CONFIG += release
+#}
+#unix {
+#        CONFIG += release
+#}
 
 QMAKE_CFLAGS_DEBUG += -ggdb
 QMAKE_CXXFLAGS_DEBUG += -ggdb
@@ -23,8 +23,6 @@ SOURCES += main.cpp \
     SMU.cpp \
     Plot/PhosphorRender.cpp \
     Plot/FloatBuffer.cpp \
-    libsmu/src/device_m1000.cpp \
-    libsmu/src/session.cpp \
     utils/filedownloader.cpp
 
 RESOURCES += qml.qrc
@@ -56,9 +54,6 @@ HEADERS += \
     SMU.h \
     Plot/PhosphorRender.h \
     Plot/FloatBuffer.h \
-    libsmu/src/device_m1000.hpp \
-    libsmu/src/libsmu.hpp \
-    libsmu/src/internal.hpp \
     utils/fileio.h \
     utils/bossac_wrap.h \
     utils/filedownloader.h
@@ -84,6 +79,7 @@ win32 {
 
 unix {
 	CONFIG += link_pkgconfig
+PKGCONFIG += libsmu
 # if we do not have a locally compiled static version of libusb-1.0 installed, use pkg-config
 	!exists(/usr/local/lib/libusb-1.0.a) {
 		PKGCONFIG += libusb-1.0
@@ -106,5 +102,3 @@ unix:!osx {
 	QMAKE_CFLAGS_DEBUG += -rdynamic
 	QMAKE_CXXFLAGS_DEBUG += -rdynamic
 }
-
-

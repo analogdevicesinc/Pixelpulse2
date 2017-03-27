@@ -5,12 +5,13 @@
 #include "utils/bossac_wrap.h"
 #include "qdebug.h"
 
+using namespace smu;
+
 void registerTypes() {
     qmlRegisterType<SessionItem>();
     qmlRegisterType<DeviceItem>();
     qmlRegisterType<ChannelItem>();
     qmlRegisterType<SignalItem>();
-    qmlRegisterType<ModeItem>();
     qmlRegisterType<SrcItem>();
 
     qmlRegisterType<PhosphorRender>("Plot", 1, 0, "PhosphorRender");
@@ -26,24 +27,20 @@ m_continuous(false),
 m_sample_rate(0),
 m_sample_count(0)
 {
-    connect(this, &SessionItem::progress, this, &SessionItem::onProgress, Qt::QueuedConnection);
     connect(this, &SessionItem::finished, this, &SessionItem::onFinished, Qt::QueuedConnection);
     connect(this, &SessionItem::attached, this, &SessionItem::onAttached, Qt::QueuedConnection);
     connect(this, &SessionItem::detached, this, &SessionItem::onDetached, Qt::QueuedConnection);
 
-    m_session->m_completion_callback = [this](unsigned status){
-        emit finished(status);
-    };
+    connect(&timer, SIGNAL(timeout()), this, SLOT(getSamples()));
 
-    m_session->m_progress_callback = [this](uint64_t n) {
-        emit progress(n);
-    };
-    m_session->m_hotplug_attach_callback = [this](Device* device){
+    m_session->hotplug_attach([this](Device* device, void* data){
+        Q_UNUSED(data);
         emit attached(device);
-    };
-    m_session->m_hotplug_detach_callback = [this](Device* device){
+    });
+    m_session->hotplug_detach([this](Device* device, void* data){
+        Q_UNUSED(data);
         emit detached(device);
-    };
+    });
 }
 
 SessionItem::~SessionItem() {
@@ -54,75 +51,60 @@ SessionItem::~SessionItem() {
 /// called on initialisation
 void SessionItem::openAllDevices()
 {
-    m_session->update_available_devices();
-    for (auto i: m_session->m_available_devices) {
-		auto dev = m_session->add_device(&*i);
-        m_devices.append(new DeviceItem(this, dev));
-	}
+    m_session->m_queue_size = 1000000;
+    m_session->add_all();
+    for (auto i: m_session->m_available_devices)
+        m_devices.append(new DeviceItem(this, &*i));
     devicesChanged();
 }
 
 /// called at exit
 void SessionItem::closeAllDevices()
 {
-        qDebug() << "Closing devices";
-        m_session->cancel();
-        m_session->end();
-        QList<DeviceItem *> devices;
-        m_devices.swap(devices);
-        devicesChanged();
+    m_session->cancel();
+    m_session->end();
+    QList<DeviceItem *> devices;
+    m_devices.swap(devices);
+    devicesChanged();
 
-        for (auto i: devices) {
-            m_session->remove_device(i->m_device);
-            delete i;
-        }
+    for (auto i: devices)
+        m_session->remove(i->m_device);
 }
 
 /// configure device, datapaths, and start streaming
 void SessionItem::start(bool continuous)
 {
+qDebug() << "Session start(" << continuous << ")";
     if (m_devices.size() == 0) return;
-    if (m_active) return;
     if (m_sample_rate == 0) return;
-    m_continuous = continuous;
 
-    m_active = true;
-    activeChanged();
     m_session->configure(m_sample_rate);
+    m_continuous = continuous;
 
     // Configure buffers
     for (auto dev: m_devices) {
+        dev->setSamplesAdded(0);
         for (auto chan: dev->m_channels) {
             dev->m_device->set_mode(chan->m_index, chan->m_mode);
+            chan->buildTxBuffer();
             for (auto sig: chan->m_signals) {
                 sig->m_buffer->setRate(1.0/m_sample_rate);
                 sig->m_buffer->allocate(m_sample_count);
-
-                if (m_continuous) {
-                    sig->m_signal->measure_callback([=](float d){
-                        sig->m_buffer->shift(d);
-                    });
-
-                    connect(sig->m_src, &SrcItem::changed, [=] {
-                        dev->m_device->lock();
-                        sig->m_src->update();
-                        dev->m_device->unlock();
-                    });
-
-                    sig->updateMeasurementMean();
-                    sig->updatePeakToPeak();
-		    sig->updateRms();
-                } else {
-                    sig->m_buffer->startSweep();
-                    sig->m_signal->measure_buffer(sig->m_buffer->data(), m_sample_count);
-                }
-                sig->m_src->update();
-
+                sig->m_buffer->startSweep();
             }
         }
+        dev->write();
     }
-    m_session->start(continuous ? 0 : m_sample_count);
 
+    m_session->flush();
+    if (continuous)
+        m_session->start(0);
+    else
+        m_session->start(m_sample_count);
+    timer.start(0);
+
+    m_active = true;
+    emit activeChanged();
 }
 
 /// handles hotplug attach condition
@@ -130,10 +112,17 @@ void SessionItem::start(bool continuous)
 /// triggered by libUSB callback over Queue
 void SessionItem::onAttached(Device *device)
 {
-    auto dev = m_session->add_device(device);
-    Q_UNUSED(dev);
-    m_devices.append(new DeviceItem(this, device));
-    devicesChanged();
+    if (m_active) {
+        this->cancel();
+    }
+
+    int err = m_session->add(device);
+
+    if (!err) {
+        m_devices.append(new DeviceItem(this, device));
+        devicesChanged();
+    }
+qDebug() << "Device attached";
 }
 
 /// handles hotplug detach condition
@@ -143,20 +132,15 @@ void SessionItem::onDetached(Device* device){
     if (m_active) {
             this->cancel();
     }
-    // wait for completion and teardown relevant state
-    // cut out the middleman, ensure completion is handled
-    // don't rely on nondeterministic race condition between Detached and Finished
-    onFinished();
-    m_session->remove_device(device);
-    if ((int) m_session->m_devices.size() < m_devices.size()) {
-        for (auto dev: m_devices) {
-             if (dev->m_device == device)
-                    m_devices.removeOne(dev);
-        }
+    m_session->remove(device, true);
+    for (auto dev: m_devices) {
+         if (dev->m_device == device) {
+                m_devices.removeOne(dev);
+         }
     }
-    // remove from list of available devices
-    m_session->destroy_available(device);
+    m_session->destroy(device);
     devicesChanged();
+qDebug() << "Device detached";
 }
 
 void SessionItem::handleDownloadedFirmware()
@@ -169,26 +153,36 @@ void SessionItem::handleDownloadedFirmware()
     m_firmware_fd = NULL;
 }
 
-/// cancel obnoxious amount of redirection
-/// SessionItem::cancel calls Session::cancel calls Device::cancel on each device
 void SessionItem::cancel() {
-    if (!m_active) { return; }
+    if (!m_active)
+        return;
+
+    if (m_continuous)
+        timer.stop();
+
     m_session->cancel();
+    m_session->end();
+    qDebug() << "Session cancel" << "status:" << m_session->cancelled();
+
+    m_active = false;
+    emit activeChanged();
 }
 
-/// completion event handler
-/// runs on UI thread
-/// waits for device to complete (paradoxically?), then tears down the output update connection
+void SessionItem::restart()
+{
+    if (!m_active)
+        return;
+
+    cancel();
+    while(m_active);
+    start(m_continuous);
+}
+
 void SessionItem::onFinished()
 {
-    m_session->end();
-    m_active = false;
-    activeChanged();
-
     for (auto dev: m_devices) {
         for (auto chan: dev->m_channels) {
             for (auto sig: chan->m_signals) {
-                disconnect(sig->m_src, &SrcItem::changed, 0, 0);
                 sig->updateMeasurementMean();
                 sig->updatePeakToPeak();
                 sig->updateRms();
@@ -197,30 +191,8 @@ void SessionItem::onFinished()
     }
 }
 
-/// progress handler
-/// called over Queue, updates BufferItem with new data as appropriate
-void SessionItem::onProgress(uint64_t sample) {
-
-    if (!m_continuous && sample > m_sample_count) {
-        // libsmu rounds up to the packet size and can report a sample count higher than requested,
-        // but the buffers only deal with requested samples.
-        sample = m_sample_count;
-    }
-
-    for (auto dev: m_devices) {
-        for (auto chan: dev->m_channels) {
-            for (auto sig: chan->m_signals) {
-                if (m_continuous) {
-                    sig->m_buffer->continuousProgress(sample);
-                } else {
-                    sig->m_buffer->sweepProgress(sample);
-                }
-            }
-        }
-    }
-}
-
 void SessionItem::updateMeasurements() {
+/*
     for (auto dev: m_devices) {
         for (auto chan: dev->m_channels) {
             for (auto sig: chan->m_signals) {
@@ -228,6 +200,7 @@ void SessionItem::updateMeasurements() {
             }
         }
     }
+*/
 }
 
 void SessionItem::updateAllMeasurements() {
@@ -244,20 +217,102 @@ void SessionItem::updateAllMeasurements() {
 
 void SessionItem::downloadFromUrl(QString url)
 {
+    /*
+     * this causes Error in `/home/dan/work/git/build-pixelpulse2-Desktop_Qt_5_5_1_GCC_64bit3-Debug/pixelpulse2': corrupted double-linked list: 0x0000000001bf9140 ***
+     *
     QUrl firmwareUrl(url);
     m_firmware_fd = new FileDownloader(firmwareUrl, this);
     connect(m_firmware_fd, SIGNAL (downloaded()), this, SLOT (handleDownloadedFirmware()));
+    */
+}
+
+void SessionItem::getSamples()
+{
+    if (!m_active)
+        return;
+
+    for (auto dev: m_devices) {
+        std::vector<std::array<float, 4>> rxbuf;
+        int ret = 0;
+
+        try {
+            ret = dev->m_device->read(rxbuf, 1000);
+        } catch (std::system_error& e) {
+            qDebug() << "exception:" << e.what();
+        } catch (std::runtime_error& e) {
+            qDebug() << "exception:" << e.what();
+        }
+
+        qDebug() << ret;
+
+        if (ret == 0)
+            return;
+
+        dev->setSamplesAdded(dev->samplesAdded() + ret);
+
+        int i = 0;
+        for (auto chan: dev->m_channels) {
+            int j = 0;
+            for (auto sig: chan->m_signals) {
+                if (m_continuous)
+                    sig->m_buffer->append_samples_circular(rxbuf, i * 2 + j);
+                else
+                    sig->m_buffer->append_samples(rxbuf, i * 2 + j);
+                j++;
+            }
+            i++;
+        }
+
+        if (!m_continuous) {
+            if (dev->samplesAdded() == m_sample_count || !m_active) {
+                    timer.stop();
+                    dev->setSamplesAdded(0);
+                    emit finished(0);
+                    QTimer::singleShot(100, this, SLOT(beginNewSweep()));
+            }
+        }
+    }
+}
+
+void SessionItem::beginNewSweep()
+{
+    if (m_active) {
+        m_session->flush();
+        for (auto dev: m_devices) {
+            dev->setSamplesAdded(0);
+            for (auto chan: dev->m_channels) {
+                chan->buildTxBuffer();
+                for (auto sig: chan->m_signals) {
+                    sig->m_buffer->startSweep();
+                }
+            }
+            dev->write();
+        }
+        m_session->start(m_sample_count);
+        timer.start(0);
+    }
 }
 
 /// DeviceItem constructor
 DeviceItem::DeviceItem(SessionItem* parent, Device* dev):
 QObject(parent),
-m_device(dev)
+m_device(dev),
+m_samples_added(0)
 {
     auto dev_info = dev->info();
 
     for (unsigned ch_i=0; ch_i < dev_info->channel_count; ch_i++) {
         m_channels.append(new ChannelItem(this, dev, ch_i));
+    }
+}
+
+void DeviceItem::write()
+{
+    for (auto chn: m_channels) {
+        unsigned mode = chn->property("mode").toUInt();
+        if (mode == SVMI || mode == SIMV) {
+            m_device->write(chn->m_tx_data, chn->m_index, true);
+        }
     }
 }
 
@@ -271,6 +326,44 @@ QObject(parent), m_device(dev), m_index(ch_i), m_mode(0)
         auto sig = dev->signal(ch_i, sig_i);
         m_signals.append(new SignalItem(this, ch_i, sig));
     }
+}
+
+void ChannelItem::buildTxBuffer()
+{
+    SignalItem *txSignal;
+
+    switch (m_mode) {
+        case SVMI:
+            txSignal = m_signals[0];
+            break;
+        case SIMV:
+            txSignal = m_signals[1];
+            break;
+        default:
+            return;
+    }
+
+    QString src = txSignal->getSrc()->property("src").toString();
+    float v1 = txSignal->getSrc()->property("v1").toFloat();
+    float v2 = txSignal->getSrc()->property("v2").toFloat();
+    float period = txSignal->getSrc()->property("period").toFloat();
+    float phase = txSignal->getSrc()->property("phase").toFloat();
+    float duty = txSignal->getSrc()->property("duty").toFloat();
+
+    m_tx_data.resize(0);
+
+    if (src == "constant")
+        txSignal->m_signal->constant(m_tx_data, 1, v1);
+    else if (src == "square")
+        txSignal->m_signal->square(m_tx_data, period, v1, v2, period, phase, duty);
+    else if (src == "sawtooth")
+        txSignal->m_signal->sawtooth(m_tx_data, period, v1, v2, period, phase);
+    else if (src == "stairstep")
+        txSignal->m_signal->stairstep(m_tx_data, period, v1, v2, period, phase);
+    else if (src == "sine")
+        txSignal->m_signal->sine(m_tx_data, period, v1, v2, period, phase);
+    else if (src == "triangle")
+        txSignal->m_signal->triangle(m_tx_data, period, v1, v2, period, phase);
 }
 
 /// SignalItem constructor
@@ -304,8 +397,10 @@ void SignalItem::updateMeasurementMean(){
 }
 
 void SignalItem::updateMeasurementLatest(){
+/*
     m_measurement = m_signal->measure_instantaneous();
     measurementChanged(m_measurement);
+*/
 }
 
 void SignalItem::updatePeakToPeak() {
@@ -340,6 +435,7 @@ m_parent(parent)
 
 /// update output signal
 void SrcItem::update() {
+   /*time
     Src v = SRC_CONSTANT;
     if (m_src == "constant")        v = SRC_CONSTANT;
     else if (m_src == "buffer")     v = SRC_BUFFER;
@@ -357,9 +453,5 @@ void SrcItem::update() {
     m_parent->m_signal->m_src_period = m_period;
     m_parent->m_signal->m_src_phase  = m_phase;
     m_parent->m_signal->m_src_duty   = m_duty;
-}
-
-ModeItem::ModeItem()
-{
-
+*/
 }
