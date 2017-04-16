@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
 
     init_signal_handlers(argv[0]);
-
+    qputenv("QT_LOGGING_RULES", "qt.network.ssl.warning=false");
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
@@ -46,8 +46,7 @@ int main(int argc, char *argv[])
     } else {
         engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     }
-
-
+    
     int r = app.exec();
     smu_session.closeAllDevices();
 
