@@ -1,6 +1,7 @@
 #pragma once
 #include <QtQuick/QQuickItem>
 #include <QTimer>
+#include <QThread>
 #include <libsmu/libsmu.hpp>
 #include <memory>
 #include "utils/filedownloader.h"
@@ -13,7 +14,8 @@ class ChannelItem;
 class SignalItem;
 class ModeItem;
 class SrcItem;
-
+class TimerItem;
+class BufferChanger;
 class FloatBuffer;
 
 /// SessionItem is the primary object in Pixelpulse2
@@ -43,7 +45,7 @@ public:
     Q_INVOKABLE void updateAllMeasurements();
 
     Q_INVOKABLE void downloadFromUrl(QString url);
-
+    bool isContinuous(){return m_continuous;}
     bool getActive() { return m_active; }
     QQmlListProperty<DeviceItem> getDevices() { return QQmlListProperty<DeviceItem>(this, m_devices); }
 
@@ -75,7 +77,6 @@ protected:
     QList<DeviceItem *> m_devices;
     QTimer timer;
     QTimer *sweepTimer;
-
 };
 
 
@@ -135,10 +136,12 @@ protected:
     QList<SignalItem*> m_signals;
 
     std::vector<float> m_tx_data;
+    TimerItem *timer;
 
     friend class SessionItem;
     friend class DeviceItem;
     friend class SignalItem;
+    friend class TimerItem;
 };
 
 /// Abstracts over a LibSMU Signal and the BufferItem used for rendering data
@@ -208,6 +211,7 @@ protected:
     friend class SessionItem;
     friend class ChannelItem;
     friend class SrcItem;
+    friend class TimerItem;
 
     void updateMeasurementMean();
     void updateMeasurementLatest();
@@ -255,6 +259,45 @@ protected:
     double m_duty;
 
     SignalItem* m_parent;
+    friend class TimerItem;
+};
+
+class TimerItem : public QObject{
+    Q_OBJECT
+private:
+    ChannelItem *channel;
+    DeviceItem *device;
+    SessionItem *session;
+    QTimer *changeBufferTimer;
+    BufferChanger *bc;
+    QThread *thread;
+    bool modified;
+
+public:
+    TimerItem(ChannelItem *channel,DeviceItem *dev);
+//    ~TimerItem();
+protected:
+    friend class DeviceItem;
+    friend class SrcItem;
+    friend class SignalItem;
+    friend class ChannelItem;
+public slots:
+    void parameterChanged();
+private slots:
+    void needChangeBuffer();
+    void clean();
+};
+
+class BufferChanger :public QObject{
+    Q_OBJECT
+private:
+    ChannelItem *channel;
+    DeviceItem *device;
+public:
+    BufferChanger(ChannelItem *chan,DeviceItem *dev);
+    ~BufferChanger(){}
+protected slots:
+    void changeBuffer();
 };
 
 void registerTypes();

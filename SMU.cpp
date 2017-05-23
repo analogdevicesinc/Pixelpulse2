@@ -42,6 +42,8 @@ m_sample_count(0)
         Q_UNUSED(data);
         emit detached(device);
     });
+    sweepTimer = new QTimer();
+    connect(sweepTimer,SIGNAL(timeout()),SLOT(beginNewSweep()));
 }
 
 SessionItem::~SessionItem() {
@@ -57,6 +59,27 @@ void SessionItem::openAllDevices()
     for (auto i: m_session->m_available_devices)
         m_devices.append(new DeviceItem(this, &*i));
     devicesChanged();
+
+    //connect(resettimer,SIGNAL(timeout()),SLOT(restart()));
+
+
+//    for (auto dev: m_devices) {
+//        for (auto chan: dev->m_channels) {
+//            for (auto sig: chan->m_signals) {
+//                    qDebug()<<"intra";
+//                    connect(sig->m_src, &SrcItem::changed, [=] {
+//                            if(!resettimer->isActive() && m_continuous){
+//                                qDebug()<<"Timer activated";
+//                                resettimer->setInterval(1000);
+//                                resettimer->setSingleShot(true);
+//                                resettimer->start();
+//                            }
+//                    });
+//                    //m_restart = true;
+//            }
+//        }
+//    }0.435294   2.5   956416   456416   0.5
+    //v1 v2 period phase duty
 }
 
 /// called at exit
@@ -82,7 +105,6 @@ qDebug() << "Session start(" << continuous << ")";
     m_session->configure(m_sample_rate);
     m_continuous = continuous;
 
-    // Configure buffers
     for (auto dev: m_devices) {
         dev->setSamplesAdded(0);
         for (auto chan: dev->m_channels) {
@@ -91,20 +113,22 @@ qDebug() << "Session start(" << continuous << ")";
             for (auto sig: chan->m_signals) {
                 sig->m_buffer->setRate(1.0/m_sample_rate);
                 sig->m_buffer->allocate(m_sample_count);
+
                 sig->m_buffer->startSweep();
             }
         }
+
         dev->write();
     }
+
 
     m_session->flush();
     if (continuous)
         m_session->start(0);
     else{
         m_session->start(m_sample_count);
-
     }
-    //m_restart = false;
+
     timer.start(0);
 
     m_active = true;
@@ -149,7 +173,6 @@ qDebug() << "Device detached";
 
 void SessionItem::onSampleCountChanged(){
     restart();
-
 }
 
 void SessionItem::handleDownloadedFirmware()
@@ -167,7 +190,6 @@ void SessionItem::cancel() {
         return;
 
     if(sweepTimer){
-        qDebug()<<"timer active"<<sweepTimer->isActive();
         sweepTimer->stop();
     }
 
@@ -185,11 +207,8 @@ void SessionItem::restart()
 {
     if (!m_active)
         return;
-    qDebug()<<"In restart";
     cancel();
-    while(m_active);
     if(sweepTimer){
-        qDebug()<<"timer active"<<sweepTimer->isActive();
         sweepTimer->stop();
     }
     start(m_continuous);
@@ -285,15 +304,9 @@ void SessionItem::getSamples()
                     timer.stop();
                     dev->setSamplesAdded(0);
                     emit finished(0);
-                    //QTimer::singleShot(100, this, SLOT(beginNewSweep()));
-
-                    sweepTimer = new QTimer(this);
                     sweepTimer->setInterval(100);
                     sweepTimer->setSingleShot(true);
-                    connect(sweepTimer,SIGNAL(timeout()),SLOT(beginNewSweep()));
                     sweepTimer->start();
-
-
             }
         }
     }
@@ -301,8 +314,6 @@ void SessionItem::getSamples()
 
 void SessionItem::beginNewSweep()
 {
-//    if(m_restart)
-//        return;
     qDebug()<<"Begin new Sweep#######################################################################\n";
     if (m_active) {
         m_session->flush();
@@ -320,6 +331,7 @@ void SessionItem::beginNewSweep()
         timer.start(0);
     }
 }
+
 
 /// DeviceItem constructor
 DeviceItem::DeviceItem(SessionItem* parent, Device* dev):
@@ -339,7 +351,11 @@ void DeviceItem::write()
     for (auto chn: m_channels) {
         unsigned mode = chn->property("mode").toUInt();
         if (mode == SVMI || mode == SIMV) {
+            try{
             m_device->write(chn->m_tx_data, chn->m_index, true);
+            }catch (std::system_error& e) {
+                qDebug() << "exception:" << e.what();
+            }
         }
     }
 }
@@ -354,6 +370,7 @@ QObject(parent), m_device(dev), m_index(ch_i), m_mode(0)
         auto sig = dev->signal(ch_i, sig_i);
         m_signals.append(new SignalItem(this, ch_i, sig));
     }
+    timer = new TimerItem(this,parent);
 }
 
 void ChannelItem::buildTxBuffer()
@@ -378,21 +395,29 @@ void ChannelItem::buildTxBuffer()
     float phase = txSignal->getSrc()->property("phase").toFloat();
     float duty = txSignal->getSrc()->property("duty").toFloat();
 
+    if(period <= 0){
+        period = -period;
+    }
+    int samples = period;
+    if(samples < 0)
+        samples = 1;
+    samples = std::min(samples,1000000);
     m_tx_data.resize(0);
-
     if (src == "constant")
         txSignal->m_signal->constant(m_tx_data, 1, v1);
     else if (src == "square")
-        txSignal->m_signal->square(m_tx_data, period, v1, v2, period, phase, duty);
+        txSignal->m_signal->square(m_tx_data, samples, v1, v2, period, phase, duty);
     else if (src == "sawtooth")
-        txSignal->m_signal->sawtooth(m_tx_data, period, v1, v2, period, phase);
+        txSignal->m_signal->sawtooth(m_tx_data, samples, v1, v2, period, phase);
     else if (src == "stairstep")
-        txSignal->m_signal->stairstep(m_tx_data, period, v1, v2, period, phase);
+        txSignal->m_signal->stairstep(m_tx_data, samples, v1, v2, period, phase);
     else if (src == "sine")
-        txSignal->m_signal->sine(m_tx_data, period, v1, v2, period, phase);
+        txSignal->m_signal->sine(m_tx_data, samples, v1, v2, period, phase);
     else if (src == "triangle")
-        txSignal->m_signal->triangle(m_tx_data, period, v1, v2, period, phase);
+        txSignal->m_signal->triangle(m_tx_data, samples, v1, v2, period, phase);
 }
+
+
 
 /// SignalItem constructor
 SignalItem::SignalItem(ChannelItem* parent, int index, Signal* sig):
@@ -463,17 +488,20 @@ m_parent(parent)
 
 /// update output signal
 void SrcItem::update() {
-   /*time
-    Src v = SRC_CONSTANT;
-    if (m_src == "constant")        v = SRC_CONSTANT;
-    else if (m_src == "buffer")     v = SRC_BUFFER;
-    else if (m_src == "callback")   v = SRC_CALLBACK;
-    else if (m_src == "square")     v = SRC_SQUARE;
-    else if (m_src == "sawtooth")   v = SRC_SAWTOOTH;
-    else if (m_src == "stairstep") v = SRC_STAIRSTEP;
-    else if (m_src == "sine")       v = SRC_SINE;
-    else if (m_src == "triangle")   v = SRC_TRIANGLE;
+    //qDebug()<<"update SrcItem";nt samples = period;
+   //time
+/*    Src v = CONSTANT;
+    if (m_src == "constant")        v = CONSTANT;
+//    else if (m_src == "buffer")     v = BUFFER;
+    //else if (m_src == "callback")   v = SRC_CALLBACK;
+    else if (m_src == "square")     v = SQUARE;
+    else if (m_src == "sawtooth")   v = SAWTOOTH;
+    else if (m_src == "stairstep") v = STAIRSTEP;
+    else if (m_src == "sine")       v = SINE;
+    else if (m_src == "triangle")   v = TRIANGLE;
     else return;
+
+    m_parent->m_signal->m
 
     m_parent->m_signal->m_src        = v;
     m_parent->m_signal->m_src_v1     = m_v1;
@@ -482,4 +510,63 @@ void SrcItem::update() {
     m_parent->m_signal->m_src_phase  = m_phase;
     m_parent->m_signal->m_src_duty   = m_duty;
 */
+}
+
+TimerItem::TimerItem(ChannelItem *chan,DeviceItem *dev):
+channel(chan),
+device(dev),
+changeBufferTimer(new QTimer),
+thread(new QThread)
+{
+    changeBufferTimer->setSingleShot(true);
+    changeBufferTimer->setInterval(500);
+    connect(changeBufferTimer,SIGNAL(timeout()), this, SLOT(needChangeBuffer()));
+
+    connect(thread,SIGNAL(finished()),this,SLOT(clean()));
+
+    for(auto sig : channel->m_signals){
+        connect(sig->m_src,&SrcItem::changed,this,&TimerItem::parameterChanged);
+    }
+
+    session = (SessionItem*)device->parent();
+
+}
+
+void TimerItem::parameterChanged(){
+
+    if(session->isContinuous())
+    {qDebug()<<"Parameter changed\n";
+        //restart the timer if needed
+        if(changeBufferTimer->isActive()){
+            changeBufferTimer->stop();
+        }
+        changeBufferTimer->start();
+    }
+}
+
+void TimerItem::needChangeBuffer(){
+    bc = new BufferChanger(channel,device);
+    connect(thread, SIGNAL(started()), bc, SLOT(changeBuffer()));
+
+    thread->start();
+    bc->moveToThread(thread);
+
+    qDebug()<<"need to change";
+
+}
+
+void TimerItem::clean(){
+    disconnect(thread,SIGNAL(started()),bc,SLOT(changeBuffer()));
+    delete bc;
+}
+
+BufferChanger::BufferChanger(ChannelItem *chan,DeviceItem *dev):
+channel(chan),
+device(dev)
+{}
+
+void BufferChanger::changeBuffer(){
+    channel->buildTxBuffer();
+    device->write();
+    this->thread()->quit();
 }
