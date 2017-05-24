@@ -25,7 +25,8 @@ m_session(new Session),
 m_active(false),
 m_continuous(false),
 m_sample_rate(0),
-m_sample_count(0)
+m_sample_count(0),
+m_queue_size(1000000)
 {
     connect(this, &SessionItem::finished, this, &SessionItem::onFinished, Qt::QueuedConnection);
     connect(this, &SessionItem::attached, this, &SessionItem::onAttached, Qt::QueuedConnection);
@@ -54,7 +55,7 @@ SessionItem::~SessionItem() {
 /// called on initialisation
 void SessionItem::openAllDevices()
 {
-    m_session->m_queue_size = 1000000;
+    m_session->m_queue_size = m_queue_size;
     m_session->add_all();
     for (auto i: m_session->m_available_devices)
         m_devices.append(new DeviceItem(this, &*i));
@@ -398,10 +399,11 @@ void ChannelItem::buildTxBuffer()
     if(period <= 0){
         period = -period;
     }
+    //period = (period <= 0) ? -period : period;
     int samples = period;
-    if(samples < 0)
-        samples = 1;
-    samples = std::min(samples,1000000);
+//    if(samples < 0)
+//        samples = 1;
+//    samples = std::min(samples,1000000);
     m_tx_data.resize(0);
     if (src == "constant")
         txSignal->m_signal->constant(m_tx_data, 1, v1);

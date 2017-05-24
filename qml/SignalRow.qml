@@ -304,7 +304,7 @@ Rectangle {
             if (readOnly)
               return;
 
-            var value = constrainValue(Number.fromLocaleString(text), 0, controller.maxOutSignalFreq);
+            var value = constrainValue(Number.fromLocaleString(text), controller.minOutSignalFreq, controller.maxOutSignalFreq);
             text = parseFloat(value).toFixed(3)
             signal.src.period = controller.sampleRate / text
           }

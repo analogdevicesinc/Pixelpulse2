@@ -13,6 +13,8 @@ Item {
   property int delaySampleCount: 0
 
   property bool dlySmplCntChanged: false
+  property int queueSize: session.queueSize
+  property real minOutSignalFreq: 1 / (queueSize/sampleRate)
 
 //  function trigger() {
 //    session.sampleRate = sampleRate
@@ -62,6 +64,8 @@ Item {
 //  }
 
   function toggle() {
+      console.log("queue size"+queueSize)
+      console.log("min freq"+minOutSignalFreq)
       if (!session.active) {
           session.sampleRate = sampleRate
           session.sampleCount = sampleCount

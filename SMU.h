@@ -28,6 +28,7 @@ class SessionItem : public QObject {
     Q_PROPERTY(unsigned sampleCount MEMBER m_sample_count NOTIFY sampleCountChanged);
     Q_PROPERTY(int activeDevices READ getActiveDevices NOTIFY activeChanged);
     Q_PROPERTY(int availableDevices READ getAvailableDevices NOTIFY devicesChanged);
+    Q_PROPERTY(int queueSize MEMBER m_queue_size CONSTANT)
 
 public:
     SessionItem();
@@ -73,6 +74,7 @@ protected:
     bool m_continuous;
     unsigned m_sample_rate;
     unsigned m_sample_count;
+    unsigned m_queue_size;
     FileDownloader *m_firmware_fd;
     QList<DeviceItem *> m_devices;
     QTimer timer;
