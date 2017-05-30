@@ -105,6 +105,7 @@ public:
     size_t samplesAdded() { return m_samples_added; }
     void setSamplesAdded(size_t count) { m_samples_added = count; }
     void write();
+    void write(ChannelItem* chn);
 
 protected:
     smu::Device* const m_device;
@@ -277,7 +278,6 @@ private:
 
 public:
     TimerItem(ChannelItem *channel,DeviceItem *dev);
-//    ~TimerItem();
 protected:
     friend class DeviceItem;
     friend class SrcItem;

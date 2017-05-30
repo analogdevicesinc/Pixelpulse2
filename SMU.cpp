@@ -60,27 +60,6 @@ void SessionItem::openAllDevices()
     for (auto i: m_session->m_available_devices)
         m_devices.append(new DeviceItem(this, &*i));
     devicesChanged();
-
-    //connect(resettimer,SIGNAL(timeout()),SLOT(restart()));
-
-
-//    for (auto dev: m_devices) {
-//        for (auto chan: dev->m_channels) {
-//            for (auto sig: chan->m_signals) {
-//                    qDebug()<<"intra";
-//                    connect(sig->m_src, &SrcItem::changed, [=] {
-//                            if(!resettimer->isActive() && m_continuous){
-//                                qDebug()<<"Timer activated";
-//                                resettimer->setInterval(1000);
-//                                resettimer->setSingleShot(true);
-//                                resettimer->start();
-//                            }
-//                    });
-//                    //m_restart = true;
-//            }
-//        }
-//    }0.435294   2.5   956416   456416   0.5
-    //v1 v2 period phase duty
 }
 
 /// called at exit
@@ -102,7 +81,7 @@ void SessionItem::start(bool continuous)
 qDebug() << "Session start(" << continuous << ")";
     if (m_devices.size() == 0) return;
     if (m_sample_rate == 0) return;
-
+    m_session->flush();
     m_session->configure(m_sample_rate);
     m_continuous = continuous;
 
@@ -121,9 +100,6 @@ qDebug() << "Session start(" << continuous << ")";
 
         dev->write();
     }
-
-
-    m_session->flush();
     if (continuous)
         m_session->start(0);
     else{
@@ -315,7 +291,7 @@ void SessionItem::getSamples()
 
 void SessionItem::beginNewSweep()
 {
-    qDebug()<<"Begin new Sweep#######################################################################\n";
+    qDebug()<<"Begin new Sweep\n";
     if (m_active) {
         m_session->flush();
         for (auto dev: m_devices) {
@@ -354,9 +330,23 @@ void DeviceItem::write()
         if (mode == SVMI || mode == SIMV) {
             try{
             m_device->write(chn->m_tx_data, chn->m_index, true);
+            qDebug()<<"write|channel:"<<chn->m_index<<"|bsize:"<<chn->m_tx_data.size()<<"\n";
             }catch (std::system_error& e) {
                 qDebug() << "exception:" << e.what();
             }
+        }
+    }
+}
+
+void DeviceItem::write(ChannelItem* chn)
+{
+    unsigned mode = chn->property("mode").toUInt();
+    if (mode == SVMI || mode == SIMV) {
+        try{
+        m_device->write(chn->m_tx_data, chn->m_index, true);
+        qDebug()<<"write|channel:"<<chn->m_index<<"|bsize:"<<chn->m_tx_data.size()<<"\n";
+        }catch (std::system_error& e) {
+            qDebug() << "exception:" << e.what();
         }
     }
 }
@@ -399,11 +389,9 @@ void ChannelItem::buildTxBuffer()
     if(period <= 0){
         period = -period;
     }
-    //period = (period <= 0) ? -period : period;
+
     int samples = period;
-//    if(samples < 0)
-//        samples = 1;
-//    samples = std::min(samples,1000000);
+
     m_tx_data.resize(0);
     if (src == "constant")
         txSignal->m_signal->constant(m_tx_data, 1, v1);
@@ -521,7 +509,7 @@ changeBufferTimer(new QTimer),
 thread(new QThread)
 {
     changeBufferTimer->setSingleShot(true);
-    changeBufferTimer->setInterval(500);
+    changeBufferTimer->setInterval(100);
     connect(changeBufferTimer,SIGNAL(timeout()), this, SLOT(needChangeBuffer()));
 
     connect(thread,SIGNAL(finished()),this,SLOT(clean()));
@@ -537,7 +525,7 @@ thread(new QThread)
 void TimerItem::parameterChanged(){
 
     if(session->isContinuous())
-    {qDebug()<<"Parameter changed\n";
+    {
         //restart the timer if needed
         if(changeBufferTimer->isActive()){
             changeBufferTimer->stop();
@@ -552,9 +540,6 @@ void TimerItem::needChangeBuffer(){
 
     thread->start();
     bc->moveToThread(thread);
-
-    qDebug()<<"need to change";
-
 }
 
 void TimerItem::clean(){
@@ -569,6 +554,7 @@ device(dev)
 
 void BufferChanger::changeBuffer(){
     channel->buildTxBuffer();
-    device->write();
+
+    device->write(channel);
     this->thread()->quit();
 }
