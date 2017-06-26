@@ -107,10 +107,13 @@ ColumnLayout {
       devicesModel.insert(n, modelCopy);
     }
 
+    if (!updatingDevice)
+      if(programmingModeDeviceDetect()){
+          showPane = true;
+      }
+
     if (showPane)
       deviceMngrVisible = true;
-    if (!updatingDevice)
-      programmingModeDeviceDetect();
   }
 
   function checkFWversion()
