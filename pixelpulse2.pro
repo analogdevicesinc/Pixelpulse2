@@ -75,6 +75,10 @@ win32 {
 	LIBS += "C:\libusb\MinGW32\static\libusb-1.0.a"
 	INCLUDEPATH += "C:\libusb\include\libusb-1.0"
 	INCLUDEPATH += "C:\mingw32\include"
+
+        LIBS += "C:/Workspace/libsmu/build-libsmu-Desktop_Qt_5_4_2_MinGW_32bit3-Release/src/libsmu.dll.a"
+        INCLUDEPATH += "C:\Workspace\libsmu\libsmu\include"
+
 }
 
 unix {
