@@ -70,6 +70,11 @@ Item {
           session.cancel();
       }
   }
+  onSampleCountChanged: {
+        console.log("onSampleCountChanged");
+        console.log(sampleCount);
+        session.sampleCount = sampleCount;
+  }
 
 //  Timer {
 //    id: updateMeasurementsTimer
@@ -87,13 +92,19 @@ Item {
 //    onTriggered: session.updateAllMeasurements()
 //  }
 
-//  onContinuousChanged: {
-//    // Restart the session so the new sampling mode takes effect
-//    restartAfterStop = true;
-//    session.cancel();
-
-//    toolbar.acqusitionDialog.onContinuousModeChanged(continuous);
-//  }
+  onContinuousChanged: {
+    // Restart the session so the new sampling mode takes effect
+    //restartAfterStop = true;
+    //session.cancel();
+    console.log("onContinuousChanged",continuous);
+    //console.log("session cont",session.
+    //session.restart();
+    if(session.active){
+        session.cancel();
+        session.start(continuous);
+        toolbar.acqusitionDialog.onContinuousModeChanged(continuous);
+    }
+  }
 
 //  onDelaySampleCountChanged: {
 //      dlySmplCntChanged = true;

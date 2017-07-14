@@ -61,7 +61,7 @@ protected slots:
     void onAttached(smu::Device* device);
     void onDetached(smu::Device* device);
     void handleDownloadedFirmware();
-
+    void onSampleCountChanged();
     void getSamples();
     void beginNewSweep();
 
@@ -74,6 +74,8 @@ protected:
     FileDownloader *m_firmware_fd;
     QList<DeviceItem *> m_devices;
     QTimer timer;
+    QTimer *sweepTimer;
+
 };
 
 

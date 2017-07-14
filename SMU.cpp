@@ -31,6 +31,7 @@ m_sample_count(0)
     connect(this, &SessionItem::attached, this, &SessionItem::onAttached, Qt::QueuedConnection);
     connect(this, &SessionItem::detached, this, &SessionItem::onDetached, Qt::QueuedConnection);
 
+    connect(this, &SessionItem::sampleCountChanged, this, &SessionItem::onSampleCountChanged);
     connect(&timer, SIGNAL(timeout()), this, SLOT(getSamples()));
 
     m_session->hotplug_attach([this](Device* device, void* data){
@@ -99,8 +100,11 @@ qDebug() << "Session start(" << continuous << ")";
     m_session->flush();
     if (continuous)
         m_session->start(0);
-    else
+    else{
         m_session->start(m_sample_count);
+
+    }
+    //m_restart = false;
     timer.start(0);
 
     m_active = true;
@@ -143,6 +147,11 @@ void SessionItem::onDetached(Device* device){
 qDebug() << "Device detached";
 }
 
+void SessionItem::onSampleCountChanged(){
+    restart();
+
+}
+
 void SessionItem::handleDownloadedFirmware()
 {
     FileIO f;
@@ -157,13 +166,17 @@ void SessionItem::cancel() {
     if (!m_active)
         return;
 
+    if(sweepTimer){
+        qDebug()<<"timer active"<<sweepTimer->isActive();
+        sweepTimer->stop();
+    }
+
     if (m_continuous)
         timer.stop();
 
     m_session->cancel();
     m_session->end();
     qDebug() << "Session cancel" << "status:" << m_session->cancelled();
-
     m_active = false;
     emit activeChanged();
 }
@@ -172,9 +185,13 @@ void SessionItem::restart()
 {
     if (!m_active)
         return;
-
+    qDebug()<<"In restart";
     cancel();
     while(m_active);
+    if(sweepTimer){
+        qDebug()<<"timer active"<<sweepTimer->isActive();
+        sweepTimer->stop();
+    }
     start(m_continuous);
 }
 
@@ -268,7 +285,15 @@ void SessionItem::getSamples()
                     timer.stop();
                     dev->setSamplesAdded(0);
                     emit finished(0);
-                    QTimer::singleShot(100, this, SLOT(beginNewSweep()));
+                    //QTimer::singleShot(100, this, SLOT(beginNewSweep()));
+
+                    sweepTimer = new QTimer(this);
+                    sweepTimer->setInterval(100);
+                    sweepTimer->setSingleShot(true);
+                    connect(sweepTimer,SIGNAL(timeout()),SLOT(beginNewSweep()));
+                    sweepTimer->start();
+
+
             }
         }
     }
@@ -276,6 +301,9 @@ void SessionItem::getSamples()
 
 void SessionItem::beginNewSweep()
 {
+//    if(m_restart)
+//        return;
+    qDebug()<<"Begin new Sweep#######################################################################\n";
     if (m_active) {
         m_session->flush();
         for (auto dev: m_devices) {
