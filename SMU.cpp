@@ -386,11 +386,7 @@ void ChannelItem::buildTxBuffer()
     float phase = txSignal->getSrc()->property("phase").toFloat();
     float duty = txSignal->getSrc()->property("duty").toFloat();
 
-    if(period <= 0){
-        period = -period;
-    }
-
-    int samples = period;
+    int samples = abs(period);
 
     m_tx_data.resize(0);
     if (src == "constant")
