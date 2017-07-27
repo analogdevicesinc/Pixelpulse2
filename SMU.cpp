@@ -280,6 +280,7 @@ void SessionItem::getSamples()
             if (dev->samplesAdded() == m_sample_count || !m_active) {
                     timer.stop();
                     dev->setSamplesAdded(0);
+                    m_session->end();
                     emit finished(0);
                     sweepTimer->setInterval(100);
                     sweepTimer->setSingleShot(true);
@@ -351,6 +352,7 @@ void DeviceItem::write(ChannelItem* chn)
     }
 }
 
+
 /// ChannelItem constructor
 ChannelItem::ChannelItem(DeviceItem* parent, Device* dev, unsigned ch_i):
 QObject(parent), m_device(dev), m_index(ch_i), m_mode(0)
@@ -386,6 +388,8 @@ void ChannelItem::buildTxBuffer()
     float phase = txSignal->getSrc()->property("phase").toFloat();
     float duty = txSignal->getSrc()->property("duty").toFloat();
 
+
+    qDebug()<<"v1:"<<v1<<" |v2:"<<v2<<" |period:"<<period<<" |phase:"<<phase<<" |duty:"<<duty<<"\n";
     int samples = abs(period);
 
     m_tx_data.resize(0);
