@@ -3,10 +3,19 @@ osx_image: xcode61
 language: objective-c
 before_install:
 - brew update 2>&1 > /dev/null
-- brew install --build-from-source libusb 2>&1 > /dev/null
+- brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/cb21e9ac30e47e3ea161c4247a6397967f83c83f/Formula/libusb.rb --universal;
 - brew install qt5 2>&1 > /dev/null
+- pip install cython
 - brew link qt5 --force
-before_script: /usr/local/opt/qt5/bin/qmake
+before_script: 
+- git clone https://github.com/analogdevicesinc/libsmu.git
+- cd libsmu
+- git checkout rework
+- mkdir build && cd build && cmake -DBUILD_PYTHON=OFF -DCMAKE_INSTALL_PREFIX=/usr/local/ ..
+- make
+- sudo make install
+- cd ../..
+- /usr/local/opt/qt5/bin/qmake
 script:
 - make
 - /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -always-overwrite -verbose=2 -qmldir=qml
