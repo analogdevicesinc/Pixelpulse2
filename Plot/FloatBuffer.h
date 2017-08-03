@@ -5,6 +5,7 @@
 #include <math.h>
 #include <QtQuick/qsgnode.h>
 #include <iostream>
+#include <array>
 using namespace std;
 class FloatBuffer : public QObject
 {
