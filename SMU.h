@@ -7,6 +7,7 @@
 #include "utils/filedownloader.h"
 #include <iostream>
 #include <QTime>
+#include <cmath>
 
 class SessionItem;
 class DeviceItem;
