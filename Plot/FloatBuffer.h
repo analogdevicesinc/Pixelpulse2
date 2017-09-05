@@ -82,8 +82,24 @@ public:
         unsigned i_min = timeToIndex(start);
         unsigned i_max = timeToIndex(end);
 
-        for (unsigned i=i_min, j=0; i<i_max && j<n_verticies; i++, j++) {
-            vertices[j].set(indexToTime(i), m_data[wrapIndex(i)]);
+        const unsigned diff = i_max - i_min;
+         //qDebug()<<"From Index "<<i_min<<" to index "<<i_max<<"with "<<n_verticies<<"\n";
+         //qDebug()<<"diff="<<diff<<"\n";
+         if(diff <= n_verticies){
+
+             for (unsigned i=i_min, j=0; i<i_max && j<n_verticies; i++, j++) {
+                 vertices[j].set(indexToTime(i), m_data[wrapIndex(i)]);
+             }
+         }
+         else{
+             double inc = i_min;
+             double incValue = (double)diff / n_verticies;
+             //qDebug()<<"diff:"<<diff<<";incValue:"<<incValue;
+             for (unsigned i=i_min, j=0; i<i_max && j<n_verticies;j++) {
+                 vertices[j].set(indexToTime(i), m_data[wrapIndex(i)]);
+                 inc += incValue;
+                 i = (unsigned)inc;
+             }
         }
     }
 
