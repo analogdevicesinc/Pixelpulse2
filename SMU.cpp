@@ -107,7 +107,6 @@ qDebug() << "Session start(" << continuous << ")";
     }
 
     timer.start(0);
-
     m_active = true;
     emit activeChanged();
 }
@@ -163,6 +162,7 @@ void SessionItem::handleDownloadedFirmware()
 }
 
 void SessionItem::cancel() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     if (!m_active)
         return;
 
@@ -173,6 +173,9 @@ void SessionItem::cancel() {
     if (m_continuous)
         timer.stop();
 
+    if(timer.isActive()){
+        timer.stop();
+    }
     m_session->cancel();
     m_session->end();
     qDebug() << "Session cancel" << "status:" << m_session->cancelled();
@@ -247,7 +250,6 @@ void SessionItem::getSamples()
     for (auto dev: m_devices) {
         std::vector<std::array<float, 4>> rxbuf;
         int ret = 0;
-
         try {
             ret = dev->m_device->read(rxbuf, 1000);
         } catch (std::system_error& e) {
@@ -294,10 +296,11 @@ void SessionItem::beginNewSweep()
 {
     qDebug()<<"Begin new Sweep\n";
     if (m_active) {
-        m_session->flush();
+        //m_session->flush();
         for (auto dev: m_devices) {
             dev->setSamplesAdded(0);
             for (auto chan: dev->m_channels) {
+                dev->m_device->set_mode(chan->m_index, chan->m_mode);
                 chan->buildTxBuffer();
                 for (auto sig: chan->m_signals) {
                     sig->m_buffer->startSweep();
@@ -306,6 +309,7 @@ void SessionItem::beginNewSweep()
             dev->write();
         }
         m_session->start(m_sample_count);
+
         timer.start(0);
     }
 }
