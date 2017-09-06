@@ -328,34 +328,22 @@ m_samples_added(0)
     }
 }
 
-void DeviceItem::write()
+
+void DeviceItem::write(ChannelItem* channel)
 {
     for (auto chn: m_channels) {
-        unsigned mode = chn->property("mode").toUInt();
-        if (mode == SVMI || mode == SIMV) {
-            try{
-            m_device->write(chn->m_tx_data, chn->m_index, true);
-            qDebug()<<"write|channel:"<<chn->m_index<<"|bsize:"<<chn->m_tx_data.size()<<"\n";
-            }catch (std::system_error& e) {
-                qDebug() << "exception:" << e.what();
+        if(channel == nullptr || chn == channel){
+            unsigned mode = chn->property("mode").toUInt();
+            if (mode == SVMI || mode == SIMV) {
+                try{
+                    m_device->write(chn->m_tx_data, chn->m_index, true);
+                }catch (std::system_error& e) {
+                    qDebug() << "exception:" << e.what();
+                }
             }
         }
     }
 }
-
-void DeviceItem::write(ChannelItem* chn)
-{
-    unsigned mode = chn->property("mode").toUInt();
-    if (mode == SVMI || mode == SIMV) {
-        try{
-        m_device->write(chn->m_tx_data, chn->m_index, true);
-        qDebug()<<"write|channel:"<<chn->m_index<<"|bsize:"<<chn->m_tx_data.size()<<"\n";
-        }catch (std::system_error& e) {
-            qDebug() << "exception:" << e.what();
-        }
-    }
-}
-
 
 /// ChannelItem constructor
 ChannelItem::ChannelItem(DeviceItem* parent, Device* dev, unsigned ch_i):

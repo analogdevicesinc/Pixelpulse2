@@ -105,8 +105,7 @@ public:
 
     size_t samplesAdded() { return m_samples_added; }
     void setSamplesAdded(size_t count) { m_samples_added = count; }
-    void write();
-    void write(ChannelItem* chn);
+    void write(ChannelItem* chn = nullptr);
 
 protected:
     smu::Device* const m_device;
