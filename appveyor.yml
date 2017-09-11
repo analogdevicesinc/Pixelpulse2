@@ -61,5 +61,4 @@ after_build:
 
 cache:
  - c:\mingw.7z -> appveyor.yml
- - distrib.zip -> appveyor.yml
  - c:\msys.zip -> appveyor.yml
