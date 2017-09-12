@@ -24,7 +24,6 @@ before_install:
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/cb21e9ac30e47e3ea161c4247a6397967f83c83f/Formula/libusb.rb --universal; fi
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew install qt5 2>&1 > /dev/null ; fi
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew link qt5 --force ; fi
-- pip install cython
 
 install: 
 - if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get -y install qt553d qt55base qt55connectivity qt55declarative qt55graphicaleffects qt55imageformats qt55quick1 qt55quickcontrols qt55script qt55tools   ;fi
