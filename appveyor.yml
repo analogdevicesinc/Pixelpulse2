@@ -54,6 +54,7 @@ after_build:
       cp C:\OpenSSL-Win32\ssleay32.dll distrib
       cp C:\OpenSSL-Win32\bin\msvcr120.dll distrib
       cp C:\libsmu\build\src\libsmu.dll distrib
+      cp C:\mingw32\bin\libgomp-1.dll distrib
       7z a -y distrib.zip distrib
     }
     appveyor PushArtifact release\pixelpulse2.exe
