@@ -22,6 +22,9 @@ install:
   - ps: (new-object System.Net.WebClient).Downloadfile("http://swdownloads.analog.com/cse/build/libusb-1.0-hp.7z", "c:\libusb.7z")
   - 7z x -y "c:\libusb.7z" -o"C:\libusb" > nul
 
+  # Install Inno Setup
+  - choco install InnoSetup
+
 build_script:
     #clone and build libsmu with mingw
   - git clone https://github.com/analogdevicesinc/libsmu.git C:\libsmu
@@ -45,9 +48,8 @@ build_script:
   - qmake pixelpulse2.pro "LIBSMU_LIBRARY = C:\libsmu\build\src\libsmu.dll.a" "LIBSMU_INCLUDE_PATH = C:\libsmu\include" 
   - mingw32-make -j8
 
-after_build:
-- ps: |
-    If (!(Test-Path -Path "distrib.zip")) {
+  # Bundle all dependencies
+  - ps: |
       windeployqt --qmldir qml release\pixelpulse2.exe --dir distrib
       cp C:\OpenSSL-Win32\libeay32.dll distrib
       cp C:\OpenSSL-Win32\libssl32.dll distrib
@@ -56,9 +58,16 @@ after_build:
       cp C:\libsmu\build\src\libsmu.dll distrib
       cp C:\mingw32\bin\libgomp-1.dll distrib
       7z a -y distrib.zip distrib
-    }
+
+  # Build the installer
+  - set PATH=%PATH%;"C:\Program Files (x86)\Inno Setup 5"
+  - ISCC /Q pixelpulse2.iss
+
+after_build:
+- ps: |
     appveyor PushArtifact release\pixelpulse2.exe
     appveyor PushArtifact distrib.zip
+    appveyor PushArtifact C:\Pixelpulse2_win_setup.exe
 
 cache:
  - c:\mingw.7z -> appveyor.yml
