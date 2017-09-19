@@ -22,6 +22,11 @@ install:
   - ps: (new-object System.Net.WebClient).Downloadfile("http://swdownloads.analog.com/cse/build/libusb-1.0-hp.7z", "c:\libusb.7z")
   - 7z x -y "c:\libusb.7z" -o"C:\libusb" > nul
 
+  - mkdir c:\projects\pixelpulse2\distrib\driver
+  - appveyor Downloadfile "https://github.com/analogdevicesinc/libsmu/blob/master/dist/m1k-winusb.inf" -FileName c:\projects\pixelpulse2\distrib\driver\m1k-winusb.inf
+  - appveyor Downloadfile "https://github.com/analogdevicesinc/libsmu/blob/master/dist/m1k-winusbx86.cat" -FileName c:\projects\pixelpulse2\distrib\driver\m1k-winusbx86.cat
+  - appveyor Downloadfile "https://github.com/analogdevicesinc/libsmu/blob/master/dist/m1k-winusbx64.cat" -FileName c:\projects\pixelpulse2\distrib\driver\m1k-winusbx64.cat
+
   # Install Inno Setup
   - choco install InnoSetup
 
@@ -72,3 +77,6 @@ after_build:
 cache:
  - c:\mingw.7z -> appveyor.yml
  - c:\msys.zip -> appveyor.yml
+ - c:\projects\pixelpulse2\distrib\driver\m1k-winusb.inf -> appveyor.yml
+ - c:\projects\pixelpulse2\distrib\driver\m1k-winusbx86.cat -> appveyor.yml
+ - c:\projects\pixelpulse2\distrib\driver\m1k-winusbx64.cat -> appveyor.yml
