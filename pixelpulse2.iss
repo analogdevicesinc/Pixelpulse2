@@ -66,5 +66,12 @@ Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: desk
 
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent unchecked
+Filename: {app}\pp2trayer.exe; Description: "Launch Pixelpulse2 Trayer"; Flags: nowait postinstall skipifsilent
 Filename: "{app}\drivers\dpinst.exe"; Parameters: "/path ""{app}\drivers"""; Flags: waituntilterminated; Tasks: drivers
 
+[UninstallRun]
+Filename: "{cmd}"; Parameters: "/C""taskkill /im pp2trayer.exe /f /t"; Flags: runhidden
+
+[Registry]
+; Make Pixelpulse2 Trayer run every time Windows boots
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "Pixelpulse2Trayer"; ValueData: """{app}\pp2trayer.exe"""; Flags: uninsdeletevalue
