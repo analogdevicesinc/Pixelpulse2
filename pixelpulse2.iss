@@ -75,3 +75,120 @@ Filename: "{cmd}"; Parameters: "/C""taskkill /im pp2trayer.exe /f /t"; Flags: ru
 [Registry]
 ; Make Pixelpulse2 Trayer run every time Windows boots
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "Pixelpulse2Trayer"; ValueData: """{app}\pp2trayer.exe"""; Flags: uninsdeletevalue
+
+; Functions GetNumber(), CompareInner(), CompareVersion() and InitializeSetup() can be used to detect
+; differences between the version being installed and the version that might be already installed.
+[Code]
+function GetNumber(var temp: String): Integer;
+var
+  part: String;
+  pos1: Integer;
+begin
+  if Length(temp) = 0 then
+  begin
+    Result := -1;
+    Exit;
+  end;
+    pos1 := Pos('.', temp);
+    if (pos1 = 0) then
+    begin
+      Result := StrToInt(temp);
+    temp := '';
+    end
+    else
+    begin
+    part := Copy(temp, 1, pos1 - 1);
+      temp := Copy(temp, pos1 + 1, Length(temp));
+      Result := StrToInt(part);
+    end;
+end;
+
+function CompareInner(var temp1, temp2: String): Integer;
+var
+  num1, num2: Integer;
+begin
+    num1 := GetNumber(temp1);
+  num2 := GetNumber(temp2);
+  if (num1 = -1) or (num2 = -1) then
+  begin
+    Result := 0;
+    Exit;
+  end;
+      if (num1 > num2) then
+      begin
+        Result := 1;
+      end
+      else if (num1 < num2) then
+      begin
+        Result := -1;
+      end
+      else
+      begin
+        Result := CompareInner(temp1, temp2);
+      end;
+end;
+
+function CompareVersion(str1, str2: String): Integer;
+var
+  temp1, temp2: String;
+begin
+    temp1 := str1;
+    temp2 := str2;
+    Result := CompareInner(temp1, temp2);
+end;
+
+// function InitializeSetup(): Boolean;
+// var
+  // oldVersion: String;
+  // uninstaller: String;
+  // ErrorCode: Integer;
+  // vCurID      :String;
+  // vCurAppName :String;
+// begin
+  // vCurID:= '{#SetupSetting("AppName")}';
+  // vCurAppName:= '{#SetupSetting("AppName")}';
+
+  // if RegKeyExists(HKLM,
+    // 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\' + vCurID + '_is1') then
+  // begin
+    // RegQueryStringValue(HKLM,
+      // 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\' + vCurID + '_is1',
+      // 'DisplayVersion', oldVersion);
+    // if (not (CompareVersion(oldVersion, '{#SetupSetting("AppVersion")}') = 0)) then
+    // begin
+      // if MsgBox('An older version ' + oldVersion + ' of ' + vCurAppName + ' is already installed. Continue to use this version?',
+        // mbConfirmation, MB_YESNO) = IDYES then
+      // begin
+        // Result := False;
+      // end
+      // else
+      // begin
+          // RegQueryStringValue(HKLM,
+            // 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\' + vCurID + '_is1',
+            // 'UninstallString', uninstaller);
+          // ShellExec('runas', uninstaller, '/SILENT', '', SW_HIDE, ewWaitUntilTerminated, ErrorCode);
+          // Result := True;
+      // end;
+    // end
+    // else
+    // begin
+      // if MsgBox('Version ' + oldVersion + ' of ' + vCurAppName + ' is already installed. Continue with the install?',
+        // mbConfirmation, MB_YESNO) = IDNO then
+      // begin
+        // Result := False;
+      // end
+      // else
+      // begin
+          // RegQueryStringValue(HKLM,
+            // 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\' + vCurID + '_is1',
+            // 'UninstallString', uninstaller);
+          // ShellExec('runas', uninstaller, '/SILENT', '', SW_HIDE, ewWaitUntilTerminated, ErrorCode);
+          // Result := True;
+      // end;
+    // end
+  // end
+  // else
+  // begin
+    // Result := True;
+  // end;
+// end;
