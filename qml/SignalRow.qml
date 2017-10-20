@@ -393,6 +393,90 @@ Rectangle {
             font.pixelSize: currentFontSize;
             property real position: averageTextBox.position + averageTextBox.width + idRectangle.width * 1/100;
         }
+
+        //Max Input
+        Text {
+            id: maxLabel;
+            color: "white";
+            visible:(signal.isOutput ? (maxLabel.position > perUnitLabel.position+perUnitLabel.width+10) :
+                                       (maxLabel.position > averageTextBox.position+averageTextBox.width+10));
+
+            anchors.right: maxInput.left;
+            anchors.rightMargin: idRectangle.width * 1/100;
+            text: (signal.label == "Voltage" ? "Max V" : "Max A")
+            font.pixelSize: currentFontSize;
+            property real position: maxInput.position-idRectangle.width*1/100-maxLabel.width;
+        }
+        TextInput {
+          id: maxInput
+          visible: maxLabel.visible
+          text: axes.ymax.toFixed(3);
+          color: "#FFF"
+          selectByMouse: true
+          font.pixelSize: currentFontSize
+          readOnly: false;
+
+          property real position: minLabel.position-idRectangle.width*3/100-maxInput.width;
+
+          onEditingFinished: {
+            var value = (signal.label == "Voltage" ?
+                             constrainValue(Number.fromLocaleString(text), signal.min-signal.min*0.02, signal.max*1.02) :
+                             constrainValue(Number.fromLocaleString(text), signal.min*1.02, signal.max*1.02));
+            value = Math.max(value,axes.ymin);
+            text = parseFloat(value).toFixed(3)
+            axes.ymax = value;
+          }
+
+          Binding {
+            target: maxInput; property: 'text';
+            value: axes.ymax.toFixed(3);
+          }
+
+          validator: DoubleValidator{}
+          anchors.right: minLabel.left;
+          anchors.rightMargin: idRectangle.width * 3/100;
+        }
+        //Min Input
+        Text {
+            id: minLabel;
+            color: "white";
+            visible: (signal.isOutput ? minLabel.position > perUnitLabel.position+perUnitLabel.width+10 :
+                                        minLabel.position > averageTextBox.position+averageTextBox.width+10);
+            anchors.right: minInput.left;
+            anchors.rightMargin: idRectangle.width * 1/100;
+            text: (signal.label == "Voltage" ? "Min V" : "Min A")
+            font.pixelSize: currentFontSize;
+            property real position: parent.width-minInput.width-idRectangle.width*1/100+35-minLabel.width;
+        }
+        TextInput {
+          id: minInput
+          visible: minLabel.visible;
+          text: axes.ymin.toFixed(3);
+          color: "#FFF"
+          selectByMouse: true
+          font.pixelSize: currentFontSize
+          readOnly: false;
+
+          property real position: parent.width+35-minInput.width;
+
+          onEditingFinished: {
+            var value = (signal.label == "Voltage" ?
+                             constrainValue(Number.fromLocaleString(text), signal.min-(0.02*signal.max), signal.max*1.02) :
+                             constrainValue(Number.fromLocaleString(text), signal.min*1.02, signal.max*1.02));
+            value =Math.min(value,axes.ymax);
+            text = parseFloat(value).toFixed(3)
+            axes.ymin = value;
+          }
+
+          Binding {
+            target: minInput; property: 'text';
+            value: axes.ymin.toFixed(3);
+          }
+
+          validator: DoubleValidator{}
+          anchors.right: parent.right;
+          anchors.rightMargin: -35;
+        }
      }
   }
 
