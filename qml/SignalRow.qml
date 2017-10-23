@@ -419,9 +419,7 @@ Rectangle {
           property real position: minLabel.position-idRectangle.width*3/100-maxInput.width;
 
           onEditingFinished: {
-            var value = (signal.label == "Voltage" ?
-                             constrainValue(Number.fromLocaleString(text), signal.min-signal.min*0.02, signal.max*1.02) :
-                             constrainValue(Number.fromLocaleString(text), signal.min*1.02, signal.max*1.02));
+            var value = constrainValue(Number.fromLocaleString(text), signal.min-axes.overrangeSpan, signal.max+axes.overrangeSpan)
             value = Math.max(value,axes.ymin);
             text = parseFloat(value).toFixed(3)
             axes.ymax = value;
@@ -460,9 +458,7 @@ Rectangle {
           property real position: parent.width+35-minInput.width;
 
           onEditingFinished: {
-            var value = (signal.label == "Voltage" ?
-                             constrainValue(Number.fromLocaleString(text), signal.min-(0.02*signal.max), signal.max*1.02) :
-                             constrainValue(Number.fromLocaleString(text), signal.min*1.02, signal.max*1.02));
+            var value = constrainValue(Number.fromLocaleString(text), signal.min-axes.overrangeSpan, signal.max+axes.overrangeSpan)
             value =Math.min(value,axes.ymax);
             text = parseFloat(value).toFixed(3)
             axes.ymin = value;
@@ -518,8 +514,8 @@ Rectangle {
 
             if (axes.ymax - axes.ymin < resolution * ygridticks && s < 1) return;
 
-            axes.ymin = Math.max(y - s * (y - axes.ymin), signal.min);
-            axes.ymax = Math.min(y - s * (y - axes.ymax), signal.max);
+            axes.ymin = Math.max(y - s * (y - axes.ymin), signal.min-axes.overrangeSpan);
+            axes.ymax = Math.min(y - s * (y - axes.ymax), signal.max+axes.overrangeSpan);
 
           }
         }
