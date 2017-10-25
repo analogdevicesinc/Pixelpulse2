@@ -1,11 +1,12 @@
 #pragma once
 #include <QObject>
-#include <vector>
+#include <deque>
 #include <numeric>
 #include <math.h>
 #include <QtQuick/qsgnode.h>
 #include <iostream>
 #include <array>
+
 using namespace std;
 class FloatBuffer : public QObject
 {
@@ -66,14 +67,23 @@ public:
     void append_samples_circular(const std::vector<std::array<float, 4>>& samples, int signal_index)
     {
         int num_samples_to_add = samples.size();
+        if(m_length > maxSize){
+            m_data.erase(m_data.begin(),m_data.begin()+num_samples_to_add);
+            for(int i=0;i<num_samples_to_add;i++){
+                m_data.push_back(samples[i][signal_index]);
+            }
+        }
+        else{
+            for (int i = 0; i < num_samples_to_add; i++) {
+                m_data[(m_start_test +  i) % m_data.size()] = samples[i][signal_index];
+            }
 
-        for (int i = 0; i < num_samples_to_add; i++) {
-            m_data[(m_start_test +  i) % m_data.size()] = samples[i][signal_index];
+            m_start_test += num_samples_to_add;
+            if (m_length < m_start_test)
+                m_length = m_start_test;
         }
 
-        m_start_test += num_samples_to_add;
-        if (m_length < m_start_test)
-            m_length = m_start_test;
+        //qDebug()<<"m_len: "<<m_length<<"m_start:"<<m_start_test<<"\n";
 
         emit dataChanged();
     }
@@ -114,21 +124,23 @@ public:
             m_length = length;
             dataChanged();
         }
+        maxSize = length;
     }
 
-    float* data() {
-        return m_data.data();
-    }
+//not needed anymore
+//    float* data() {
+//        return m_data.data();
+//    }
 
-	Q_INVOKABLE QList<qreal> getData() {
-		QList<qreal> qData;
-		qData.reserve(m_length);
-		for (unsigned i=0; i < m_length; i++) {
-			qreal d = get(i);
-			qData.append(d);
-		}
-		return qData;
-	}
+//	Q_INVOKABLE QList<qreal> getData() {
+//		QList<qreal> qData;
+//		qData.reserve(m_length);
+//		for (unsigned i=0; i < m_length; i++) {
+//			qreal d = get(i);
+//			qData.append(d);
+//		}
+//		return qData;
+//	}
 
     void startSweep() {
         // When switching from continuous to repeated-sweep mode, stop acting like a ring buffer
@@ -137,6 +149,7 @@ public:
             m_length = 0;
             dataChanged();
         }
+
         m_start_test = 0;
     }
 
@@ -179,7 +192,7 @@ public:
 
     std::vector<float> dif_mean(double avg){
         std::vector<float> tmp;
-        for (std::vector<float>::iterator it = data_begin(); it != m_data.end(); ++it){
+        for (std::deque<float>::iterator it = data_begin(); it != m_data.end(); ++it){
                     tmp.push_back(*it - avg);
         }
         return tmp;
@@ -199,11 +212,12 @@ public slots:
 
 private:
     float m_secondsPerSample;
-    std::vector<float> m_data;
+    std::deque<float> m_data;
     size_t m_start;
     size_t m_length;
     size_t m_first_samples_ignored;
     size_t m_start_test;
+    size_t maxSize;
 
     unsigned unwrapIndex(unsigned index) {
         if (index >= m_start) {
@@ -230,13 +244,13 @@ private:
 
     /* A number of samples at the beginning of the buffer can be ignored by
      * the application. Use data_begin() and data_size() to access the rest of data */
-    std::vector<float>::iterator data_begin()
+    std::deque<float>::iterator data_begin()
     {
-	return (m_data.begin() + m_first_samples_ignored);
+       return (m_data.begin() + m_first_samples_ignored);
     }
 
     float data_size()
     {
-	return (m_data.size() - m_first_samples_ignored);
+       return (m_data.size() - m_first_samples_ignored);
     }
 };
