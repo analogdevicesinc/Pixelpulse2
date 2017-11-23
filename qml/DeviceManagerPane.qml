@@ -413,9 +413,10 @@ ColumnLayout {
     id: logCleanBtn
     anchors { right: parent.right;
               bottom: logOutput.top;
+              bottomMargin: 5;
               rightMargin: 5 }
-    height: 20
-    width: 70
+    height: 25
+    width: 85
     radius: 4
     color: 'grey'
 
