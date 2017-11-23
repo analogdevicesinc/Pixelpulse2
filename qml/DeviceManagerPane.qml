@@ -465,7 +465,7 @@ ColumnLayout {
     backgroundVisible: false
     selectByKeyboard: true
     selectByMouse: true
-    implicitHeight: 51
+    implicitHeight: 70
 
     style: TextAreaStyle {
       textColor: "#fff"
