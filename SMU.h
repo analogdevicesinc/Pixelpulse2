@@ -47,6 +47,10 @@ public:
     Q_INVOKABLE void updateAllMeasurements();
 
     Q_INVOKABLE void downloadFromUrl(QString url);
+    Q_INVOKABLE QString flash_firmware(QString url);
+    Q_INVOKABLE QString getTmpPathForFirmware();
+    Q_INVOKABLE int programmingModeDeviceExists();
+
     bool isContinuous(){return m_continuous;}
     bool getActive() { return m_active; }
     QQmlListProperty<DeviceItem> getDevices() { return QQmlListProperty<DeviceItem>(this, m_devices); }

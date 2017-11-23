@@ -1,8 +1,10 @@
+#include <QStandardPaths>
+#include <QDir>
+
 #include "SMU.h"
 #include "Plot/PhosphorRender.h"
 #include "Plot/FloatBuffer.h"
 #include "utils/fileio.h"
-#include "utils/bossac_wrap.h"
 #include "qdebug.h"
 
 using namespace smu;
@@ -18,6 +20,16 @@ void registerTypes() {
     qmlRegisterType<FloatBuffer>("Plot", 1, 0, "FloatBuffer");
 
     qRegisterMetaType<uint64_t>("uint64_t");
+}
+
+QString SessionItem::getTmpPathForFirmware()
+{
+    QString path = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+    path += "/pixelpulse2/m1k_firmware";
+    QDir dir(path);
+    if (!dir.exists())
+        dir.mkpath(".");
+   return dir.path();
 }
 
 SessionItem::SessionItem():
@@ -136,15 +148,13 @@ void SessionItem::onDetached(Device* device){
     if (m_active) {
             this->cancel();
     }
-    m_session->remove(device, true);
     for (auto dev: m_devices) {
          if (dev->m_device == device) {
                 m_devices.removeOne(dev);
          }
     }
-    m_session->destroy(device);
     devicesChanged();
-qDebug() << "Device detached";
+    qDebug() << "Device detached";
 }
 
 void SessionItem::onSampleCountChanged(){
@@ -154,8 +164,7 @@ void SessionItem::onSampleCountChanged(){
 void SessionItem::handleDownloadedFirmware()
 {
     FileIO f;
-    BossacWrapper bw;
-    f.writeRawByFilename(bw.getTmpPathForFirmware() + "/firmware.bin",  m_firmware_fd->downloadedData());
+    f.writeRawByFilename(getTmpPathForFirmware() + "/firmware.bin",  m_firmware_fd->downloadedData());
 
     delete m_firmware_fd;
     m_firmware_fd = NULL;
@@ -233,6 +242,7 @@ void SessionItem::updateAllMeasurements() {
 
 void SessionItem::downloadFromUrl(QString url)
 {
+    Q_UNUSED(url);
     /*
      * this causes Error in `/home/dan/work/git/build-pixelpulse2-Desktop_Qt_5_5_1_GCC_64bit3-Debug/pixelpulse2': corrupted double-linked list: 0x0000000001bf9140 ***
      *
@@ -241,7 +251,18 @@ void SessionItem::downloadFromUrl(QString url)
     connect(m_firmware_fd, SIGNAL (downloaded()), this, SLOT (handleDownloadedFirmware()));
     */
 }
+QString SessionItem::flash_firmware(QString url){
+    QString ret = "";
+    int flashed = 0;
+    try{
+        flashed = m_session->flash_firmware(url.toStdString());
+    }
+    catch(std::runtime_error &e){
+        ret = e.what();
+    }
 
+    return ret;
+}
 void SessionItem::getSamples()
 {
     if (!m_active)
@@ -312,6 +333,12 @@ void SessionItem::beginNewSweep()
 
         timer.start(0);
     }
+}
+
+int SessionItem::programmingModeDeviceExists(){
+    std::vector<libusb_device*> samba_devs;
+
+    return m_session->scan_samba_devs(samba_devs);
 }
 
 

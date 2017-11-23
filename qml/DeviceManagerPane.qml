@@ -9,6 +9,8 @@ ColumnLayout {
   id: smpLayout
   spacing: 12
 
+  property bool updateNeeded: false
+  property bool justUpdated: false
   function addProgModeDeviceToList()
   {
     devicesModel.insert(devicesModel.count,
@@ -34,12 +36,9 @@ ColumnLayout {
 
   function programmingModeDeviceExists()
   {
-     var msg = bossac.deviceInformation();
      var deviceExists = false;
-
-      if (msg.indexOf("Device found") > -1) {
-        deviceExists = true;
-      }
+        if(session.programmingModeDeviceExists() > 0)
+            deviceExists = true;
 
       return deviceExists;
   }
@@ -79,15 +78,30 @@ ColumnLayout {
       }
       devicesModel.clear();
     }
+    console.log(programmingModeDeviceDetect()+" detected devices");
+    if(programmingModeDeviceDetect()){
+        if(!justUpdated){
+            updateNeeded = true;
+        }
+        justUpdated = false;
+        console.log("update needded: " + updateNeeded);
+    }
     for (var i = 0; i < session.devices.length; i++) {
       var device = session.devices[i];
       var updt_needed = false;
 
       if (device.FWVer.indexOf('.') === -1)   // The firmware might be so old that won't provide the version in the 'major.minor' format
+      {
           updt_needed = true;
-      else if (parseFloat(device.FWVer) < parseFloat(devListView.latestVersion.substring(1)))
-        updt_needed = true;
+          updateNeeded = true;
+      }
 
+      else if (parseFloat(device.FWVer) < parseFloat(devListView.latestVersion.substring(1))){
+        updt_needed = true;
+          updateNeeded = true;
+      }
+
+      console.log("Right before dev insert \n");
       devicesModel.insert(devicesModel.count,
                           {"name": device.label,
                            "uid":device.UUID,
@@ -272,88 +286,16 @@ ColumnLayout {
                 height: parent.height
                 width: 115
                 radius: 4
-                color: 'grey'
+                color: 'black'
                 visible: fw_updt_needed === true
-
-                Rectangle {
-                  anchors.horizontalCenter: parent.horizontalCenter
-                  anchors.verticalCenter: parent.verticalCenter
-                  width: parent.width - 2
-                  height: parent.height - 2
-                  radius: 4
-                  gradient: Gradient {
-                    GradientStop { position: 0.0; color: '#565666' }
-                    GradientStop { position: 0.15; color: '#6a6a7d' }
-                    GradientStop { position: 0.5; color: '#5a5a6a' }
-                    GradientStop { position: 1.0; color: '#585868' }
-                  }
 
                   Text {
                     x: 5
                     text: "Update Firmware"
                     font.pointSize: 10
-                    color: 'white'
+                    color: 'steelblue'
                     anchors.verticalCenter: parent.verticalCenter
                   }
-
-                  MouseArea {
-                    property color lastColor: 'black'
-                    visible: !updt_in_progress
-
-                    hoverEnabled: true
-                    anchors.fill: parent
-                    onClicked: {
-                      var ret;
-                      var err;
-                      var firmwareFilePath = bossac.getTmpPathForFirmware() + "/firmware.bin";
-
-                      if (name === "[Device In Programming Mode]") {
-                        // Devices in programming mode can be disconnected without us to know about it, so check if the device is still there.
-                        if (!programmingModeDeviceExists()) {
-                          clearProgModeDeviceFromList();
-                          return;
-                        }
-
-                        ret = bossac.flashByFilename(firmwareFilePath);
-                        if (ret.length === 0) {
-                          devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
-                          devicesModel.setProperty(index,"status", "ok");
-                        } else {
-                          devicesModel.setProperty(index,"status", "error");
-                          logOutput.appendMessage(ret);
-                        }
-                      } else if (!programmingModeDeviceDetect()) {
-                        devicesModel.setProperty(index, "updt_in_progress", true);
-
-                        if (!bossac.checkFileExists(bossac.getBossacPath())) {
-                          ret = "Could not find bossac.exe at:" + bossac.getBossacPath();
-                        } else if (!bossac.checkFileExists(firmwareFilePath)) {
-                            ret = "Could not find firmware at:" + firmwareFilePath;
-                        } else {
-                            session.devices[index].ctrl_transfer(0xBB, 0, 0);
-                            ret = bossac.flashByFilename(firmwareFilePath);
-                        }
-
-                        if (ret.length === 0) {
-                          devicesModel.setProperty(index, "firmware_version", devListView.latestVersion);
-                          devicesModel.setProperty(index,"status", "ok");
-                        } else {
-                          devicesModel.setProperty(index,"status", "error");
-                          logOutput.appendMessage(ret);
-                        }
-                        devicesModel.setProperty(index, "fw_updt_needed", false);
-                        // TO DO: Now the user needs to unplug the device. App should monitor the COM port to check if the device has been disconnected
-                        // and remove the item in the device list. The monitoring should be done in a separate thread.
-
-                      } else {
-                          logOutput.appendMessage("A device is already in programming mode and needs to be programmed first!");
-                      }
-                    }
-
-                    onPressed: devUpdateBtn.color = 'black'
-                    onReleased: devUpdateBtn.color = 'grey'
-                  }
-                }
               }
             }
           }
@@ -408,6 +350,67 @@ ColumnLayout {
        }
     }
   }
+  Rectangle {
+    id: updateBtn
+    anchors { right: parent.right;
+              bottom: logCleanBtn.top;
+              bottomMargin: 5;
+              rightMargin: 5 }
+    height: 25
+    width: 145
+    radius: 4
+    color: 'grey'
+    visible: updateNeeded === true
+
+    Rectangle {
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.verticalCenter: parent.verticalCenter
+      width: parent.width - 2
+      height: parent.height - 2
+      radius: 4
+
+      gradient: Gradient {
+        GradientStop { position: 0.0; color: '#565666' }
+        GradientStop { position: 0.15; color: '#6a6a7d' }
+        GradientStop { position: 0.5; color: '#5a5a6a' }
+        GradientStop { position: 1.0; color: '#585868' }
+      }
+
+      Text {
+        x: 5
+        text: "Update Firmware"
+        font.pointSize: 10
+        color: 'white'
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+      }
+
+      MouseArea {
+        hoverEnabled: true
+        anchors.fill: parent
+        onClicked: {
+            var firmwareFilePath = session.getTmpPathForFirmware() + "/firmware.bin";
+            var ret;
+
+            session.closeAllDevices();
+            devicesModel.clear();
+            justUpdated = true;
+            updateNeeded = false;
+            ret = session.flash_firmware(firmwareFilePath);
+
+            if (ret.length === 0) {
+                logOutput.appendMessage("All devices were succesfully updated. Disconnect devices");
+            } else {
+              logOutput.appendMessage(ret);
+            }
+        }
+
+        onPressed: updateBtn.color = 'black'
+        onReleased: updateBtn.color = 'grey'
+      }
+    }
+  }
+
 
   Rectangle {
     id: logCleanBtn

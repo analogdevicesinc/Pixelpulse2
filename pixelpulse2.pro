@@ -64,7 +64,6 @@ HEADERS += \
     Plot/PhosphorRender.h \
     Plot/FloatBuffer.h \
     utils/fileio.h \
-    utils/bossac_wrap.h \
     utils/filedownloader.h
 
 win32:debug {
