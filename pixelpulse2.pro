@@ -4,11 +4,20 @@ QT += qml quick widgets
 QT += network
 CONFIG += c++11
 
-win32 {
-        CONFIG += release
+isEmpty(LIBUSB_LIBRARY) {
+   LIBUSB_LIBRARY = "C:\libusb\MinGW32\static\libusb-1.0.a"
 }
-unix {
-        CONFIG += release
+
+ isEmpty(LIBUSB_INCLUDE_PATH) {
+   LIBUSB_INCLUDE_PATH = "C:\libusb\include\libusb-1.0"
+}
+
+isEmpty(LIBSMU_LIBRARY) {
+   LIBSMU_LIBRARY = "C:/Workspace/libsmu/build-libsmu-Desktop_Qt_5_4_2_MinGW_32bit3-Release/src/libsmu.dll.a"
+}
+
+ isEmpty(LIBSMU_INCLUDE_PATH) {
+   LIBSMU_INCLUDE_PATH = "C:\Workspace\libsmu\libsmu\include"
 }
 
 QMAKE_CFLAGS_DEBUG += -ggdb
@@ -17,14 +26,12 @@ QMAKE_CXXFLAGS_DEBUG += -ggdb
 CFLAGS += -v -static -static-libgcc -static-libstdc++ -g
 
 DEFINES += GIT_VERSION='"\\\"$(shell git -C $$PWD describe --always --tags --abbrev)\\\""'
-DEFINES += BUILD_DATE='"\\\"$(shell date +%F)\\\""'
+DEFINES += BUILD_DATE='"\\\"$(shell date /t +%F)\\\""'
 
 SOURCES += main.cpp \
     SMU.cpp \
     Plot/PhosphorRender.cpp \
     Plot/FloatBuffer.cpp \
-    libsmu/src/device_m1000.cpp \
-    libsmu/src/session.cpp \
     utils/filedownloader.cpp
 
 RESOURCES += qml.qrc
@@ -56,11 +63,7 @@ HEADERS += \
     SMU.h \
     Plot/PhosphorRender.h \
     Plot/FloatBuffer.h \
-    libsmu/src/device_m1000.hpp \
-    libsmu/src/libsmu.hpp \
-    libsmu/src/internal.hpp \
     utils/fileio.h \
-    utils/bossac_wrap.h \
     utils/filedownloader.h
 
 win32:debug {
@@ -77,13 +80,19 @@ osx {
 
 win32 {
 	RC_ICONS = icons/pp2.ico
-	LIBS += "C:\libusb\MinGW32\static\libusb-1.0.a"
-	INCLUDEPATH += "C:\libusb\include\libusb-1.0"
 	INCLUDEPATH += "C:\mingw32\include"
+
+        LIBS += $${LIBUSB_LIBRARY}
+        INCLUDEPATH += $${LIBUSB_INCLUDE_PATH}
+
+        LIBS += $${LIBSMU_LIBRARY}
+        INCLUDEPATH += $${LIBSMU_INCLUDE_PATH}
+
 }
 
 unix {
 	CONFIG += link_pkgconfig
+PKGCONFIG += libsmu
 # if we do not have a locally compiled static version of libusb-1.0 installed, use pkg-config
 	!exists(/usr/local/lib/libusb-1.0.a) {
 		PKGCONFIG += libusb-1.0
@@ -106,5 +115,3 @@ unix:!osx {
 	QMAKE_CFLAGS_DEBUG += -rdynamic
 	QMAKE_CXXFLAGS_DEBUG += -rdynamic
 }
-
-

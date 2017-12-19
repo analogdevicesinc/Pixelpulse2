@@ -1,20 +1,56 @@
-os: osx
-osx_image: xcode61
-language: objective-c
+matrix:
+    include:
+        - os: osx
+          osx_image: xcode61
+          language: objective-c
+        - os: linux
+          sudo: required
+          dist: trusty
+          env: PIP=pip
+          language: cpp
+          compiler: gcc
+          addons:
+            apt:
+                packages:
+                    - libusb-1.0
+                    - libboost-all-dev
+      
 before_install:
-- brew update 2>&1 > /dev/null
-- brew install --build-from-source libusb 2>&1 > /dev/null
-- brew install qt5 2>&1 > /dev/null
-- brew link qt5 --force
-before_script: /usr/local/opt/qt5/bin/qmake
+- if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get install libudev-dev ; fi
+- if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo add-apt-repository --yes ppa:beineri/opt-qt551-trusty ;fi
+- if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get update -qq ;fi
+
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew update 2>&1 > /dev/null ; fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/cb21e9ac30e47e3ea161c4247a6397967f83c83f/Formula/libusb.rb --universal; fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew install qt5 2>&1 > /dev/null ; fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew link qt5 --force ; fi
+
+install: 
+- if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get -y install qt553d qt55base qt55connectivity qt55declarative qt55graphicaleffects qt55imageformats qt55quick1 qt55quickcontrols qt55script qt55tools   ;fi
+
+
+before_script:
+
+- git clone https://github.com/analogdevicesinc/libsmu.git
+- cd libsmu
+- git checkout rework
+- mkdir build && cd build && cmake -DBUILD_PYTHON=OFF -DCMAKE_INSTALL_PREFIX=/usr/local/ ..
+- make
+- sudo make install
+- cd ../..
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then /usr/local/opt/qt5/bin/qmake ; fi
+- if [[ ${TRAVIS_OS_NAME} == linux ]]; then source /opt/qt55/bin/qt55-env.sh; /opt/qt55/bin/qmake; fi
+
 script:
 - make
-- /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -always-overwrite -verbose=2 -qmldir=qml
-- curl -o /tmp/macdeployqtfix.py https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py
-- python /tmp/macdeployqtfix.py ./pixelpulse2.app/Contents/MacOS/pixelpulse2 /usr/local/Cellar/qt5/5.5.0_1/
-- /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -no-plugins
-- mkdir deploy
-- cp pixelpulse2.dmg deploy
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -always-overwrite -verbose=2 -qmldir=qml ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then curl -o /tmp/macdeployqtfix.py https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then python /tmp/macdeployqtfix.py ./pixelpulse2.app/Contents/MacOS/pixelpulse2 /usr/local/Cellar/qt5/5.5.0_1/ ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -no-plugins ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then mkdir deploy ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then cp pixelpulse2.dmg deploy ;fi
+
+
 deploy:
   provider: s3
   access_key_id: AKIAJIUMJWTHBLSLXXPA
@@ -25,5 +61,6 @@ deploy:
   local_dir: deploy
   acl: public_read
   on:
+    condition: "${TRAVIS_OS_NAME} == osx"
     repo: analogdevicesinc/Pixelpulse2
     all_branches: true

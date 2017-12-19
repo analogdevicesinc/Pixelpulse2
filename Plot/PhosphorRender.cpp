@@ -122,6 +122,8 @@ QSGNode *PhosphorRender::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *
         n_points = m_ybuffer->countPointsBetween(m_xmin, m_xmax);
     }
 
+    n_points = std::min(n_points,(unsigned) 65767);
+
     if (!oldNode) {
         node = new QSGGeometryNode;
         geometry = new QSGGeometry(QSGGeometry::defaultAttributes_Point2D(), n_points);

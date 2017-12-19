@@ -1,9 +1,13 @@
 #pragma once
 #include <QtQuick/QQuickItem>
-#include "libsmu/src/libsmu.hpp"
+#include <QTimer>
+#include <QThread>
+#include <libsmu/libsmu.hpp>
 #include <memory>
 #include "utils/filedownloader.h"
 #include <iostream>
+#include <QTime>
+#include <cmath>
 
 class SessionItem;
 class DeviceItem;
@@ -11,7 +15,8 @@ class ChannelItem;
 class SignalItem;
 class ModeItem;
 class SrcItem;
-
+class TimerItem;
+class BufferChanger;
 class FloatBuffer;
 
 /// SessionItem is the primary object in Pixelpulse2
@@ -24,6 +29,7 @@ class SessionItem : public QObject {
     Q_PROPERTY(unsigned sampleCount MEMBER m_sample_count NOTIFY sampleCountChanged);
     Q_PROPERTY(int activeDevices READ getActiveDevices NOTIFY activeChanged);
     Q_PROPERTY(int availableDevices READ getAvailableDevices NOTIFY devicesChanged);
+    Q_PROPERTY(int queueSize MEMBER m_queue_size CONSTANT)
 
 public:
     SessionItem();
@@ -33,6 +39,7 @@ public:
 
     Q_INVOKABLE void start(bool continuous);
     Q_INVOKABLE void cancel();
+    Q_INVOKABLE void restart();
     int getAvailableDevices() { return m_session->m_available_devices.size(); }
     int getActiveDevices() { return m_session->m_devices.size(); }
 
@@ -40,7 +47,11 @@ public:
     Q_INVOKABLE void updateAllMeasurements();
 
     Q_INVOKABLE void downloadFromUrl(QString url);
+    Q_INVOKABLE QString flash_firmware(QString url);
+    Q_INVOKABLE QString getTmpPathForFirmware();
+    Q_INVOKABLE int programmingModeDeviceExists();
 
+    bool isContinuous(){return m_continuous;}
     bool getActive() { return m_active; }
     QQmlListProperty<DeviceItem> getDevices() { return QQmlListProperty<DeviceItem>(this, m_devices); }
 
@@ -49,26 +60,30 @@ signals:
     void activeChanged();
     void sampleRateChanged();
     void sampleCountChanged();
-    void progress(uint64_t);
     void finished(unsigned status);
-    void attached(Device* device);
-    void detached(Device* device);
+    void attached(smu::Device* device);
+    void detached(smu::Device* device);
 
 protected slots:
-    void onProgress(uint64_t);
     void onFinished();
-    void onAttached(Device* device);
-    void onDetached(Device* device);
+    void onAttached(smu::Device* device);
+    void onDetached(smu::Device* device);
     void handleDownloadedFirmware();
+    void onSampleCountChanged();
+    void getSamples();
+    void beginNewSweep();
 
 protected:
-    Session* m_session;
+    smu::Session* m_session;
     bool m_active;
     bool m_continuous;
     unsigned m_sample_rate;
     unsigned m_sample_count;
+    unsigned m_queue_size;
     FileDownloader *m_firmware_fd;
     QList<DeviceItem *> m_devices;
+    QTimer timer;
+    QTimer *sweepTimer;
 };
 
 
@@ -83,19 +98,24 @@ class DeviceItem : public QObject {
     Q_PROPERTY(QString UUID READ getDevSN CONSTANT);
 
 public:
-    DeviceItem(SessionItem*, Device*);
+    DeviceItem(SessionItem*, smu::Device*);
     QQmlListProperty<ChannelItem> getChannels() { return QQmlListProperty<ChannelItem>(this, m_channels); }
     QString getLabel() { return QString(m_device->info()->label); }
-    QString getFWVer() { return QString(m_device->fwver()); }
-    QString getHWVer() { return QString(m_device->hwver()); }
-    QString getDevSN() { return QString(m_device->serial()); }
+    QString getFWVer() { return QString::fromStdString(m_device->m_fwver); }
+    QString getHWVer() { return QString::fromStdString(m_device->m_hwver); }
+    QString getDevSN() { return QString::fromStdString(m_device->m_serial); }
     int getDefaultRate() { return m_device->get_default_rate(); }
     Q_INVOKABLE int ctrl_transfer( int x, int y, int z) { return m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);}
 
+    size_t samplesAdded() { return m_samples_added; }
+    void setSamplesAdded(size_t count) { m_samples_added = count; }
+    void write(ChannelItem* chn = nullptr);
+
 protected:
-    Device* const m_device;
+    smu::Device* const m_device;
     QList<ChannelItem*> m_channels;
     friend class SessionItem;
+    size_t m_samples_added;
 };
 
 class ChannelItem : public QObject {
@@ -105,23 +125,30 @@ class ChannelItem : public QObject {
     Q_PROPERTY(unsigned mode MEMBER m_mode NOTIFY modeChanged);
 
 public:
-    ChannelItem(DeviceItem*, Device*, unsigned index);
+    ChannelItem(DeviceItem*, smu::Device*, unsigned index);
     QQmlListProperty<SignalItem> getSignals() { return QQmlListProperty<SignalItem>(this, m_signals); }
     QString getLabel() const { return QString(m_device->channel_info(m_index)->label); }
+
+    void buildTxBuffer();
 
 signals:
     void modeChanged(unsigned mode);
 
 protected:
-    Device* const m_device;
+    smu::Device* const m_device;
     const unsigned m_index;
     unsigned m_mode;
 
     QList<ModeItem *> m_modes;
     QList<SignalItem*> m_signals;
 
+    std::vector<float> m_tx_data;
+    TimerItem *timer;
+
     friend class SessionItem;
+    friend class DeviceItem;
     friend class SignalItem;
+    friend class TimerItem;
 };
 
 /// Abstracts over a LibSMU Signal and the BufferItem used for rendering data
@@ -141,7 +168,7 @@ class SignalItem : public QObject {
     Q_PROPERTY(double mean READ getMean NOTIFY meanChanged);
 
 public:
-    SignalItem(ChannelItem*, int index, Signal*);
+    SignalItem(ChannelItem*, int index, smu::Signal*);
     FloatBuffer* getBuffer() const { return m_buffer; }
     QString getLabel() const { return QString(m_signal->info()->label); }
     double getMin() const { return m_signal->info()->min; }
@@ -181,7 +208,7 @@ protected slots:
 protected:
     int const m_index;
     ChannelItem* const m_channel;
-    Signal* const m_signal;
+    smu::Signal* const m_signal;
     FloatBuffer* m_buffer;
     SrcItem* m_src;
     double m_measurement;
@@ -189,19 +216,14 @@ protected:
     double m_rms;
     double m_mean;
     friend class SessionItem;
+    friend class ChannelItem;
     friend class SrcItem;
+    friend class TimerItem;
 
     void updateMeasurementMean();
     void updateMeasurementLatest();
     void updatePeakToPeak();
     void updateRms();
-};
-
-/// Should be used for handling mode switches in continuous mode.
-class ModeItem : public QObject {
-Q_OBJECT
-public:
-    ModeItem();
 };
 
 class SrcItem : public QObject {
@@ -244,6 +266,44 @@ protected:
     double m_duty;
 
     SignalItem* m_parent;
+    friend class TimerItem;
+};
+
+class TimerItem : public QObject{
+    Q_OBJECT
+private:
+    ChannelItem *channel;
+    DeviceItem *device;
+    SessionItem *session;
+    QTimer *changeBufferTimer;
+    BufferChanger *bc;
+    QThread *thread;
+    bool modified;
+
+public:
+    TimerItem(ChannelItem *channel,DeviceItem *dev);
+protected:
+    friend class DeviceItem;
+    friend class SrcItem;
+    friend class SignalItem;
+    friend class ChannelItem;
+public slots:
+    void parameterChanged();
+private slots:
+    void needChangeBuffer();
+    void clean();
+};
+
+class BufferChanger :public QObject{
+    Q_OBJECT
+private:
+    ChannelItem *channel;
+    DeviceItem *device;
+public:
+    BufferChanger(ChannelItem *chan,DeviceItem *dev);
+    ~BufferChanger(){}
+protected slots:
+    void changeBuffer();
 };
 
 void registerTypes();

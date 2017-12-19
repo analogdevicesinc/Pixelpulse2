@@ -33,8 +33,26 @@ install:
   - choco install InnoSetup
 
 build_script:
-  - git submodule update --init --recursive
-  - qmake pixelpulse2.pro
+    #clone and build libsmu with mingw
+  - git clone https://github.com/analogdevicesinc/libsmu.git C:\libsmu
+  - ps: pushd "C:\libsmu"
+  - git checkout rework
+  - mkdir build
+  - cd build
+  - cmake -G "MSYS Makefiles" \
+    -DLIBUSB_LIBRARIES="C:\\libusb\\MinGW32\\static\\libusb-1.0.a" \
+    -DLIBUSB_INCLUDE_DIRS="C:\\libusb\\include\\libusb-1.0" \
+    -DBoost_USE_STATIC_LIBS=ON \
+    -DBUILD_STATIC_LIB=OFF \
+    -DBUILD_EXAMPLES=OFF \
+    -DBUILD_TESTS=OFF \
+    -DBOOST_ROOT="C:\\Libraries\\boost_1_62_0" \
+    -DBUILD_PYTHON=OFF \
+    ..
+  - mingw32-make -j8
+  
+  - ps: popd
+  - qmake pixelpulse2.pro "LIBSMU_LIBRARY = C:\libsmu\build\src\libsmu.dll.a" "LIBSMU_INCLUDE_PATH = C:\libsmu\include" 
   - mingw32-make -j8
 
   # Bundle all dependencies
@@ -44,6 +62,8 @@ build_script:
       cp C:\OpenSSL-Win32\libssl32.dll distrib
       cp C:\OpenSSL-Win32\ssleay32.dll distrib
       cp C:\OpenSSL-Win32\bin\msvcr120.dll distrib
+      cp C:\libsmu\build\src\libsmu.dll distrib
+      cp C:\mingw32\bin\libgomp-1.dll distrib
       7z a -y distrib.zip distrib
 
   # Build the installer

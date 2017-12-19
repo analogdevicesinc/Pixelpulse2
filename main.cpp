@@ -7,7 +7,6 @@
 #include "SMU.h"
 
 #include "utils/backtracing.h"
-#include "utils/bossac_wrap.h"
 #include "utils/fileio.h"
 
 int main(int argc, char *argv[])
@@ -26,7 +25,6 @@ int main(int argc, char *argv[])
     registerTypes();
 
     FileIO fileIO;
-    BossacWrapper bossacWrapper;
     SessionItem smu_session;
     smu_session.openAllDevices();
     engine.rootContext()->setContextProperty("session", &smu_session);
@@ -36,7 +34,6 @@ int main(int argc, char *argv[])
     versions.insert("git_version", GIT_VERSION);
     engine.rootContext()->setContextProperty("versions", versions);
     engine.rootContext()->setContextProperty("fileio", &fileIO);
-    engine.rootContext()->setContextProperty("bossac", &bossacWrapper);
     if (argc > 1) {
         if (strcmp(argv[1], "-v") || strcmp(argv[1], "--version")) {
             std::cout << GIT_VERSION << ": Built on " << BUILD_DATE << std::endl;

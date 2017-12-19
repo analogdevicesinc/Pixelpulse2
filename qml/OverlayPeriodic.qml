@@ -59,7 +59,7 @@ Item {
     dragOn: overlay
     onPressed: overlay.dragStart('d1')
     onReleased: {
-      signal.src.period = constrainInterval(signal.src.period, 0, controller.sampleRate / controller.maxOutSignalFreq);
+      signal.src.period = constrainInterval(signal.src.period, controller.sampleRate / controller.minOutSignalFreq, controller.sampleRate / controller.maxOutSignalFreq);
       overlay.dragEnd();
     }
     onDrag: {
@@ -72,7 +72,7 @@ Item {
           newPeriod = 1
         }
       }
-      signal.src.period = constrainInterval(newPeriod, 0, controller.sampleRate / controller.maxOutSignalFreq);
+      signal.src.period = constrainInterval(newPeriod, controller.sampleRate / controller.minOutSignalFreq, controller.sampleRate / controller.maxOutSignalFreq);
       signal.src.v1 = overlay.mapY(pos);
       // Adjust phase so the signal stays in the same position relative to the other dot
       signal.src.phase = -relX/sampleTick - controller.delaySampleCount;
@@ -99,7 +99,7 @@ Item {
       } else {
         signal.src.phase = -relX/sampleTick - controller.delaySampleCount;
       }
-      signal.src.v2 = overlay.mapY(pos)
+      signal.src.v2 = overlay.mapY(pos);
     }
   }
 
@@ -125,5 +125,4 @@ Item {
       signal.src.duty = Math.min(Math.max(duty, 0), 1);
     }
   }
-
 }
