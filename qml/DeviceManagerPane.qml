@@ -78,13 +78,13 @@ ColumnLayout {
       }
       devicesModel.clear();
     }
-    console.log(programmingModeDeviceDetect()+" detected devices");
+    //console.log(programmingModeDeviceDetect()+" detected devices");
     if(programmingModeDeviceDetect()){
         if(!justUpdated){
             updateNeeded = true;
         }
         justUpdated = false;
-        console.log("update needded: " + updateNeeded);
+        //console.log("update needded: " + updateNeeded);
     }
     for (var i = 0; i < session.devices.length; i++) {
       var device = session.devices[i];
@@ -101,7 +101,7 @@ ColumnLayout {
           updateNeeded = true;
       }
 
-      console.log("Right before dev insert \n");
+      //console.log("Right before dev insert \n");
       devicesModel.insert(devicesModel.count,
                           {"name": device.label,
                            "uid":device.UUID,
@@ -218,13 +218,13 @@ ColumnLayout {
     }
 
     onLatestVersionChanged: {
-      console.log("latestVersion changed to: ", latestVersion);
+      //console.log("latestVersion changed to: ", latestVersion);
       if (latestVersion === 'v0.0')
         return;
 
       deviceManagerListFill();
       JSUtils.getFirmwareURL(function(url) {
-        console.log("LOG URL: ", url);
+        //console.log("LOG URL: ", url);
         session.downloadFromUrl(url);
       });
     }

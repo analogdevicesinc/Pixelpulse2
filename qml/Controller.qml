@@ -64,8 +64,8 @@ Item {
 //  }
 
   function toggle() {
-      console.log("queue size"+queueSize)
-      console.log("min freq"+minOutSignalFreq)
+      //console.log("queue size"+queueSize)
+      //console.log("min freq"+minOutSignalFreq)
       if (!session.active) {
           session.sampleRate = sampleRate
           session.sampleCount = sampleCount
@@ -75,8 +75,8 @@ Item {
       }
   }
   onSampleCountChanged: {
-        console.log("onSampleCountChanged");
-        console.log(sampleCount);
+        //console.log("onSampleCountChanged");
+        //console.log(sampleCount);
         session.sampleCount = sampleCount;
   }
 
@@ -100,8 +100,8 @@ Item {
     // Restart the session so the new sampling mode takes effect
     //restartAfterStop = true;
     //session.cancel();
-    console.log("onContinuousChanged",continuous);
-    //console.log("session cont",session.
+    //console.log("onContinuousChanged",continuous);
+    ////console.log("session cont",session.
     //session.restart();
     if(session.active){
         session.cancel();

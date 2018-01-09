@@ -4,6 +4,8 @@ QT += qml quick widgets
 QT += network
 CONFIG += c++11
 
+CONFIG(release, debug|release):DEFINES += QT_NO_DEBUG_OUTPUT
+
 isEmpty(LIBUSB_LIBRARY) {
    LIBUSB_LIBRARY = "C:\libusb\MinGW32\static\libusb-1.0.a"
 }

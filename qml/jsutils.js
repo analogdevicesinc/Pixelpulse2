@@ -77,39 +77,39 @@ var requestFile = function(url, callback) {
 
     xhr.onloadstart = (function(myxhr) {
         return function() {
-            console.log('LOG: onloadstart: ', myxhr.status);
+            //console.log('LOG: onloadstart: ', myxhr.status);
         }
     })(xhr);
     xhr.onprogress = (function(myxhr) {
         return function() {
-            console.log('LOG: progress: ', myxhr.status);
+            //console.log('LOG: progress: ', myxhr.status);
         }
     })(xhr);
     xhr.onerror = (function(myxhr) {
         return function() {
-            console.log('LOG: error: ', myxhr.status);
+            //console.log('LOG: error: ', myxhr.status);
         }
     })(xhr);
     xhr.ontimeout = (function(myxhr) {
         return function() {
-            console.log('LOG: timeout: ', myxhr.status);
+            //console.log('LOG: timeout: ', myxhr.status);
         }
     })(xhr);
     xhr.onloadend = (function(myxhr) {
         return function() {
-            console.log('LOG: onloadend: ', myxhr.status);
+            //console.log('LOG: onloadend: ', myxhr.status);
         }
     })(xhr);
     xhr.onreadystatechange = (function(myxhr) {
         return function() {
-            if(myxhr) console.log('LOG: status ready: ', myxhr.readyState);//if(myxhr.readyState === 4)
+            if(myxhr) //console.log('LOG: status ready: ', myxhr.readyState);//if(myxhr.readyState === 4)
             if(myxhr.readyState === 4 && myxhr.status  === 200) callback(myxhr)
 	    }
     })(xhr);
 
     xhr.onload = (function(myxhr) {
         return function() {
-            console.log('LOG: status load: ', myxhr.status);
+            //console.log('LOG: status load: ', myxhr.status);
              if(myxhr.status  === 200) callback(myxhr)
 	    }
     })(xhr);
