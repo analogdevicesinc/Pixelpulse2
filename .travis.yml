@@ -43,9 +43,18 @@ before_script:
 
 script:
 - make
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then ls libsmu/build/src ;fi
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -always-overwrite -verbose=2 -qmldir=qml ;fi
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then curl -o /tmp/macdeployqtfix.py https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py ;fi
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then python /tmp/macdeployqtfix.py ./pixelpulse2.app/Contents/MacOS/pixelpulse2 /usr/local/Cellar/qt5/5.5.0_1/ ;fi
+
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then cp libsmu/build/src/libsmu.0.dylib pixelpulse2.app/Contents/Frameworks/ ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then otool -L libsmu/build/src/libsmu.0.dylib ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then sudo install_name_tool -id libsmu.0.dylib pixelpulse2.app/Contents/Frameworks/libsmu.0.dylib ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then sudo install_name_tool -change @rpath/libsmu.0.dylib @executable_path/../Frameworks/libsmu.0.dylib pixelpulse2.app/Contents/MacOS/Pixelpulse2 ;fi
+
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then otool -L pixelpulse2.app/Contents/MacOS/Pixelpulse2 ;fi
+
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -no-plugins ;fi
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then mkdir deploy ;fi
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then cp pixelpulse2.dmg deploy ;fi
