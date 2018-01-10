@@ -33,7 +33,6 @@ before_script:
 
 - git clone https://github.com/analogdevicesinc/libsmu.git
 - cd libsmu
-- git checkout rework
 - mkdir build && cd build && cmake -DBUILD_PYTHON=OFF -DCMAKE_INSTALL_PREFIX=/usr/local/ ..
 - make
 - sudo make install
@@ -48,10 +47,10 @@ script:
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then curl -o /tmp/macdeployqtfix.py https://raw.githubusercontent.com/aurelien-rainone/macdeployqtfix/master/macdeployqtfix.py ;fi
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then python /tmp/macdeployqtfix.py ./pixelpulse2.app/Contents/MacOS/pixelpulse2 /usr/local/Cellar/qt5/5.5.0_1/ ;fi
 
-- if [[ ${TRAVIS_OS_NAME} == osx ]]; then cp libsmu/build/src/libsmu.0.dylib pixelpulse2.app/Contents/Frameworks/ ;fi
-- if [[ ${TRAVIS_OS_NAME} == osx ]]; then otool -L libsmu/build/src/libsmu.0.dylib ;fi
-- if [[ ${TRAVIS_OS_NAME} == osx ]]; then sudo install_name_tool -id libsmu.0.dylib pixelpulse2.app/Contents/Frameworks/libsmu.0.dylib ;fi
-- if [[ ${TRAVIS_OS_NAME} == osx ]]; then sudo install_name_tool -change @rpath/libsmu.0.dylib @executable_path/../Frameworks/libsmu.0.dylib pixelpulse2.app/Contents/MacOS/Pixelpulse2 ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then cp libsmu/build/src/libsmu.1.dylib pixelpulse2.app/Contents/Frameworks/ ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then otool -L libsmu/build/src/libsmu.1.dylib ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then sudo install_name_tool -id libsmu.1.dylib pixelpulse2.app/Contents/Frameworks/libsmu.1.dylib ;fi
+- if [[ ${TRAVIS_OS_NAME} == osx ]]; then sudo install_name_tool -change @rpath/libsmu.1.dylib @executable_path/../Frameworks/libsmu.1.dylib pixelpulse2.app/Contents/MacOS/Pixelpulse2 ;fi
 
 - if [[ ${TRAVIS_OS_NAME} == osx ]]; then otool -L pixelpulse2.app/Contents/MacOS/Pixelpulse2 ;fi
 
