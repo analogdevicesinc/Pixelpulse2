@@ -36,7 +36,6 @@ build_script:
     #clone and build libsmu with mingw
   - git clone https://github.com/analogdevicesinc/libsmu.git C:\libsmu
   - ps: pushd "C:\libsmu"
-  - git checkout rework
   - mkdir build
   - cd build
   - cmake -G "MSYS Makefiles" \
