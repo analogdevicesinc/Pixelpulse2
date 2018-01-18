@@ -31,10 +31,7 @@ Click and drag the X axis to pan in time.
 To build from source on any platform, you need to install a C++ compiler toolchain, collect the build dependencies, setup your build environment, and compile the project.
 
 If you have not built packages from source before, this is ill-advised.
-
-* Install [LibUSB](http://libusb.info/).
- * Install using your package manager - "libusb" on OSX Homebrew, "libusb-1.0-0-dev" on modern Debian/Ubuntu distributions, "libusb-devel" on Fedora/CentOS.
- * Build from source using the [appropriate branch](https://github.com/kevinmehall/libusb/tree/hp) if a version of LibUSB with HotPlug support for your platform is not available. (Windows, Debian Wheezy)
+* Build and install libsmu (https://github.com/analogdevicesinc/libsmu)
 * Install Qt5.4.
  * On most Linux Distributions, Qt5 is available in repositories. The complete list of packages required varies, but includes qt's support for declarative (qml) UI programming, qtquick, qtquick-window, qtquick-controls, and qtquick-layouts.
  * Binary installers are available from [the Qt project](http://qtmirror.ics.com/pub/qtproject/development_releases/qt/5.4/5.4.0-rc/) for most platforms.
@@ -45,8 +42,14 @@ To build / run on a generic POSIX platform
     cd pixelpulse2
     mkdir build
     cd build
-    qmake -qt=qt5 ..
+    qmake pixelpulse2.pro -qt=qt5
     make
+
+On Windows the qmake command should look like this
+
+    qmake pixelpulse2.pro "LIBSMU_LIBRARY = path_to_libsmu_dll" "LIBSMU_INCLUDE_PATH = path_to_libsmu_include_folder" -qt=qt5
+
+After it is finished building, you have to copy the libsmu shared library into the build folder and Pixelpulse2 should be ready to use with your M1K
 
 To build / install for Debian, from the `pixelpulse2` directory:
 
@@ -62,13 +65,6 @@ To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com
 
     ```bash
     sudo apt-get update
-    ```
-
-* Install libusb and libudev
-
-    ```bash
-   sudo apt-get install libusb-1.0-0-dev
-   sudo apt-get install libudev-dev
     ```
 
 * Download and install Qt5.4
@@ -103,15 +99,15 @@ To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com
     ```bash
     mkdir development
     cd development
-    git clone --recursive https://github.com/signalspec/pixelpulse2
+    git clone https://github.com/signalspec/pixelpulse2
     cd pixelpulse2
     mkdir build
     cd build
-    qmake ..
+    qmake pixelpulse2.pro ..
     make
     ```
 
-* After it is finished building, Pixelpulse2 should be ready to use with your M1K
+* After it is finished building,you have to copy the libsmu shared library into the build folder and Pixelpulse2 should be ready to use with your M1K
  * Make sure your M1K is plugged into your computer.  The onboard LED should light up when it is connected.  You can double-check by typing ```lsusb```.  You should see something along the lines of ```ID 064b:784c Analog Devices, Inc. (White Mountain DSP)```
  * You should be ready to launch Pixelpulse2. First, go to the directory it was built in:
     
@@ -124,5 +120,4 @@ To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com
     ```bash
     sudo ./pixelpulse2
     ```
-
 
