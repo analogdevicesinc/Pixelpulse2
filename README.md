@@ -38,7 +38,7 @@ If you have not built packages from source before, this is ill-advised.
 
 To build / run on a generic POSIX platform
 
-    git clone --recursive https://github.com/signalspec/pixelpulse2
+    git clone https://github.com/signalspec/pixelpulse2
     cd pixelpulse2
     mkdir build
     cd build
