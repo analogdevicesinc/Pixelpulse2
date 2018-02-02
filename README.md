@@ -16,7 +16,7 @@ Click and drag the X axis to pan in time.
 
 ### Screenshot
 
-![Screenshot of PP2 on Windows 7](http://itdaniher.com/static/pp2_win7.png "Pixelpulse on Windows 7")
+![Screenshot of PP2 on Windows 7](https://analogdevicesinc.github.io/Pixelpulse2/pp2screenshot.png "Pixelpulse on Windows 7")
 
 ### Getting Pixelpulse2
 
