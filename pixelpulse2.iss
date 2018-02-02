@@ -1,5 +1,5 @@
 #define AppName "Pixelpulse2"
-#define AppVersion "0.90"
+#define AppVersion "1.0.1"
 #define AppPublisher "Analog Devices, Inc."
 #define AppURL "http://www.analog.com"
 #define AppExeName "Pixelpulse2.exe"
