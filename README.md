@@ -67,6 +67,8 @@ To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com
     sudo apt-get update
     ```
 
+* Build and install libsmu (https://github.com/analogdevicesinc/libsmu)
+
 * Download and install Qt5.4
 
     ```bash
