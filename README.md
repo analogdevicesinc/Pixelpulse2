@@ -109,7 +109,6 @@ To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com
     make
     ```
 
-* After it is finished building,you have to copy the libsmu shared library into the build folder and Pixelpulse2 should be ready to use with your M1K
  * Make sure your M1K is plugged into your computer.  The onboard LED should light up when it is connected.  You can double-check by typing ```lsusb```.  You should see something along the lines of ```ID 064b:784c Analog Devices, Inc. (White Mountain DSP)```
  * You should be ready to launch Pixelpulse2. First, go to the directory it was built in:
     
