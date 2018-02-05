@@ -61,6 +61,8 @@ m_queue_size(1000000)
 
 SessionItem::~SessionItem() {
         Q_ASSERT(m_devices.size() == 0);
+        delete m_firmware_fd;
+        m_firmware_fd = NULL;
 }
 
 
@@ -165,9 +167,7 @@ void SessionItem::handleDownloadedFirmware()
 {
     FileIO f;
     f.writeRawByFilename(getTmpPathForFirmware() + "/firmware.bin",  m_firmware_fd->downloadedData());
-
-    delete m_firmware_fd;
-    m_firmware_fd = NULL;
+    disconnect(m_firmware_fd, SIGNAL(downloaded()), this, SLOT(handleDownloadedFirmware()));
 }
 
 void SessionItem::cancel() {
@@ -242,15 +242,11 @@ void SessionItem::updateAllMeasurements() {
 
 void SessionItem::downloadFromUrl(QString url)
 {
-    Q_UNUSED(url);
-    /*
-     * this causes Error in `/home/dan/work/git/build-pixelpulse2-Desktop_Qt_5_5_1_GCC_64bit3-Debug/pixelpulse2': corrupted double-linked list: 0x0000000001bf9140 ***
-     *
     QUrl firmwareUrl(url);
     m_firmware_fd = new FileDownloader(firmwareUrl, this);
     connect(m_firmware_fd, SIGNAL (downloaded()), this, SLOT (handleDownloadedFirmware()));
-    */
 }
+
 QString SessionItem::flash_firmware(QString url){
     QString ret = "";
     int flashed = 0;
