@@ -167,6 +167,7 @@ void SessionItem::handleDownloadedFirmware()
 {
     FileIO f;
     f.writeRawByFilename(getTmpPathForFirmware() + "/firmware.bin",  m_firmware_fd->downloadedData());
+    emit firmwareDownloaded();
     disconnect(m_firmware_fd, SIGNAL(downloaded()), this, SLOT(handleDownloadedFirmware()));
 }
 

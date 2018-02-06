@@ -63,6 +63,7 @@ signals:
     void finished(unsigned status);
     void attached(smu::Device* device);
     void detached(smu::Device* device);
+    void firmwareDownloaded();
 
 protected slots:
     void onFinished();

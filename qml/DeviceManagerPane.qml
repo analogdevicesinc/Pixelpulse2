@@ -11,6 +11,7 @@ ColumnLayout {
 
   property bool updateNeeded: false
   property bool justUpdated: false
+  property bool firmwareDownloaded: false
   function addProgModeDeviceToList()
   {
     devicesModel.insert(devicesModel.count,
@@ -348,6 +349,9 @@ ColumnLayout {
        onDevicesChanged: {
            deviceManagerListFill();
        }
+       onFirmwareDownloaded:{
+           firmwareDownloaded = true;
+       }
     }
   }
   Rectangle {
@@ -360,7 +364,7 @@ ColumnLayout {
     width: 145
     radius: 4
     color: 'grey'
-    visible: updateNeeded === true
+    visible: updateNeeded === true && firmwareDownloaded === true
 
     Rectangle {
       anchors.horizontalCenter: parent.horizontalCenter
