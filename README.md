@@ -27,7 +27,7 @@ Click and drag the X axis to pan in time.
 * Linux - Build from source (below) 
 #### Advanced
 
-To build from source on any platform, you need to install a C++ compiler toolchain, collect the build dependencies, setup your build environmBnt, and compile the project.
+To build from source on any platform, you need to install a C++ compiler toolchain, collect the build dependencies, setup your build environment, and compile the project.
 
 If you have not built packages from source before, this is ill-advised.
 * Build and install libsmu (https://github.com/analogdevicesinc/libsmu)
