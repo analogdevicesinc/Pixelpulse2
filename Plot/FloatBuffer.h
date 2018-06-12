@@ -132,15 +132,15 @@ public:
 //        return m_data.data();
 //    }
 
-//	Q_INVOKABLE QList<qreal> getData() {
-//		QList<qreal> qData;
-//		qData.reserve(m_length);
-//		for (unsigned i=0; i < m_length; i++) {
-//			qreal d = get(i);
-//			qData.append(d);
-//		}
-//		return qData;
-//	}
+    Q_INVOKABLE QList<qreal> getData() {
+            QList<qreal> qData;
+            qData.reserve(m_length);
+            for (unsigned i=0; i < m_length; i++) {
+                    qreal d = get(i);
+                    qData.append(d);
+            }
+            return qData;
+    }
 
     void startSweep() {
         // When switching from continuous to repeated-sweep mode, stop acting like a ring buffer
