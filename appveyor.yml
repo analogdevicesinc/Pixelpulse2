@@ -8,17 +8,13 @@ install:
   - c:\projects\7zip_installer.exe /S /D=c:\projects\7zip_tool
   - set PATH=c:\projects\7zip_tool;%PATH%
   - ps: |
-      If (!(Test-Path -Path "c:\mingw.7z")) {
-        (new-object System.Net.WebClient).Downloadfile("https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/5.2.0/threads-posix/dwarf/i686-5.2.0-release-posix-dwarf-rt_v4-rev0.7z", "c:\mingw.7z")
-      }
-  - 7z x -y "c:\mingw.7z" -o"C:\" > nul
-  - ps: |
       If (!(Test-Path -Path "c:\msys.zip")) {
         (new-object System.Net.WebClient).Downloadfile("https://sourceforge.net/projects/mingw-w64/files/External%20binary%20packages%20%28Win64%20hosted%29/MSYS%20%2832-bit%29/MSYS-20111123.zip", "c:\msys.zip")
       }
   - 7z x -y "c:\msys.zip" -o"C:\" > nul
+  - set MINGW_PATH=C:\Qt\Tools\mingw530_32
   - set QTDIR=C:\Qt\5.10\mingw53_32
-  - set PATH=C:\Program Files (x86)\MSBuild\12.0\bin\;C:\mingw32\bin;C:\msys\bin\;%QTDIR%\bin;%PATH%
+  - set PATH=C:\Program Files (x86)\MSBuild\12.0\bin\;%MINGW_PATH%\bin;C:\msys\bin\;%QTDIR%\bin;%PATH%
   - ps: (new-object System.Net.WebClient).Downloadfile("http://swdownloads.analog.com/cse/build/libusb-1.0-hp.7z", "c:\libusb.7z")
   - 7z x -y "c:\libusb.7z" -o"C:\libusb" > nul
 
@@ -61,7 +57,7 @@ build_script:
       cp C:\OpenSSL-Win32\ssleay32.dll distrib
       cp C:\OpenSSL-Win32\bin\msvcr120.dll distrib
       cp C:\libsmu\build\src\libsmu.dll distrib
-      cp C:\mingw32\bin\libgomp-1.dll distrib
+      cp $Env:MINGW_PATH\bin\libgomp-1.dll distrib
       7z a -y distrib.zip distrib
 
   # Build the installer
@@ -75,5 +71,4 @@ after_build:
     appveyor PushArtifact C:\Pixelpulse2_win_setup.exe
 
 cache:
- - c:\mingw.7z -> appveyor.yml
  - c:\msys.zip -> appveyor.yml
