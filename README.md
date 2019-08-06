@@ -104,7 +104,7 @@ To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com
     cd pixelpulse2
     mkdir build
     cd build
-    qmake pixelpulse2.pro ..
+    qmake ../pixelpulse2.pro
     make
     ```
 
