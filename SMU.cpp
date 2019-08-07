@@ -47,22 +47,16 @@ m_queue_size(1000000)
     connect(this, &SessionItem::sampleCountChanged, this, &SessionItem::onSampleCountChanged);
     connect(&timer, SIGNAL(timeout()), this, SLOT(getSamples()));
 
-    m_session->hotplug_attach([this](Device* device, void* data){
-        Q_UNUSED(data);
-        emit attached(device);
-    });
-    m_session->hotplug_detach([this](Device* device, void* data){
-        Q_UNUSED(data);
-        emit detached(device);
-    });
+    std::thread usb_thread(usb_handle_thread_method, this);
+    usb_thread.detach();
+
     sweepTimer = new QTimer();
     connect(sweepTimer,SIGNAL(timeout()),SLOT(beginNewSweep()));
 }
 
 SessionItem::~SessionItem() {
-        Q_ASSERT(m_devices.size() == 0);
-        delete m_firmware_fd;
-        m_firmware_fd = NULL;
+    Q_ASSERT(m_devices.size() == 0);
+	delete sweepTimer;
 }
 
 
@@ -127,7 +121,8 @@ qDebug() << "Session start(" << continuous << ")";
 
 /// handles hotplug attach condition
 /// runs on UI thread
-/// triggered by libUSB callback over Queue
+/// triggered by libUSB callback over Queue -- removed
+/// triggered by the responsible USB checker thread
 void SessionItem::onAttached(Device *device)
 {
     if (m_active) {
@@ -140,23 +135,24 @@ void SessionItem::onAttached(Device *device)
         m_devices.append(new DeviceItem(this, device));
         devicesChanged();
     }
-qDebug() << "Device attached";
 }
 
 /// handles hotplug detach condition
 /// runs on UI thread
-/// triggered by libUSB callback over Queue
+/// triggered by libUSB callback over Queue -- removed
+/// triggered by the responsible USB checker thread
 void SessionItem::onDetached(Device* device){
     if (m_active) {
             this->cancel();
     }
     for (auto dev: m_devices) {
-         if (dev->m_device == device) {
+         if (!dev->m_device->m_serial.compare(device->m_serial)) {
                 m_devices.removeOne(dev);
+                delete dev;
          }
     }
+
     devicesChanged();
-    qDebug() << "Device detached";
 }
 
 void SessionItem::onSampleCountChanged(){
@@ -336,6 +332,57 @@ int SessionItem::programmingModeDeviceExists(){
     std::vector<libusb_device*> samba_devs;
 
     return m_session->scan_samba_devs(samba_devs);
+}
+
+void SessionItem::usb_handle_thread_method(SessionItem *session_item)
+{
+    std::vector < Device* > last_devices;
+
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        session_item->m_session->scan();
+
+        std::vector < Device* > available_devices = session_item->m_session->m_available_devices;
+
+        //check if there is any disconnected device
+        for (auto other_device : last_devices) {
+            bool found = 0;
+
+            for (auto device : available_devices) {
+                if (!device->m_serial.compare(other_device->m_serial)) {
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found) {
+                emit session_item->detached(other_device);
+                last_devices.erase(remove(last_devices.begin(), last_devices.end(), other_device), last_devices.end());
+            }
+        }
+
+        //check if there is any new connected device
+        for (auto device : available_devices) {
+            bool found = 0;
+
+            for (auto other_device : last_devices) {
+                if (!device->m_serial.compare(other_device->m_serial)) {
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found) {
+                emit session_item->attached(device);
+            }
+            else {
+                available_devices.erase(remove(available_devices.begin(), available_devices.end(), device), available_devices.end());
+                delete device;
+            }
+        }
+
+        last_devices.insert(last_devices.end(), available_devices.begin(), available_devices.end());
+    }
 }
 
 
