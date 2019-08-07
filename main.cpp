@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
 
     FileIO fileIO;
     SessionItem smu_session;
-    smu_session.openAllDevices();
     engine.rootContext()->setContextProperty("session", &smu_session);
 
     QVariantMap versions;

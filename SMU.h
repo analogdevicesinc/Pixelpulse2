@@ -54,6 +54,7 @@ public:
     bool isContinuous(){return m_continuous;}
     bool getActive() { return m_active; }
     QQmlListProperty<DeviceItem> getDevices() { return QQmlListProperty<DeviceItem>(this, m_devices); }
+    static void usb_handle_thread_method(SessionItem *session_item);
 
 signals:
     void devicesChanged();
