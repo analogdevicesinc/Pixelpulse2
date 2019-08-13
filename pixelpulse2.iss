@@ -58,8 +58,7 @@ Source: "c:\projects\pixelpulse2\distrib\*"; DestDir: "{app}"; Flags: recursesub
 Source: "C:\WinDDK\7600.16385.1\redist\DIFx\dpinst\EngMui\x86\dpinst.exe"; DestDir: "{app}\drivers"; Tasks: drivers; Check: not IsWin64
 Source: "C:\WinDDK\7600.16385.1\redist\DIFx\dpinst\EngMui\amd64\dpinst.exe"; DestDir: "{app}\drivers"; Tasks: drivers; Check: IsWin64
 Source: "c:\projects\pixelpulse2\distrib\driver\m1k-winusb.inf"; DestDir: "{app}\drivers"; Tasks: drivers
-Source: "c:\projects\pixelpulse2\distrib\driver\m1k-winusbx86.cat"; DestDir: "{app}\drivers"; Tasks: drivers; Check: not IsWin64
-Source: "c:\projects\pixelpulse2\distrib\driver\m1k-winusbx64.cat"; DestDir: "{app}\drivers"; Tasks: drivers; Check: IsWin64
+Source: "c:\projects\pixelpulse2\distrib\driver\m1k-winusb.cat"; DestDir: "{app}\drivers"; Tasks: drivers
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExeName}"

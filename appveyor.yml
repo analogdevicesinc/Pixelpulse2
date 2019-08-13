@@ -21,8 +21,7 @@ install:
   - git clone https://github.com/analogdevicesinc/libsmu.git C:\libsmu
   - if not exist "c:\projects\pixelpulse2\distrib\driver" mkdir c:\projects\pixelpulse2\distrib\driver
   - copy C:\libsmu\dist\m1k-winusb.inf c:\projects\pixelpulse2\distrib\driver
-  - copy C:\libsmu\dist\\m1k-winusbx86.cat c:\projects\pixelpulse2\distrib\driver
-  - copy C:\libsmu\dist\m1k-winusbx64.cat c:\projects\pixelpulse2\distrib\driver
+  - copy C:\libsmu\dist\\m1k-winusb.cat c:\projects\pixelpulse2\distrib\driver
   - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/pp2trayer.exe?branch=master" -FileName c:\projects\pixelpulse2\distrib\pp2trayer.exe'
 
   # Install Inno Setup
