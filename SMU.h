@@ -107,6 +107,7 @@ public:
     QString getDevSN() { return QString::fromStdString(m_device->m_serial); }
     int getDefaultRate() { return m_device->get_default_rate(); }
     Q_INVOKABLE int ctrl_transfer( int x, int y, int z) { return m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);}
+    Q_INVOKABLE void blinkLeds();
 
     size_t samplesAdded() { return m_samples_added; }
     void setSamplesAdded(size_t count) { m_samples_added = count; }
