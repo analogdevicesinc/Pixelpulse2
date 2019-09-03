@@ -18,6 +18,13 @@ Rectangle {
     x: (timelinePane.spacing - height) / 2
   }
 
+  MouseArea {
+      anchors.fill: parent
+      onClicked: {
+          session.devices[currentIndex].blinkLeds()
+      }
+  }
+
   ColumnLayout {
     anchors.fill: parent
     anchors.leftMargin: timelinePane.spacing

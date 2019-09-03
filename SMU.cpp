@@ -433,6 +433,17 @@ m_samples_added(0)
     }
 }
 
+void DeviceItem::blinkLeds()
+{
+    m_device->set_led(1);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    m_device->set_led(2);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    m_device->set_led(1);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    m_device->set_led(2);
+}
+
 
 void DeviceItem::write(ChannelItem* channel)
 {
