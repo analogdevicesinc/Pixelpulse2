@@ -1,5 +1,6 @@
 #include <QStandardPaths>
 #include <QDir>
+#include <thread>
 
 #include "SMU.h"
 #include "Plot/PhosphorRender.h"
@@ -354,15 +355,18 @@ m_samples_added(0)
 
 void DeviceItem::blinkLeds()
 {
-    m_device->set_led(1);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    m_device->set_led(2);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    m_device->set_led(1);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    m_device->set_led(2);
+    std::thread led_thread ([=] {
+        this->m_device->set_led(1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        this->m_device->set_led(2);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        this->m_device->set_led(1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        this->m_device->set_led(2);
+        }
+    );
+    led_thread.detach();
 }
-
 
 void DeviceItem::write(ChannelItem* channel)
 {
