@@ -64,6 +64,13 @@ ToolbarStyle {
           checked: true
       }
 
+      MenuItem {
+          id: dataLoggingIte
+          text: "Data logging"
+          checkable: true
+          checked: false
+      }
+
       Menu {
         title: "Sample Time"
         MenuItem { exclusiveGroup: timeGroup; checkable: true; checked: controller.sampleTime == 0.01 ? true : false
