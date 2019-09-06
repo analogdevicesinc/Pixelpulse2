@@ -38,13 +38,17 @@ m_active(false),
 m_continuous(false),
 m_sample_rate(0),
 m_sample_count(0),
-m_queue_size(1000000)
+m_queue_size(1000000),
+m_data_logger(new DataLogger(-1)),
+m_logging(0)
 {
     connect(this, &SessionItem::finished, this, &SessionItem::onFinished, Qt::QueuedConnection);
     connect(this, &SessionItem::attached, this, &SessionItem::onAttached, Qt::QueuedConnection);
     connect(this, &SessionItem::detached, this, &SessionItem::onDetached, Qt::QueuedConnection);
 
     connect(this, &SessionItem::sampleCountChanged, this, &SessionItem::onSampleCountChanged);
+    connect(this, &SessionItem::loggingChanged, this, &SessionItem::onLoggingChanged);
+    connect(this, &SessionItem::sampleTimeChanged, this, &SessionItem::onSampleTimeChanged);
     connect(&timer, SIGNAL(timeout()), this, SLOT(getSamples()));
 
     std::thread usb_thread(usb_handle_thread_method, this);
@@ -55,8 +59,9 @@ m_queue_size(1000000)
 }
 
 SessionItem::~SessionItem() {
-    Q_ASSERT(m_devices.size() == 0);
-	delete sweepTimer;
+        Q_ASSERT(m_devices.size() == 0);
+        delete sweepTimer;
+        delete this->m_data_logger;
 }
 
 
@@ -92,6 +97,11 @@ qDebug() << "Session start(" << continuous << ")";
     m_session->flush();
     m_session->configure(m_sample_rate);
     m_continuous = continuous;
+
+    if (m_logging == 1) {
+        delete m_data_logger;
+        m_data_logger = new DataLogger(m_sample_time);
+    }
 
     for (auto dev: m_devices) {
         dev->setSamplesAdded(0);
@@ -159,6 +169,19 @@ void SessionItem::onDetached(Device* device){
 
 void SessionItem::onSampleCountChanged(){
     restart();
+}
+
+void SessionItem::onSampleTimeChanged() {
+    m_data_logger->setSampleTime(m_sample_time);
+}
+
+void SessionItem::onLoggingChanged()
+{
+    if (m_logging == 0) {
+        m_logging = 1;
+    } else {
+        m_logging = 0;
+    }
 }
 
 void SessionItem::handleDownloadedFirmware()
@@ -290,6 +313,12 @@ void SessionItem::getSamples()
                 else
                     sig->m_buffer->append_samples(rxbuf, i * 2 + j);
                 j++;
+            }
+
+            if (m_logging) {
+                for (auto it : rxbuf) {
+                    this->m_data_logger->addData(dev, {it[0], it[1], it[2], it[3]});
+                }
             }
             i++;
         }
@@ -622,4 +651,109 @@ void BufferChanger::changeBuffer(){
 
     device->write(channel);
     this->thread()->quit();
+}
+
+DataLogger::DataLogger(double sampleTime)
+{
+    if (sampleTime != -1) {
+        this->sampleTime = sampleTime;
+        auto current_time = std::chrono::system_clock::now();
+        std::time_t time = std::chrono::system_clock::to_time_t(current_time);
+        string timeString = "logging/PP_Log_";
+        timeString.append(modifyDateTime(std::ctime(&time)));
+        timeString.append(".csv");
+        fileStream.open(timeString.c_str(), std::ios::out);
+        startTime = std::chrono::system_clock::now();
+        lastLog = startTime;
+        fileStream << "Timestamp,Device serial,Min V ch A,Min A ch A,Min V ch B,Min A ch B,Max V ch A,Max A ch A,Max V ch B,Max A ch B,Avg V ch A,Avg A ch A,Avg V ch B,Avg A ch B\n";
+        fileStream.flush();
+    }
+}
+
+string DataLogger::modifyDateTime(string dateTime)
+{
+    std::map < string, string > months = {{"Jan", "01"}, {"Feb", "02"}, {"Mar", "03"}, {"Apr", "04"}, {"May", "05"}, {"Jun", "06"},
+                                          {"Jul", "07"}, {"Aug", "08"}, {"Sep", "09"}, {"Oct", "10"}, {"Nov", "11"}, {"Dec", "12"}};
+    string year = dateTime.substr(20, 4);
+    string month = months[dateTime.substr(4, 3)];
+    string day = dateTime.substr(8, 2);
+    if (std::stoi(day) < 10)
+        day[0] = '0';
+    string hour = dateTime.substr(11, 2);
+    string minute = dateTime.substr(14, 2);
+    string second = dateTime.substr(17, 2);
+    return year + month + day + hour + minute + second;
+}
+
+void DataLogger::updateMinimum(DeviceItem* deviceItem, std::array<double, 4> samples)
+{
+    minimum[deviceItem][0] = std::min(samples[0], minimum[deviceItem][0]);
+    minimum[deviceItem][1] = std::min(samples[1], minimum[deviceItem][1]);
+    minimum[deviceItem][2] = std::min(samples[2], minimum[deviceItem][2]);
+    minimum[deviceItem][3] = std::min(samples[3], minimum[deviceItem][3]);
+}
+
+void DataLogger::updateMaximum(DeviceItem * deviceItem, std::array<double, 4> samples)
+{
+    maximum[deviceItem][0] = std::max(samples[0], maximum[deviceItem][0]);
+    maximum[deviceItem][1] = std::max(samples[1], maximum[deviceItem][1]);
+    maximum[deviceItem][2] = std::max(samples[2], maximum[deviceItem][2]);
+    maximum[deviceItem][3] = std::max(samples[3], maximum[deviceItem][3]);
+}
+
+void DataLogger::updateSum(DeviceItem * deviceItem, std::array<double, 4> samples)
+{
+    sum[deviceItem][0] += samples[0];
+    sum[deviceItem][1] += samples[1];
+    sum[deviceItem][2] += samples[2];
+    sum[deviceItem][3] += samples[3];
+}
+
+std::array < double, 4 > DataLogger::computeAverage(DeviceItem * deviceItem)
+{
+    return {sum[deviceItem][0] / dataCounter[deviceItem], sum[deviceItem][1] / dataCounter[deviceItem],
+                sum[deviceItem][2] / dataCounter[deviceItem], sum[deviceItem][3] / dataCounter[deviceItem]};
+}
+
+void DataLogger::resetData(DeviceItem* deviceItem)
+{
+    dataCounter[deviceItem] = 0;
+    minimum[deviceItem] = {100, 100, 100, 100};
+    maximum[deviceItem] = {-100, -100, -100, -100};
+    sum[deviceItem] = {0, 0, 0, 0};
+}
+
+void DataLogger::addData(DeviceItem * deviceItem, std::array<double, 4> samples)
+{
+    dataCounter[deviceItem] ++;
+    updateMinimum(deviceItem, samples);
+    updateMaximum(deviceItem, samples);
+    updateSum(deviceItem, samples);
+    std::chrono::duration < double > timeDiff = std::chrono::system_clock::now() - lastLog;
+
+    if (timeDiff.count() >= sampleTime) {
+        lastLog = std::chrono::system_clock::now();
+        printData(deviceItem);
+        resetData(deviceItem);
+    }
+}
+
+void DataLogger::printData(DeviceItem* deviceItem)
+{
+    string deviceSerial = deviceItem->m_device->m_serial;
+    deviceSerial = deviceSerial.substr(deviceSerial.size() - 5, 5);
+    std::chrono::duration < double > timeDiff = std::chrono::system_clock::now() - startTime;
+
+    std::array < double, 4 > average = computeAverage(deviceItem);
+
+    fileStream <<  timeDiff.count() << "," << deviceSerial << ","
+                     << minimum[deviceItem][0] << "," << minimum[deviceItem][1] << "," << minimum[deviceItem][2] << "," << minimum[deviceItem][3] << ","
+                     << maximum[deviceItem][0] << "," << maximum[deviceItem][1] << "," << maximum[deviceItem][2] << "," << maximum[deviceItem][3] << ","
+                     << average[0] << "," << average[1] << "," << average[2] << "," << average[3] << '\n';
+    fileStream.flush();
+}
+
+void DataLogger::setSampleTime(double sampleTime)
+{
+    this->sampleTime = sampleTime;
 }
