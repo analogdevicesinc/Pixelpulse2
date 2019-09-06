@@ -64,13 +64,6 @@ ToolbarStyle {
           checked: true
       }
 
-      MenuItem {
-          id: dataLoggingIte
-          text: "Data logging"
-          checkable: true
-          checked: false
-      }
-
       Menu {
         title: "Sample Time"
         MenuItem { exclusiveGroup: timeGroup; checkable: true; checked: controller.sampleTime == 0.01 ? true : false
@@ -81,6 +74,15 @@ ToolbarStyle {
           onTriggered: controller.sampleTime = 1; text: '1 s' }
         MenuItem { exclusiveGroup: timeGroup; checkable: true; checked: controller.sampleTime == 10 ? true : false
           onTriggered: controller.sampleTime = 10; text: '10 s' }
+      }
+
+      MenuItem {
+          id: dataLoggingItem
+          text: "Data logging"
+          checkable: true
+          checked: false
+          enabled: controller.sampleTime == 0.1 || controller.sampleTime == 0.01 ? false : true
+          onTriggered: session.onLoggingChanged()
       }
 
       MenuItem {

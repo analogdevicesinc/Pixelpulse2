@@ -69,6 +69,7 @@ Item {
       if (!session.active) {
           session.sampleRate = sampleRate
           session.sampleCount = sampleCount
+          session.sampleTime = sampleTime
           session.start(continuous);
       } else {
           session.cancel();
@@ -78,6 +79,10 @@ Item {
         //console.log("onSampleCountChanged");
         //console.log(sampleCount);
         session.sampleCount = sampleCount;
+  }
+
+  onSampleTimeChanged: {
+      session.sampleTime = sampleTime;
   }
 
 //  Timer {
