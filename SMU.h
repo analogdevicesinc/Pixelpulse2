@@ -8,6 +8,7 @@
 #include <iostream>
 #include <QTime>
 #include <cmath>
+#include <fstream>
 
 class SessionItem;
 class DeviceItem;
@@ -18,6 +19,7 @@ class SrcItem;
 class TimerItem;
 class BufferChanger;
 class FloatBuffer;
+class DataLogger;
 
 /// SessionItem is the primary object in Pixelpulse2
 /// It abstracts over a libsmu session, exposing relevant parameters to QML.
@@ -27,6 +29,8 @@ class SessionItem : public QObject {
     Q_PROPERTY(bool active READ getActive NOTIFY activeChanged);
     Q_PROPERTY(unsigned sampleRate MEMBER m_sample_rate NOTIFY sampleRateChanged);
     Q_PROPERTY(unsigned sampleCount MEMBER m_sample_count NOTIFY sampleCountChanged);
+    Q_PROPERTY(double sampleTime MEMBER m_sample_time NOTIFY sampleTimeChanged);
+    Q_PROPERTY(unsigned logging MEMBER m_logging NOTIFY loggingChanged);
     Q_PROPERTY(int activeDevices READ getActiveDevices NOTIFY activeChanged);
     Q_PROPERTY(int availableDevices READ getAvailableDevices NOTIFY devicesChanged);
     Q_PROPERTY(int queueSize MEMBER m_queue_size CONSTANT)
@@ -61,6 +65,8 @@ signals:
     void activeChanged();
     void sampleRateChanged();
     void sampleCountChanged();
+    void sampleTimeChanged();
+    void loggingChanged();
     void finished(unsigned status);
     void attached(smu::Device* device);
     void detached(smu::Device* device);
@@ -72,6 +78,8 @@ protected slots:
     void onDetached(smu::Device* device);
     void handleDownloadedFirmware();
     void onSampleCountChanged();
+    void onSampleTimeChanged();
+    void onLoggingChanged();
     void getSamples();
     void beginNewSweep();
 
@@ -81,7 +89,10 @@ protected:
     bool m_continuous;
     unsigned m_sample_rate;
     unsigned m_sample_count;
+    double m_sample_time;
     unsigned m_queue_size;
+    DataLogger *m_data_logger;
+    unsigned m_logging;
     FileDownloader *m_firmware_fd;
     QList<DeviceItem *> m_devices;
     QTimer timer;
@@ -107,6 +118,7 @@ public:
     QString getHWVer() { return QString::fromStdString(m_device->m_hwver); }
     QString getDevSN() { return QString::fromStdString(m_device->m_serial); }
     int getDefaultRate() { return m_device->get_default_rate(); }
+    friend class DataLogger;
     Q_INVOKABLE int ctrl_transfer( int x, int y, int z) { return m_device->ctrl_transfer(0x40, x, y, z, 0, 0, 100);}
 
     size_t samplesAdded() { return m_samples_added; }
@@ -309,3 +321,31 @@ protected slots:
 };
 
 void registerTypes();
+
+class DataLogger {
+public:
+    DataLogger(double sampleTime);
+    void addData(DeviceItem*, std::array < double, 4 >);
+    double computeAverage(DeviceItem*, int channel);
+    double computeMinimum(DeviceItem*, int channel);
+    double computeMaximum(DeviceItem*, int channel);
+    void printData(DeviceItem* deviceItem);
+    void setSampleTime(double sampleTime);
+private:
+    double sampleTime;
+    std::ofstream fileStream;
+    std::map < DeviceItem*, std::vector < std::array < double, 4 > > > data;
+    std::map < DeviceItem*, int > dataCounter;
+    std::map < DeviceItem*, std::array < double, 4 > > minimum;
+    std::map < DeviceItem*, std::array < double, 4 > > maximum;
+    std::map < DeviceItem*, std::array < double, 4 > > sum;
+    void updateMinimum(DeviceItem*, std::array < double, 4 >);
+    void updateMaximum(DeviceItem*, std::array < double, 4 >);
+    void updateSum(DeviceItem*, std::array < double, 4 >);    
+    std::array < double, 4 > computeAverage(DeviceItem*);
+    void resetData(DeviceItem*);
+    std::string modifyDateTime(std::string);
+    std::chrono::time_point <std::chrono::system_clock> startTime;
+    std::chrono::time_point <std::chrono::system_clock> lastLog;
+};
+
