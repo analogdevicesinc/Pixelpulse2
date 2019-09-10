@@ -327,6 +327,7 @@ class DataLogger {
 public:
     DataLogger(float sampleTime);
     void addData(DeviceItem*, std::array < float, 4 >);
+    void addBulkData(DeviceItem*, std::vector < std::array < float, 4 > >);
     double computeAverage(DeviceItem*, int channel);
     double computeMinimum(DeviceItem*, int channel);
     double computeMaximum(DeviceItem*, int channel);
