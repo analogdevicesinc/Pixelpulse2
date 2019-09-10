@@ -349,5 +349,6 @@ private:
     std::string modifyDateTime(std::string);
     std::chrono::time_point <std::chrono::system_clock> startTime;
     std::chrono::time_point <std::chrono::system_clock> lastLog;
+    void createLoggingFolder();
 };
 
