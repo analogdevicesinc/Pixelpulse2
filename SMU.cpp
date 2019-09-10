@@ -658,6 +658,7 @@ DataLogger::DataLogger(float sampleTime)
         this->sampleTime = sampleTime;
         auto current_time = std::chrono::system_clock::now();
         std::time_t time = std::chrono::system_clock::to_time_t(current_time);
+        createLoggingFolder();
         string timeString = "logging/PP_Log_";
         timeString.append(modifyDateTime(std::ctime(&time)));
         timeString.append(".csv");
@@ -768,4 +769,11 @@ void DataLogger::printData(DeviceItem* deviceItem)
 void DataLogger::setSampleTime(float sampleTime)
 {
     this->sampleTime = sampleTime;
+}
+
+void DataLogger::createLoggingFolder()
+{
+    if (!QDir("logging").exists()) {
+        QDir().mkdir("logging");
+    }
 }
