@@ -316,9 +316,8 @@ void SessionItem::getSamples()
             }
 
             if (m_logging) {
-                for (auto it : rxbuf) {
-                    this->m_data_logger->addData(dev, {it[0], it[1], it[2], it[3]});
-                }
+                std::thread t1([=] {this->m_data_logger->addBulkData(dev, rxbuf);});
+                t1.detach();
             }
             i++;
         }
@@ -737,9 +736,18 @@ void DataLogger::addData(DeviceItem * deviceItem, std::array<float, 4> samples)
 
     if (timeDiff.count() >= sampleTime) {
         lastLog = std::chrono::system_clock::now();
-        printData(deviceItem);
-        resetData(deviceItem);
+        //Log data for all available devices.
+        for (auto pair : sum) {
+            printData(pair.first);
+            resetData(pair.first);
+        }
     }
+}
+
+void DataLogger::addBulkData(DeviceItem* deviceItem, std::vector<std::array<float, 4> > buff)
+{
+    for (auto sample : buff)
+        addData(deviceItem, sample);
 }
 
 void DataLogger::printData(DeviceItem* deviceItem)
