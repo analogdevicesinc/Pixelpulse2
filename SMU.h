@@ -324,25 +324,25 @@ void registerTypes();
 
 class DataLogger {
 public:
-    DataLogger(double sampleTime);
-    void addData(DeviceItem*, std::array < double, 4 >);
+    DataLogger(float sampleTime);
+    void addData(DeviceItem*, std::array < float, 4 >);
     double computeAverage(DeviceItem*, int channel);
     double computeMinimum(DeviceItem*, int channel);
     double computeMaximum(DeviceItem*, int channel);
     void printData(DeviceItem* deviceItem);
-    void setSampleTime(double sampleTime);
+    void setSampleTime(float sampleTime);
 private:
-    double sampleTime;
+    float sampleTime;
     std::ofstream fileStream;
-    std::map < DeviceItem*, std::vector < std::array < double, 4 > > > data;
+    std::map < DeviceItem*, std::vector < std::array < float, 4 > > > data;
     std::map < DeviceItem*, int > dataCounter;
-    std::map < DeviceItem*, std::array < double, 4 > > minimum;
-    std::map < DeviceItem*, std::array < double, 4 > > maximum;
-    std::map < DeviceItem*, std::array < double, 4 > > sum;
-    void updateMinimum(DeviceItem*, std::array < double, 4 >);
-    void updateMaximum(DeviceItem*, std::array < double, 4 >);
-    void updateSum(DeviceItem*, std::array < double, 4 >);    
-    std::array < double, 4 > computeAverage(DeviceItem*);
+    std::map < DeviceItem*, std::array < float, 4 > > minimum;
+    std::map < DeviceItem*, std::array < float, 4 > > maximum;
+    std::map < DeviceItem*, std::array < float, 4 > > sum;
+    void updateMinimum(DeviceItem*, std::array < float, 4 >);
+    void updateMaximum(DeviceItem*, std::array < float, 4 >);
+    void updateSum(DeviceItem*, std::array < float, 4 >);
+    std::array < float, 4 > computeAverage(DeviceItem*);
     void resetData(DeviceItem*);
     std::string modifyDateTime(std::string);
     std::chrono::time_point <std::chrono::system_clock> startTime;

@@ -653,7 +653,7 @@ void BufferChanger::changeBuffer(){
     this->thread()->quit();
 }
 
-DataLogger::DataLogger(double sampleTime)
+DataLogger::DataLogger(float sampleTime)
 {
     if (sampleTime != -1) {
         this->sampleTime = sampleTime;
@@ -685,7 +685,7 @@ string DataLogger::modifyDateTime(string dateTime)
     return year + month + day + hour + minute + second;
 }
 
-void DataLogger::updateMinimum(DeviceItem* deviceItem, std::array<double, 4> samples)
+void DataLogger::updateMinimum(DeviceItem* deviceItem, std::array<float, 4> samples)
 {
     minimum[deviceItem][0] = std::min(samples[0], minimum[deviceItem][0]);
     minimum[deviceItem][1] = std::min(samples[1], minimum[deviceItem][1]);
@@ -693,7 +693,7 @@ void DataLogger::updateMinimum(DeviceItem* deviceItem, std::array<double, 4> sam
     minimum[deviceItem][3] = std::min(samples[3], minimum[deviceItem][3]);
 }
 
-void DataLogger::updateMaximum(DeviceItem * deviceItem, std::array<double, 4> samples)
+void DataLogger::updateMaximum(DeviceItem * deviceItem, std::array<float, 4> samples)
 {
     maximum[deviceItem][0] = std::max(samples[0], maximum[deviceItem][0]);
     maximum[deviceItem][1] = std::max(samples[1], maximum[deviceItem][1]);
@@ -701,7 +701,7 @@ void DataLogger::updateMaximum(DeviceItem * deviceItem, std::array<double, 4> sa
     maximum[deviceItem][3] = std::max(samples[3], maximum[deviceItem][3]);
 }
 
-void DataLogger::updateSum(DeviceItem * deviceItem, std::array<double, 4> samples)
+void DataLogger::updateSum(DeviceItem * deviceItem, std::array<float, 4> samples)
 {
     sum[deviceItem][0] += samples[0];
     sum[deviceItem][1] += samples[1];
@@ -709,7 +709,7 @@ void DataLogger::updateSum(DeviceItem * deviceItem, std::array<double, 4> sample
     sum[deviceItem][3] += samples[3];
 }
 
-std::array < double, 4 > DataLogger::computeAverage(DeviceItem * deviceItem)
+std::array < float, 4 > DataLogger::computeAverage(DeviceItem * deviceItem)
 {
     return {sum[deviceItem][0] / dataCounter[deviceItem], sum[deviceItem][1] / dataCounter[deviceItem],
                 sum[deviceItem][2] / dataCounter[deviceItem], sum[deviceItem][3] / dataCounter[deviceItem]};
@@ -723,7 +723,7 @@ void DataLogger::resetData(DeviceItem* deviceItem)
     sum[deviceItem] = {0, 0, 0, 0};
 }
 
-void DataLogger::addData(DeviceItem * deviceItem, std::array<double, 4> samples)
+void DataLogger::addData(DeviceItem * deviceItem, std::array<float, 4> samples)
 {
     if (dataCounter[deviceItem] == 0) {
         resetData(deviceItem);
@@ -748,7 +748,7 @@ void DataLogger::printData(DeviceItem* deviceItem)
     deviceSerial = deviceSerial.substr(deviceSerial.size() - 5, 5);
     std::chrono::duration < double > timeDiff = std::chrono::system_clock::now() - startTime;
 
-    std::array < double, 4 > average = computeAverage(deviceItem);
+    std::array < float, 4 > average = computeAverage(deviceItem);
 
     fileStream <<  timeDiff.count() << "," << deviceSerial << ","
                      << minimum[deviceItem][0] << "," << minimum[deviceItem][1] << "," << minimum[deviceItem][2] << "," << minimum[deviceItem][3] << ","
@@ -757,7 +757,7 @@ void DataLogger::printData(DeviceItem* deviceItem)
     fileStream.flush();
 }
 
-void DataLogger::setSampleTime(double sampleTime)
+void DataLogger::setSampleTime(float sampleTime)
 {
     this->sampleTime = sampleTime;
 }
