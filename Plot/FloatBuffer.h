@@ -68,7 +68,7 @@ public:
     {
         int num_samples_to_add = samples.size();
         if(m_length > maxSize){
-            m_data.erase(m_data.begin(),m_data.begin()+num_samples_to_add);
+            m_data.erase(m_data.begin(),std::min(m_data.end(), m_data.begin()+num_samples_to_add));
             for(int i=0;i<num_samples_to_add;i++){
                 m_data.push_back(samples[i][signal_index]);
             }
