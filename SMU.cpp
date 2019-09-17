@@ -266,7 +266,7 @@ void SessionItem::getSamples()
         std::vector<std::array<float, 4>> rxbuf;
         int ret = 0;
         try {
-            ret = dev->m_device->read(rxbuf, 1000);
+            ret = dev->m_device->read(rxbuf, 10000);
         } catch (std::system_error& e) {
             qDebug() << "exception:" << e.what();
         } catch (std::runtime_error& e) {
