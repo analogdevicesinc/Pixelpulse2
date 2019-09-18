@@ -1,5 +1,6 @@
 #include <QStandardPaths>
 #include <QDir>
+#include <iomanip>
 
 #include "SMU.h"
 #include "Plot/PhosphorRender.h"
@@ -766,7 +767,7 @@ void DataLogger::printData(DeviceItem* deviceItem)
 
     std::array < float, 4 > average = computeAverage(deviceItem);
 
-    fileStream <<  timeDiff.count() << "," << deviceSerial << ","
+    fileStream << setprecision(3) << fixed << timeDiff.count() << "," << deviceSerial << ","
                      << minimum[deviceItem][0] << "," << minimum[deviceItem][1] << "," << minimum[deviceItem][2] << "," << minimum[deviceItem][3] << ","
                      << maximum[deviceItem][0] << "," << maximum[deviceItem][1] << "," << maximum[deviceItem][2] << "," << maximum[deviceItem][3] << ","
                      << average[0] << "," << average[1] << "," << average[2] << "," << average[3] << '\n';
