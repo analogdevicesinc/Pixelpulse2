@@ -180,6 +180,11 @@ void SessionItem::onLoggingChanged()
 {
     if (m_logging == 0) {
         m_logging = 1;
+
+        if (m_active) {
+            delete m_data_logger;
+            m_data_logger = new DataLogger(m_sample_time);
+        }
     } else {
         m_logging = 0;
     }
