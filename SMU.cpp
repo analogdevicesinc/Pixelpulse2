@@ -659,7 +659,9 @@ void BufferChanger::changeBuffer(){
 
 DataLogger::DataLogger(float sampleTime)
 {
-    if (sampleTime != -1) {
+    //if created by a valid session (1s or 10s sample time), create the log file
+    if (sampleTime != -1
+            && !(fabs(sampleTime - 0.01) < 0.00001 || fabs(sampleTime - 0.1) < 0.00001)) {
         this->sampleTime = sampleTime;
         auto current_time = std::chrono::system_clock::now();
         std::time_t time = std::chrono::system_clock::to_time_t(current_time);
