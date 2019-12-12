@@ -411,6 +411,12 @@ void SessionItem::usb_handle_thread_method(SessionItem *session_item)
             }
             else {
                 available_devices.erase(remove(available_devices.begin(), available_devices.end(), device), available_devices.end());
+                /*
+                 *      This set is needed for the workaround from libsmu (see libsmu->session.cpp->probe_device()), in order to avoid a crash.
+                 *      When the workaround is removed, this set can be removed as well (although it doesn't affect the functionality anyway).
+                 *      It prevents deleting the old libusb interface for this device, so that the workaround can work.
+                 */
+                device->set_usb(nullptr);
                 delete device;
             }
         }
