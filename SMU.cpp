@@ -168,8 +168,6 @@ void SessionItem::onDetached(Device* device){
                 delete dev;
          }
     }
-
-    devicesChanged();
 }
 
 void SessionItem::onSampleCountChanged(){
