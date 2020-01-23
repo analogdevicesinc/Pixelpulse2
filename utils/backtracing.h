@@ -19,12 +19,14 @@
 
 static char *glbProgramName;
 
+#ifdef _BUILD_STACKTRACE
 #ifdef _WIN32
 
 void windows_print_stacktrace(CONTEXT* context)
 {
     int addr2line_available = 0;
     char system_cmd[1024];
+    DWORD machine_type;
 
     printf("Checking for \"addr2line\" utility:\n");
     if (system("addr2line -v") == 0)
@@ -36,12 +38,25 @@ void windows_print_stacktrace(CONTEXT* context)
 
     memset(&frame, 0, sizeof(STACKFRAME));
 
-    frame.AddrPC.Offset         = context->Eip;
+//    frame.AddrPC.Offset         = context->Eip;
     frame.AddrPC.Mode           = AddrModeFlat;
-    frame.AddrStack.Offset      = context->Esp;
+//    frame.AddrStack.Offset      = context->Esp;
     frame.AddrStack.Mode        = AddrModeFlat;
-    frame.AddrFrame.Offset      = context->Ebp;
+//    frame.AddrFrame.Offset      = context->Ebp;
     frame.AddrFrame.Mode        = AddrModeFlat;
+
+
+#ifdef _M_X64
+	    frame.AddrPC.Offset = context->Rip;
+	    frame.AddrFrame.Offset = context->Rbp;
+	    frame.AddrStack.Offset = context->Rsp;
+	    machine_type = IMAGE_FILE_MACHINE_AMD64;
+#else
+	    frame.AddrPC.Offset = context->Eip;
+	    frame.AddrPC.Offset = context->Ebp;
+	    frame.AddrPC.Offset = context->Esp;
+	    machine_type = IMAGE_FILE_MACHINE_I386;
+#endif
 
     static char symbolBuffer[sizeof(IMAGEHLP_SYMBOL) + 255];
     memset(symbolBuffer, 0, sizeof(IMAGEHLP_SYMBOL) + 255);
@@ -59,7 +74,7 @@ void windows_print_stacktrace(CONTEXT* context)
     module.SizeOfStruct = sizeof(IMAGEHLP_MODULE);
 
     printf("\nBacktrace:\n");
-    while (StackWalk(IMAGE_FILE_MACHINE_I386,
+    while (StackWalk(machine_type,
            GetCurrentProcess(),
            GetCurrentThread(),
            &frame,
@@ -317,4 +332,6 @@ void init_signal_handlers(char *program_name)
 #endif
 }
 
+
+#endif
 #endif /* __BACKTRACING__H_ */

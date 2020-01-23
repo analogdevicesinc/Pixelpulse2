@@ -1,73 +1,111 @@
-os: Windows Server 2012 R2
-
-platform:
- - x86
+clone_depth: 1
 
 install:
-  - ps: (new-object System.Net.WebClient).Downloadfile("http://www.7-zip.org/a/7z1514-x64.exe", "c:\projects\7zip_installer.exe")
-  - c:\projects\7zip_installer.exe /S /D=c:\projects\7zip_tool
-  - set PATH=c:\projects\7zip_tool;%PATH%
-  - ps: |
-      If (!(Test-Path -Path "c:\msys.zip")) {
-        (new-object System.Net.WebClient).Downloadfile("https://sourceforge.net/projects/mingw-w64/files/External%20binary%20packages%20%28Win64%20hosted%29/MSYS%20%2832-bit%29/MSYS-20111123.zip", "c:\msys.zip")
-      }
-  - 7z x -y "c:\msys.zip" -o"C:\" > nul
-  - set MINGW_PATH=C:\Qt\Tools\mingw530_32
-  - set QTDIR=C:\Qt\5.10\mingw53_32
-  - set PATH=C:\Program Files (x86)\MSBuild\12.0\bin\;%MINGW_PATH%\bin;C:\msys\bin\;%QTDIR%\bin;%PATH%
-  - ps: (new-object System.Net.WebClient).Downloadfile("http://swdownloads.analog.com/cse/build/libusb-1.0-hp.7z", "c:\libusb.7z")
-  - 7z x -y "c:\libusb.7z" -o"C:\libusb" > nul
 
-  - git clone https://github.com/analogdevicesinc/libsmu.git C:\libsmu
-  - if not exist "c:\projects\pixelpulse2\distrib\driver" mkdir c:\projects\pixelpulse2\distrib\driver
-  - copy C:\libsmu\dist\m1k-winusb.inf c:\projects\pixelpulse2\distrib\driver
-  - copy C:\libsmu\dist\\m1k-winusb.cat c:\projects\pixelpulse2\distrib\driver
-  - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/pp2trayer.exe?branch=master" -FileName c:\projects\pixelpulse2\distrib\pp2trayer.exe'
+    # Remove dependencies that prevent us from upgrading to GCC 6.2
+    - C:\msys64\usr\bin\bash -lc "pacman -Rs --noconfirm mingw-w64-i686-gcc-ada mingw-w64-i686-gcc-fortran mingw-w64-i686-gcc-libgfortran mingw-w64-i686-gcc-objc"
+    - C:\msys64\usr\bin\bash -lc "pacman -Rs --noconfirm mingw-w64-x86_64-gcc-ada mingw-w64-x86_64-gcc-fortran mingw-w64-x86_64-gcc-libgfortran mingw-w64-x86_64-gcc-objc"
 
-  # Install Inno Setup
-  - choco install InnoSetup
+    - C:\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm "
+    - C:\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm "
+
+    # Remove existing file that causes GCC install to fail
+    - C:\msys64\usr\bin\bash -lc "rm /mingw32/etc/gdbinit /mingw64/etc/gdbinit"
+
+    # Update to GCC 6.2 and install dependencies
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy mingw-w64-i686-gcc mingw-w64-i686-boost mingw-w64-i686-python3 mingw-w64-i686-libzip"
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy mingw-w64-x86_64-gcc mingw-w64-x86_64-boost mingw-w64-x86_64-python3 mingw-w64-x86_64-libzip"
+
+    # Hack: Qt5Qml CMake script throws errors when loading its plugins. So let's just drop those plugins.
+    - C:\msys64\usr\bin\bash -lc "rm -f /mingw32/lib/cmake/Qt5Qml/*Factory.cmake"
+    - C:\msys64\usr\bin\bash -lc "rm -f /mingw64/lib/cmake/Qt5Qml/*Factory.cmake"
+
+    # Install Inno Setup
+    - choco install InnoSetup
+
+    # Download a 32-bit version of windres.exe
+    - appveyor DownloadFile http://swdownloads.analog.com/cse/build/windres.exe.gz -FileName C:\windres.exe.gz
+    - C:\msys64\usr\bin\bash -lc "cd /c ; gunzip windres.exe.gz"
+
+    - git clone https://github.com/analogdevicesinc/libsmu.git C:\projects\libsmu
+    - if not exist "c:\projects\pixelpulse2\distrib\driver" mkdir c:\projects\pixelpulse2\distrib\driver
+    - copy C:\projects\libsmu\dist\m1k-winusb.inf c:\projects\pixelpulse2\distrib\driver
+    - copy C:\projects\libsmu\dist\\m1k-winusb.cat c:\projects\pixelpulse2\distrib\driver
+    - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/distrib.zip?branch=master" -FileName c:\distrib.zip'
+    - 7z x -y "c:\distrib.zip" -o"c:\" > nul
 
 build_script:
+    # build 32-bit MinGW
     #clone and build libsmu with mingw
-  - cd C:\libsmu
-  - mkdir build
-  - cd build
-  - cmake -G "MSYS Makefiles" \
-    -DLIBUSB_LIBRARIES="C:\\libusb\\MinGW32\\static\\libusb-1.0.a" \
-    -DLIBUSB_INCLUDE_DIRS="C:\\libusb\\include\\libusb-1.0" \
-    -DBoost_USE_STATIC_LIBS=ON \
-    -DBUILD_STATIC_LIB=OFF \
-    -DBUILD_EXAMPLES=OFF \
-    -DBUILD_TESTS=OFF \
-    -DBOOST_ROOT="C:\\Libraries\\boost_1_62_0" \
-    -DBUILD_PYTHON=OFF \
-    ..
-  - mingw32-make -j8
-  
-  - cd c:\projects\pixelpulse2
-  - qmake pixelpulse2.pro "LIBSMU_LIBRARY = C:\libsmu\build\src\libsmu.dll.a" "LIBSMU_INCLUDE_PATH = C:\libsmu\include" 
-  - mingw32-make -j8
+    - set PATH=C:\msys64\mingw32\bin;%PATH%
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/mingw/i686/mingw-w64-i686-libusb-1.0.21-1-any.pkg.tar.xz"
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy mingw-w64-i686-qt5"
+    - mkdir c:\projects\libsmu\mingw-32
+    - C:\msys64\usr\bin\bash -lc "cd C:/projects/libsmu/mingw-32 && cmake -G 'Unix Makefiles' -DCMAKE_INSTALL_PREFIX=/mingw32 -DCMAKE_C_COMPILER:FILEPATH=/mingw32/bin/i686-w64-mingw32-gcc.exe -DCMAKE_CXX_COMPILER:FILEPATH=/mingw32/bin/i686-w64-mingw32-g++.exe -DLIBUSB_LIBRARIES=C:/msys64/mingw32/lib/libusb-1.0.dll.a -DLIBUSB_INCLUDE_DIRS=C:/msys64/mingw32/include/libusb-1.0 -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -DBOOST_ROOT=C:/Libraries/boost_1_62_0 -DBUILD_PYTHON=OFF .. && cmake --build . && cmake --build . --target install"
 
-  # Bundle all dependencies
-  - ps: |
-      windeployqt --qmldir qml release\pixelpulse2.exe --dir distrib
-      cp C:\OpenSSL-Win32\libeay32.dll distrib
-      cp C:\OpenSSL-Win32\libssl32.dll distrib
-      cp C:\OpenSSL-Win32\ssleay32.dll distrib
-      cp C:\OpenSSL-Win32\bin\msvcr120.dll distrib
-      cp C:\libsmu\build\src\libsmu.dll distrib
-      cp $Env:MINGW_PATH\bin\libgomp-1.dll distrib
-      7z a -y distrib.zip distrib
+    - set RC_COMPILER="-DCMAKE_RC_COMPILER=/c/windres.exe"
+    - C:\msys64\usr\bin\bash -lc "/mingw32/bin/python3.exe --version"
+    - C:\msys64\usr\bin\bash -lc "/c/msys64/mingw32/bin/python3.exe --version"
+    - C:\msys64\usr\bin\bash -lc "mkdir /c/projects/build_32 ; cd /c/projects/build_32 ; cmake -G 'Unix Makefiles' %RC_COMPILER% -DCMAKE_BUILD_TYPE=RelWithDebInfo -DGIT_EXECUTABLE=/c/Program\\ Files/Git/cmd/git.exe -DPKG_CONFIG_EXECUTABLE=/mingw32/bin/pkg-config.exe -DCMAKE_C_COMPILER=i686-w64-mingw32-gcc.exe -DCMAKE_CXX_COMPILER=i686-w64-mingw32-g++.exe -DPYTHON_EXECUTABLE=/mingw32/bin/python3.exe -DLIBUSB_LIBRARIES=C:/msys64/mingw32/lib/libusb-1.0.dll.a -DLIBUSB_INCLUDE_DIRS=C:/msys64/mingw32/include/libusb-1.0 -DLIBSMU_LIBRARIES=C:/msys64/mingw32/lib/libsmu.dll.a -DLIBSMU_INCLUDE_DIRS=C:/msys64/mingw32/include /c/projects/pixelpulse2"
+    - C:\msys64\usr\bin\bash -lc "cd /c/projects/build_32/ && sed -i 's/^\(FILEVERSION .*\)$/\1,0,"{build}"/' properties.rc
+    - C:\msys64\usr\bin\bash -lc "cd /c/projects/build_32 && make -j3"
+
+
+   # Copy the dependencies
+    - mkdir c:\pixelpulse_32
+    - mkdir c:\pixelpulse_32\pp2trayer
+    - copy c:\projects\build_32\pixelpulse2.exe c:\pixelpulse_32\
+    - if not exist "c:\pixelpulse_32\driver" mkdir c:\pixelpulse_32\driver
+    - copy C:\projects\libsmu\dist\m1k-winusb.inf c:\pixelpulse_32\driver
+    - copy C:\projects\libsmu\dist\\m1k-winusb.cat c:\pixelpulse_32\driver
+    - C:\msys64\usr\bin\bash -lc "cp -r /c/distrib/* /c/pixelpulse_32/pp2trayer"
+    - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/pp2trayer.exe?branch=master" -FileName c:\pixelpulse_32\pp2trayer\pp2trayer.exe'
+    - c:\msys64\mingw32\bin\windeployqt.exe --dir c:\pixelpulse_32 --release --no-system-d3d-compiler --no-compiler-runtime --qmldir c:\projects\pixelpulse2\qml c:\projects\build_32\pixelpulse2.exe
+    - C:\msys64\usr\bin\bash -lc "cd /mingw32/bin ; cp -r libsmu*.dll libwinpthread-*.dll libgcc_*.dll libstdc++-*.dll libboost_{system,filesystem,atomic,program_options,regex,thread}-*.dll libglib-*.dll libintl-*.dll libusb-*.dll libzstd*.dll libicu*.dll libgomp*.dll libdouble-conversion*.dll libpcre2*.dll /c/pixelpulse_32/"
+
+    - 7z a "c:\pixelpulse-32bit.zip" c:\pixelpulse_32
+    - appveyor PushArtifact c:\pixelpulse-32bit.zip
+
+    # build 64-bit MinGW
+    #clone and build libsmu with mingw
+    - set PATH=C:\msys64\mingw64\bin;%PATH%
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-libusb-1.0.21-1-any.pkg.tar.xz"
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy mingw-w64-x86_64-qt5"
+
+    - mkdir c:\projects\libsmu\mingw-64
+    - C:\msys64\usr\bin\bash -lc "cd C:/projects/libsmu/mingw-64 && cmake -G 'Unix Makefiles' -DCMAKE_INSTALL_PREFIX=/mingw64 -DCMAKE_C_COMPILER:FILEPATH=/mingw64/bin/x86_64-w64-mingw32-gcc.exe -DCMAKE_CXX_COMPILER:FILEPATH=/mingw64/bin/x86_64-w64-mingw32-g++.exe -DLIBUSB_LIBRARIES=C:/msys64/mingw64/lib/libusb-1.0.dll.a -DLIBUSB_INCLUDE_DIRS=C:/msys64/mingw64/include/libusb-1.0 -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -DBOOST_ROOT=C:/Libraries/boost_1_62_0 -DBUILD_PYTHON=OFF .. && cmake --build . && cmake --build . --target install"
+
+    - C:\msys64\usr\bin\bash -lc "/mingw64/bin/python3.exe --version"
+    - C:\msys64\usr\bin\bash -lc "/c/msys64/mingw64/bin/python3.exe --version"
+    - C:\msys64\usr\bin\bash -lc "mkdir /c/projects/build_64 ; cd /c/projects/build_64 ; cmake -G 'Unix Makefiles' -DCMAKE_BUILD_TYPE=RelWithDebInfo -DGIT_EXECUTABLE=/c/Program\\ Files/Git/cmd/git.exe -DPKG_CONFIG_EXECUTABLE=/mingw64/bin/pkg-config.exe -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc.exe -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++.exe -DPYTHON_EXECUTABLE=/mingw64/bin/python3.exe -DLIBUSB_LIBRARIES=C:/msys64/mingw64/lib/libusb-1.0.dll.a -DLIBUSB_INCLUDE_DIRS=C:/msys64/mingw64/include/libusb-1.0 -DLIBSMU_LIBRARIES=C:/msys64/mingw64/lib/libsmu.dll.a -DLIBSMU_INCLUDE_DIRS=C:/msys64/mingw64/include /c/projects/pixelpulse2"
+    - C:\msys64\usr\bin\bash -lc "cd /c/projects/build_64/ && sed -i 's/^\(FILEVERSION .*\)$/\1,0,"{build}"/' properties.rc
+    - C:\msys64\usr\bin\bash -lc "cd /c/projects/build_64 && make -j3"
+
+
+   # Copy the dependencies
+    - mkdir c:\pixelpulse_64
+    - mkdir c:\pixelpulse_64\pp2trayer
+    - copy c:\projects\build_64\pixelpulse2.exe c:\pixelpulse_64\
+    - if not exist "c:\pixelpulse_64\driver" mkdir c:\pixelpulse_64\driver
+    - copy C:\projects\libsmu\dist\m1k-winusb.inf c:\pixelpulse_64\driver
+    - copy C:\projects\libsmu\dist\\m1k-winusb.cat c:\pixelpulse_64\driver
+    - C:\msys64\usr\bin\bash -lc "cp -r /c/distrib/* /c/pixelpulse_64/pp2trayer"
+    - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/pp2trayer.exe?branch=master" -FileName c:\pixelpulse_64\pp2trayer\pp2trayer.exe'
+    - c:\msys64\mingw64\bin\windeployqt.exe --dir c:\pixelpulse_64 --release --no-system-d3d-compiler --no-compiler-runtime --qmldir c:\projects\pixelpulse2\qml c:\projects\build_64\pixelpulse2.exe
+
+    - C:\msys64\usr\bin\bash -lc "cd /mingw64/bin ; cp -r libsmu*.dll libwinpthread-*.dll libgcc_*.dll libstdc++-*.dll libboost_{system,filesystem,atomic,program_options,regex,thread}-*.dll libglib-*.dll libintl-*.dll libusb-*.dll libzstd*.dll libicu*.dll libgomp*.dll libdouble-conversion*.dll libpcre2*.dll /c/pixelpulse_64/"
+
+    - 7z a "c:\pixelpulse-64bit.zip" c:\pixelpulse_64
+    - appveyor PushArtifact c:\pixelpulse-64bit.zip
+
+  # Install Inno Setup
+    - choco install InnoSetup
+
 
   # Build the installer
-  - set PATH=%PATH%;"C:\Program Files (x86)\Inno Setup 5"
-  - ISCC /Q pixelpulse2.iss
+    - cd "c:\projects\build_64\"
+    - set PATH=%PATH%;"C:\Program Files (x86)\Inno Setup 5"
+    - ISCC /Q pixelpulse2.iss
 
-after_build:
-- ps: |
-    appveyor PushArtifact release\pixelpulse2.exe
-    appveyor PushArtifact distrib.zip
-    appveyor PushArtifact C:\Pixelpulse2_win_setup.exe
+    - ps: appveyor PushArtifact c:\Pixelpulse2_win_setup.exe
 
-cache:
- - c:\msys.zip -> appveyor.yml
