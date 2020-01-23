@@ -1,0 +1,7 @@
+#ifndef CONFIG_H_CMAKEIN
+#define CONFIG_H_CMAKEIN
+
+#define BUILD_DATE	       "@BUILD_DATE@"
+#define GIT_VERSION      "@PP_VERSION_STR@"
+
+#endif // CONFIG_H_CMAKEIN
