@@ -1,0 +1,26 @@
+#include <windows.h>
+AppIcon ICON DISCARDABLE "@CMAKE_SOURCE_DIR@/icons/pp2.ico"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_DEFAULT
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION @PP_FILEVERSION@
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904E4"
+        BEGIN
+	    VALUE "FileVersion",        "@PP_PRODUCTVERSION_STR@"
+            VALUE "CompanyName",        "Analog Devices"
+            VALUE "InternalName",       "pixelpulse2"
+            VALUE "OriginalFilename",   "pixelpulse2.exe"
+            VALUE "ProductName",        "Pixelpulse2"
+	    VALUE "ProductVersion",     "@PP_PRODUCTVERSION_STR@-@GIT_VERSION@"
+        END
+    END
+
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END

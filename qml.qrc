@@ -35,5 +35,6 @@
         <file>qml/ColorControlDialog.qml</file>
         <file>qml/StyleSlider.qml</file>
         <file>qml/AcquisitionSettingsDialog.qml</file>
+        <file>icons/pp2.ico</file>
     </qresource>
 </RCC>
