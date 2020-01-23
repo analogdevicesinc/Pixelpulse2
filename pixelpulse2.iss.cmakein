@@ -1,8 +1,8 @@
 #define AppName "Pixelpulse2"
-#define AppVersion "1.0.4"
+#define AppVersion "@GIT_VERSION@"
 #define AppPublisher "Analog Devices, Inc."
 #define AppURL "http://www.analog.com"
-#define AppExeName "Pixelpulse2.exe"
+#define AppExeName "pixelpulse2.exe"
 
 [Setup]
 AppId={{258C031E-98C7-4609-9122-65A4D36274AF}
@@ -19,6 +19,7 @@ OutputBaseFilename=Pixelpulse2_win_setup
 UninstallDisplayIcon={app}\{#AppExeName}
 Compression=lzma
 SolidCompression=yes
+ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -53,7 +54,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: drivers; Description: Install WinUSB drivers for the M1K;
 
 [Files]
-Source: "c:\projects\pixelpulse2\release\pixelpulse2.exe"; DestDir: "{app}"
+Source: "c:\pixelpulse_32\*"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "c:\pixelpulse_64\*"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "c:\projects\pixelpulse2\distrib\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
 Source: "C:\WinDDK\7600.16385.1\redist\DIFx\dpinst\EngMui\x86\dpinst.exe"; DestDir: "{app}\drivers"; Tasks: drivers; Check: not IsWin64
 Source: "C:\WinDDK\7600.16385.1\redist\DIFx\dpinst\EngMui\amd64\dpinst.exe"; DestDir: "{app}\drivers"; Tasks: drivers; Check: IsWin64
@@ -67,15 +69,15 @@ Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: desk
 
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent unchecked
-Filename: {app}\pp2trayer.exe; Description: "Launch Pixelpulse2 Trayer"; Flags: nowait postinstall skipifsilent
+Filename: {app}\pp2trayer\pp2trayer.exe; Description: "Launch Pixelpulse2 Trayer"; Flags: nowait postinstall skipifsilent
 Filename: "{app}\drivers\dpinst.exe"; Parameters: "/path ""{app}\drivers"""; Flags: waituntilterminated; Tasks: drivers
 
 [UninstallRun]
-Filename: "{cmd}"; Parameters: "/C""taskkill /im pp2trayer.exe /f /t"; Flags: runhidden
+Filename: "{cmd}"; Parameters: "/C""taskkill /im pp2trayer\pp2trayer.exe /f /t"; Flags: runhidden
 
 [Registry]
 ; Make Pixelpulse2 Trayer run every time Windows boots
-Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "Pixelpulse2Trayer"; ValueData: """{app}\pp2trayer.exe"""; Flags: uninsdeletevalue
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "Pixelpulse2Trayer"; ValueData: """{app}\pp2trayer\pp2trayer.exe"""; Flags: uninsdeletevalue
 
 ; Functions GetNumber(), CompareInner(), CompareVersion() and InitializeSetup() can be used to detect
 ; differences between the version being installed and the version that might be already installed.
