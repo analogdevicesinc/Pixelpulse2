@@ -740,6 +740,10 @@ void DataLogger::resetData(DeviceItem* deviceItem)
 
 void DataLogger::addData(DeviceItem * deviceItem, std::array<double, 4> samples)
 {
+    if (dataCounter[deviceItem] == 0) {
+        resetData(deviceItem);
+    }
+
     dataCounter[deviceItem] ++;
     updateMinimum(deviceItem, samples);
     updateMaximum(deviceItem, samples);
