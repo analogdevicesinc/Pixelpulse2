@@ -143,11 +143,13 @@ void SessionItem::onAttached(Device *device)
 /// triggered by the responsible USB checker thread
 void SessionItem::onDetached(Device* device){
     if (m_active) {
-            this->cancel();
+        this->cancel();
     }
     for (auto dev: m_devices) {
          if (!dev->m_device->m_serial.compare(device->m_serial)) {
                 m_devices.removeOne(dev);
+                m_session->remove(dev->m_device, true);
+                devicesChanged();
                 delete dev;
          }
     }
