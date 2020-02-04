@@ -731,6 +731,7 @@ void DataLogger::resetData(DeviceItem* deviceItem)
 
 void DataLogger::addData(DeviceItem * deviceItem, std::array<float, 4> samples)
 {
+    m_logMutex.lock();
     if (dataCounter[deviceItem] == 0) {
         resetData(deviceItem);
     }
@@ -749,6 +750,7 @@ void DataLogger::addData(DeviceItem * deviceItem, std::array<float, 4> samples)
             resetData(pair.first);
         }
     }
+    m_logMutex.unlock();
 }
 
 void DataLogger::addBulkData(DeviceItem* deviceItem, std::vector<std::array<float, 4> > buff)
