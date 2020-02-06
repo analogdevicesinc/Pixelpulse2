@@ -383,7 +383,8 @@ void SessionItem::usb_handle_thread_method(SessionItem *session_item)
             bool found = 0;
 
             for (auto device : available_devices) {
-                if (!device->m_serial.compare(other_device->m_serial)) {
+                if ((device->m_usb_addr.first == other_device->m_usb_addr.first) &&
+			     (device->m_usb_addr.second == other_device->m_usb_addr.second) ) {
                     found = 1;
                     break;
                 }
@@ -400,7 +401,8 @@ void SessionItem::usb_handle_thread_method(SessionItem *session_item)
             bool found = 0;
 
             for (auto other_device : last_devices) {
-                if (!device->m_serial.compare(other_device->m_serial)) {
+                if ((device->m_usb_addr.first == other_device->m_usb_addr.first) &&
+			     (device->m_usb_addr.second == other_device->m_usb_addr.second) ) {
                     found = 1;
                     break;
                 }
@@ -411,13 +413,6 @@ void SessionItem::usb_handle_thread_method(SessionItem *session_item)
             }
             else {
                 available_devices.erase(remove(available_devices.begin(), available_devices.end(), device), available_devices.end());
-                /*
-                 *      This set is needed for the workaround from libsmu (see libsmu->session.cpp->probe_device()), in order to avoid a crash.
-                 *      When the workaround is removed, this set can be removed as well (although it doesn't affect the functionality anyway).
-                 *      It prevents deleting the old libusb interface for this device, so that the workaround can work.
-                 */
-                device->set_usb(nullptr);
-                delete device;
             }
         }
 
