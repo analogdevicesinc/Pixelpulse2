@@ -1,10 +1,7 @@
 #include <QStandardPaths>
 #include <QDir>
-<<<<<<< HEAD
 #include <thread>
-=======
 #include <iomanip>
->>>>>>> Log data with only 3 decimals.
 
 #include "SMU.h"
 #include "Plot/PhosphorRender.h"
