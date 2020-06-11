@@ -112,7 +112,7 @@ endif()
 FILE(GLOB PP_RESOURCES *.qrc)
 qt5_add_resources(pixelpulse_RESOURCES ${PP_RESOURCES})
 
-FILE(GLOB QML_SRC "qml/*.qml")
+FILE(GLOB QML_SRC "qml/*")
 
 if (WIN32)
 	set(RESOURCES ${CMAKE_CURRENT_BINARY_DIR}/properties.rc)
