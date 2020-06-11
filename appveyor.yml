@@ -39,7 +39,8 @@ build_script:
     #clone and build libsmu with mingw
     - set PATH=C:\msys64\mingw32\bin;%PATH%
     - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/mingw/i686/mingw-w64-i686-libusb-1.0.21-1-any.pkg.tar.xz"
-    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy mingw-w64-i686-qt5"
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/mingw/i686/mingw-w64-i686-qt5-5.14.2-2-any.pkg.tar.xz"
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/mingw/i686/mingw-w64-i686-icu-65.1-1-any.pkg.tar.xz"
     - mkdir c:\projects\libsmu\mingw-32
     - C:\msys64\usr\bin\bash -lc "cd C:/projects/libsmu/mingw-32 && cmake -G 'Unix Makefiles' -DCMAKE_INSTALL_PREFIX=/mingw32 -DCMAKE_C_COMPILER:FILEPATH=/mingw32/bin/i686-w64-mingw32-gcc.exe -DCMAKE_CXX_COMPILER:FILEPATH=/mingw32/bin/i686-w64-mingw32-g++.exe -DLIBUSB_LIBRARIES=C:/msys64/mingw32/lib/libusb-1.0.dll.a -DLIBUSB_INCLUDE_DIRS=C:/msys64/mingw32/include/libusb-1.0 -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -DBOOST_ROOT=C:/Libraries/boost_1_62_0 -DBUILD_PYTHON=OFF .. && cmake --build . && cmake --build . --target install"
 
@@ -60,8 +61,8 @@ build_script:
     - copy C:\projects\libsmu\dist\\m1k-winusb.cat c:\pixelpulse_32\driver
     - C:\msys64\usr\bin\bash -lc "cp -r /c/distrib/* /c/pixelpulse_32/pp2trayer"
     - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/pp2trayer.exe?branch=master" -FileName c:\pixelpulse_32\pp2trayer\pp2trayer.exe'
-    - c:\msys64\mingw32\bin\windeployqt.exe --dir c:\pixelpulse_32 --release --no-system-d3d-compiler --no-compiler-runtime --qmldir c:\projects\pixelpulse2\qml c:\projects\build_32\pixelpulse2.exe
-    - C:\msys64\usr\bin\bash -lc "cd /mingw32/bin ; cp -r libsmu*.dll libwinpthread-*.dll libgcc_*.dll libstdc++-*.dll libboost_{system,filesystem,atomic,program_options,regex,thread}-*.dll libglib-*.dll libintl-*.dll libusb-*.dll libzstd*.dll libicu*.dll libgomp*.dll libdouble-conversion*.dll libpcre2*.dll /c/pixelpulse_32/"
+    - c:\msys64\mingw32\bin\windeployqt.exe --dir c:\pixelpulse_32 --no-system-d3d-compiler --qmlimport c:\projects\pixelpulse2\qml c:\projects\build_32\pixelpulse2.exe
+    - C:\msys64\usr\bin\bash -lc "cd /mingw32/bin ; cp -r libsmu*.dll libwinpthread-*.dll libgcc_*.dll libstdc++-*.dll libboost_{system,filesystem,atomic,program_options,regex,thread}-*.dll libglib-*.dll libintl-*.dll libusb-*.dll libzstd*.dll libicu*.dll libgomp*.dll libdouble-conversion*.dll libpcre2*.dll Qt5Core.dll Qt5Gui.dll Qt5Svg.dll Qt5Widgets.dll /c/pixelpulse_32/"
 
     - 7z a "c:\pixelpulse-32bit.zip" c:\pixelpulse_32
     - appveyor PushArtifact c:\pixelpulse-32bit.zip
@@ -70,7 +71,8 @@ build_script:
     #clone and build libsmu with mingw
     - set PATH=C:\msys64\mingw64\bin;%PATH%
     - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-libusb-1.0.21-1-any.pkg.tar.xz"
-    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy mingw-w64-x86_64-qt5"
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-qt5-5.14.2-2-any.pkg.tar.xz"
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U http://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-icu-65.1-1-any.pkg.tar.xz"
 
     - mkdir c:\projects\libsmu\mingw-64
     - C:\msys64\usr\bin\bash -lc "cd C:/projects/libsmu/mingw-64 && cmake -G 'Unix Makefiles' -DCMAKE_INSTALL_PREFIX=/mingw64 -DCMAKE_C_COMPILER:FILEPATH=/mingw64/bin/x86_64-w64-mingw32-gcc.exe -DCMAKE_CXX_COMPILER:FILEPATH=/mingw64/bin/x86_64-w64-mingw32-g++.exe -DLIBUSB_LIBRARIES=C:/msys64/mingw64/lib/libusb-1.0.dll.a -DLIBUSB_INCLUDE_DIRS=C:/msys64/mingw64/include/libusb-1.0 -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -DBOOST_ROOT=C:/Libraries/boost_1_62_0 -DBUILD_PYTHON=OFF .. && cmake --build . && cmake --build . --target install"
@@ -91,9 +93,11 @@ build_script:
     - copy C:\projects\libsmu\dist\\m1k-winusb.cat c:\pixelpulse_64\driver
     - C:\msys64\usr\bin\bash -lc "cp -r /c/distrib/* /c/pixelpulse_64/pp2trayer"
     - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/pp2trayer.exe?branch=master" -FileName c:\pixelpulse_64\pp2trayer\pp2trayer.exe'
-    - c:\msys64\mingw64\bin\windeployqt.exe --dir c:\pixelpulse_64 --release --no-system-d3d-compiler --no-compiler-runtime --qmldir c:\projects\pixelpulse2\qml c:\projects\build_64\pixelpulse2.exe
+    - c:\msys64\mingw64\bin\windeployqt.exe --dir c:\pixelpulse_64 --no-system-d3d-compiler --qmlimport c:\projects\pixelpulse2\qml c:\projects\build_64\pixelpulse2.exe
 
     - C:\msys64\usr\bin\bash -lc "cd /mingw64/bin ; cp -r libsmu*.dll libwinpthread-*.dll libgcc_*.dll libstdc++-*.dll libboost_{system,filesystem,atomic,program_options,regex,thread}-*.dll libglib-*.dll libintl-*.dll libusb-*.dll libzstd*.dll libicu*.dll libgomp*.dll libdouble-conversion*.dll libpcre2*.dll /c/pixelpulse_64/"
+    # Pixelpulse only work with the 32 bit Qt dlls, therefore we are copying them in Pixelpulse's folder.
+    - C:\msys64\usr\bin\bash -lc "cd /mingw32/bin ; cp -r Qt5Core.dll Qt5Gui.dll Qt5Svg.dll Qt5Widgets.dll /c/pixelpulse_64/"
 
     - 7z a "c:\pixelpulse-64bit.zip" c:\pixelpulse_64
     - appveyor PushArtifact c:\pixelpulse-64bit.zip
@@ -108,4 +112,3 @@ build_script:
     - ISCC /Q pixelpulse2.iss
 
     - ps: appveyor PushArtifact c:\Pixelpulse2_win_setup.exe
-
