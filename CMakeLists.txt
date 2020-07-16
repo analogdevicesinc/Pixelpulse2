@@ -138,46 +138,6 @@ include_directories(
 	${CMAKE_SOURCE_DIR}
 )
 
-add_executable(${PROJECT_NAME} WIN32 ${OSX_BUNDLE}
-		${SRC_LIST}
-		${pixelpulse_RESOURCES}
-		${RESOURCES}
-#		${QML_SRC}
-)
-
-# Compiler options
-target_compile_options(${PROJECT_NAME} PUBLIC -Wall)
-
-#List of warnings to be treated as errors
-target_compile_options(${PROJECT_NAME} PUBLIC
-	-Werror=return-type
-	-Werror=uninitialized
-	-Werror=init-self
-	-Werror=switch
-)
-
-if (WIN32 OR ENABLE_APPLICATION_BUNDLE)
-	message("================ Set target properties ")
-	set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME pixelpulse2)
-endif()
-
-target_link_libraries(${PROJECT_NAME} LINK_PRIVATE
-		${LIBUSB_LIBRARIES}
-		${LIBSMU_LIBRARIES}
-		${Qt5Widgets_LIBRARIES}
-		${Qt5Quick_LIBRARIES}
-		${Qt5Qml_LIBRARIES}
-		${Qt5Network_LIBRARIES}
-)
-
-
-if (NOT WIN32)
-	find_library(PTHREAD_LIBRARIES pthread)
-	if (PTHREAD_LIBRARIES)
-		target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${PTHREAD_LIBRARIES})
-	endif()
-endif()
-
 if (APPLE)
 	option(ENABLE_APPLICATION_BUNDLE "Enable application bundle for OSX" ON)
 endif(APPLE)
@@ -219,7 +179,47 @@ if (ENABLE_APPLICATION_BUNDLE)
 	set(EXTRA_BUNDLE_FILES ${QT_PLUGINS} ${ICON_FILE} ${PKGINFO} ${QT_CONF})
 endif()
 
+add_executable(${PROJECT_NAME} WIN32 ${OSX_BUNDLE}
+		${SRC_LIST}
+		${pixelpulse_RESOURCES}
+		${RESOURCES}
+#		${QML_SRC}
+)
+
 if (NOT ENABLE_APPLICATION_BUNDLE)
 	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 	install(FILES ${CMAKE_SOURCE_DIR}/icons/pp2.ico DESTINATION share/icons/hicolor/apps/scalable RENAME pp2.ico)
+endif()
+
+# Compiler options
+target_compile_options(${PROJECT_NAME} PUBLIC -Wall)
+
+#List of warnings to be treated as errors
+target_compile_options(${PROJECT_NAME} PUBLIC
+	-Werror=return-type
+	-Werror=uninitialized
+	-Werror=init-self
+	-Werror=switch
+)
+
+if (WIN32 OR ENABLE_APPLICATION_BUNDLE)
+	message("================ Set target properties ")
+	set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME pixelpulse2)
+endif()
+
+target_link_libraries(${PROJECT_NAME} LINK_PRIVATE
+		${LIBUSB_LIBRARIES}
+		${LIBSMU_LIBRARIES}
+		${Qt5Widgets_LIBRARIES}
+		${Qt5Quick_LIBRARIES}
+		${Qt5Qml_LIBRARIES}
+		${Qt5Network_LIBRARIES}
+)
+
+
+if (NOT WIN32)
+	find_library(PTHREAD_LIBRARIES pthread)
+	if (PTHREAD_LIBRARIES)
+		target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${PTHREAD_LIBRARIES})
+	endif()
 endif()
