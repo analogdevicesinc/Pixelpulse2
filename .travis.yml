@@ -33,7 +33,7 @@ before_install:
   - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew update 2>&1 > /dev/null ; fi
   - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew unlink libusb ; fi
   - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/cb21e9ac30e47e3ea161c4247a6397967f83c83f/Formula/libusb.rb --universal; fi
-  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew unlink qt ; fi
+  #- if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew unlink qt ; fi
   - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew install --force https://raw.githubusercontent.com/Homebrew/homebrew-core/8846805afc0cb8e5d114d5e222af1de3b35289df/Formula/qt.rb ; fi
   - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew link qt --force ; fi
   - if [[ ${TRAVIS_OS_NAME} == osx ]]; then export PATH=/usr/local/opt/qt/bin:$PATH ; fi
