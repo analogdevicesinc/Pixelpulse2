@@ -54,8 +54,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: drivers; Description: Install WinUSB drivers for the M1K;
 
 [Files]
-Source: "c:\pixelpulse_32\*"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "c:\pixelpulse_64\*"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "c:\pixelpulse_32\*"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: replacesameversion recursesubdirs createallsubdirs
+Source: "c:\pixelpulse_64\*"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: replacesameversion recursesubdirs createallsubdirs
 Source: "c:\projects\pixelpulse2\distrib\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
 Source: "C:\WinDDK\7600.16385.1\redist\DIFx\dpinst\EngMui\x86\dpinst.exe"; DestDir: "{app}\drivers"; Tasks: drivers; Check: not IsWin64
 Source: "C:\WinDDK\7600.16385.1\redist\DIFx\dpinst\EngMui\amd64\dpinst.exe"; DestDir: "{app}\drivers"; Tasks: drivers; Check: IsWin64
