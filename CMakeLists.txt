@@ -54,10 +54,12 @@ endif()
 # write version info to file -- used for CI artifact versioning
 file(WRITE ${CMAKE_BINARY_DIR}/.version ${PP_VERSION_STR})
 
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Sql REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Quick REQUIRED)
-find_package(Qt5Qml REQUIRED)
 find_package(Qt5Network REQUIRED)
+find_package(Qt5Qml REQUIRED)
 
 string(TIMESTAMP BUILD_DATE "%Y/%m/%d")
 set(GIT_VERSION ${PP_GIT_REV})
@@ -82,7 +84,6 @@ find_path(LIBSMU_INCLUDE_DIRS libsmu/libsmu.hpp)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -std=c++11")
 endif()
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_BUILD")
 
 # don't complain about extra format args for g++
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -133,6 +134,8 @@ include_directories(
 	${Qt5Quick_INCLUDE_DIRS}
 	${Qt5Qml_INCLUDE_DIRS}
 	${Qt5Network_INCLUDE_DIRS}
+	${Qt5Core_INCLUDE_DIRS}
+	${Qt5Gui_INCLUDE_DIRS}
 	${CMAKE_SOURCE_DIR}/Plot
 	${CMAKE_SOURCE_DIR}/utils
 	${CMAKE_SOURCE_DIR}
@@ -183,7 +186,6 @@ add_executable(${PROJECT_NAME} WIN32 ${OSX_BUNDLE}
 		${SRC_LIST}
 		${pixelpulse_RESOURCES}
 		${RESOURCES}
-#		${QML_SRC}
 )
 
 if (NOT ENABLE_APPLICATION_BUNDLE)
@@ -214,6 +216,8 @@ target_link_libraries(${PROJECT_NAME} LINK_PRIVATE
 		${Qt5Quick_LIBRARIES}
 		${Qt5Qml_LIBRARIES}
 		${Qt5Network_LIBRARIES}
+		${Qt5Core_LIBRARIES}
+		${Qt5Gui_LIBRARIES}
 )
 
 
