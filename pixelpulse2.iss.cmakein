@@ -2,7 +2,7 @@
 #define AppVersion "@GIT_VERSION@"
 #define AppPublisher "Analog Devices, Inc."
 #define AppURL "http://www.analog.com"
-#define AppExeName "pixelpulse2.exe"
+#define AppExeName "@PROJECT_NAME@.exe"
 
 [Setup]
 AppId={{258C031E-98C7-4609-9122-65A4D36274AF}
