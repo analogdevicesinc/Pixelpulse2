@@ -9,7 +9,7 @@ project(pixelpulse2 CXX C)
 # libsmu versioning
 set(PP_VERSION_MAJOR 1)
 set(PP_VERSION_MINOR 0)
-set(PP_VERSION_PATCH 2)
+set(PP_VERSION_PATCH 4)
 set(PP_VERSION ${PP_VERSION_MAJOR}.${PP_VERSION_MINOR}.${PP_VERSION_PATCH})
 
 # determine a more descriptive project version using git info if available
@@ -79,8 +79,6 @@ endif()
 find_library(LIBSMU_LIBRARIES smu)
 find_path(LIBSMU_INCLUDE_DIRS libsmu/libsmu.hpp)
 
-
-# generate version header
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -std=c++11")
 endif()
@@ -205,7 +203,6 @@ target_compile_options(${PROJECT_NAME} PUBLIC
 )
 
 if (WIN32 OR ENABLE_APPLICATION_BUNDLE)
-	message("================ Set target properties ")
 	set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME pixelpulse2)
 endif()
 

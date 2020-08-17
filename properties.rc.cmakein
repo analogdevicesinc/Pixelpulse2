@@ -12,8 +12,8 @@ BEGIN
         BEGIN
 	    VALUE "FileVersion",        "@PP_PRODUCTVERSION_STR@"
             VALUE "CompanyName",        "Analog Devices"
-            VALUE "InternalName",       "pixelpulse2"
-            VALUE "OriginalFilename",   "pixelpulse2.exe"
+	    VALUE "InternalName",       "@PROJECT_NAME@"
+	    VALUE "OriginalFilename",   "@PROJECT_NAME@.exe"
             VALUE "ProductName",        "Pixelpulse2"
 	    VALUE "ProductVersion",     "@PP_PRODUCTVERSION_STR@-@GIT_VERSION@"
         END

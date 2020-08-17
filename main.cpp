@@ -8,7 +8,6 @@
 #include <QApplication>
 #include "SMU.h"
 
-#include "utils/backtracing.h"
 #include "utils/fileio.h"
 #include "config.h"
 
@@ -19,8 +18,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("Pixelpulse2");
 
     QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
-
-    /* init_signal_handlers(argv[0]); */
 
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
@@ -46,8 +43,8 @@ int main(int argc, char *argv[])
         engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     }
 
-    app.setWindowIcon(QIcon("qrc:/icons/pp2.ico"));
-    QApplication::setWindowIcon(QIcon("qrc:/icons/pp2.ico"));
+    app.setWindowIcon(QIcon(":/icons/pp2.ico"));
+    QApplication::setWindowIcon(QIcon(":/icons/pp2.ico"));
 
     int r = app.exec();
     smu_session.closeAllDevices();
