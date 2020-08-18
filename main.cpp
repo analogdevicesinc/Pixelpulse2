@@ -14,7 +14,7 @@
 int main(int argc, char *argv[])
 {
     // Prevent config being written to ~/.config/Unknown Organization/pixelpulse2.conf
-    QCoreApplication::setOrganizationName("Pixelpulse2");
+    QCoreApplication::setOrganizationName("ADI");
     QCoreApplication::setApplicationName("Pixelpulse2");
 
     QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
