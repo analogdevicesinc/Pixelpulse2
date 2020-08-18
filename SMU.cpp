@@ -666,7 +666,8 @@ DataLogger::DataLogger(float sampleTime)
         auto current_time = std::chrono::system_clock::now();
         std::time_t time = std::chrono::system_clock::to_time_t(current_time);
         createLoggingFolder();
-        string timeString = "logging/PP_Log_";
+        QString directory = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        string timeString = directory.toStdString() + "/logging/PP_Log_";
         timeString.append(modifyDateTime(std::ctime(&time)));
         timeString.append(".csv");
         fileStream.open(timeString.c_str(), std::ios::out);
@@ -782,7 +783,8 @@ void DataLogger::setSampleTime(float sampleTime)
 
 void DataLogger::createLoggingFolder()
 {
-    if (!QDir("logging").exists()) {
-        QDir().mkdir("logging");
+    QString directory = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    if (!QDir(directory + "/logging").exists()) {
+        QDir().mkpath(directory + "/logging");
     }
 }
