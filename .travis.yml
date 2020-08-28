@@ -28,23 +28,22 @@ matrix:
       osx_image: xcode12
       
 before_install:
-  - if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get install libudev-dev libusb-1.0-0; fi
-
-#- if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo add-apt-repository --yes ppa:beineri/opt-qt551-trusty ;fi
-#- if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get update -qq ;fi
+  - if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get update ; fi
+  - if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get install libudev-dev libusb-1.0-0-dev libboost-all-dev ; fi
 
   - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew update 2>&1 > /dev/null ; fi
-  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew unlink libusb ; fi
-  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/cb21e9ac30e47e3ea161c4247a6397967f83c83f/Formula/libusb.rb --universal; fi
+  #- if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew unlink libusb ; fi
+  #- if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/cb21e9ac30e47e3ea161c4247a6397967f83c83f/Formula/libusb.rb --universal; fi
   #- if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew unlink qt ; fi
   - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew install --force https://raw.githubusercontent.com/Homebrew/homebrew-core/8846805afc0cb8e5d114d5e222af1de3b35289df/Formula/qt.rb ; fi
+  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew install libusb ; fi
+  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew link libusb ; fi
   - if [[ ${TRAVIS_OS_NAME} == osx ]]; then brew link qt --force ; fi
   - if [[ ${TRAVIS_OS_NAME} == osx ]]; then export PATH=/usr/local/opt/qt/bin:$PATH ; fi
 
 install: 
-  - if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get install -y qt5-default qttools5-dev qtdeclarative5-dev libqt5svg5-dev libqt5opengl5-dev ; fi
-  - if [[ ${TRAVIS_OS_NAME} == linux ]]; then QMAKE="$(command -v qmake)"; fi
-#- if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get -y install qt55d qt55base qt55connectivity qt55declarative qt55graphicaleffects qt55imageformats qt55quick1 qt55quickcontrols qt55script qt55tools   ;fi
+  - if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get install -y qt5-default qttools5-dev qtdeclarative5-dev libqt5svg5-dev libqt5opengl5-dev cmake ; fi
+  #- if [[ ${TRAVIS_OS_NAME} == linux ]]; then sudo apt-get -y install qt55d qt55base qt55connectivity qt55declarative qt55graphicaleffects qt55imageformats qt55quick1 qt55quickcontrols qt55script qt55tools   ;fi
 
 
 before_script:
