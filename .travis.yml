@@ -61,7 +61,9 @@ before_script:
   - echo $LDIST
 
 script:
-  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then /usr/local/opt/qt5/bin/macdeployqt build/pixelpulse2.app -always-overwrite -verbose=2 -qmldir=qml ;fi
+  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then cd build; fi
+  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -always-overwrite -verbose=2 -qmldir=../qml ;fi
+  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then cd ..; fi
 
   - |
      if [[ ${TRAVIS_OS_NAME} == osx ]]; then
@@ -76,19 +78,20 @@ script:
 
   - if [[ ${TRAVIS_OS_NAME} == osx ]]; then otool -L build/pixelpulse2.app/Contents/MacOS/Pixelpulse2 ;fi
 
-  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then /usr/local/opt/qt5/bin/macdeployqt build/pixelpulse2.app -dmg -no-plugins ;fi
-  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then for x in build/*.dmg ; do mv $x ${x%.dmg}${LDIST}.dmg ; done ; fi
+  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then cd build; fi
+  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -no-plugins ;fi
+  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then for x in *.dmg ; do cp  $x ${x%.dmg}${LDIST}.dmg ; done ; fi
+  - if [[ ${TRAVIS_OS_NAME} == osx ]]; then cd ..; fi
 
 deploy:
-  provider: s3
-  access_key_id: AKIAJIUMJWTHBLSLXXPA
-  secret_access_key:
-    secure: OLYC1jXlh0sO+4rCJFci6AnsMCl4BQpiUCC6ndExCpRdJdHeHa7AmK7VqYEWp2esD+4oh+aq+wBKA7ZpKzWIbpDffvCFfGvph8nCnUhXpfy5bRG2nsKU4NbcwYy8vd+xzY/EY5neTqWwMbbsL7L+baqs4GGv9mHzKRhCPycOW+c=
-  bucket: pixelpulse2nightly
+  provider: releases
+  api_key:
+    secure: gjhjymTOZHb+J6h4wPkZBjgP2wYGhhRBiLGadKfiq8mherF+XRTZyVHMeRmBaJI963OkrIMP9lt2H131Iv5dsHXmxokosxQ2xO/gJA2ft4P23vpjC4KNhdOI65G0agr+cixSfANOQPswCETu/L5k5Q79RN+VnilUaYka2UiGqK8= 
+  file_glob: true
+  file: "build/*.dmg"
   skip_cleanup: true
-  local_dir: deploy
-  acl: public_read
   on:
     condition: "${TRAVIS_OS_NAME} == osx"
     repo: analogdevicesinc/Pixelpulse2
-    all_branches: true
+    tags: true
+
