@@ -8,20 +8,12 @@ install:
     - cmd: C:\msys64\usr\bin\bash -lc "pacman-key --verify msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz{.sig,}"
     - cmd: C:\msys64\usr\bin\bash -lc "pacman-key --populate"
     - cmd: C:\msys64\usr\bin\bash -lc "pacman --noconfirm -U msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
+    - cmd: C:\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm"
+    #- C:\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm "
 
-    # Remove dependencies that prevent us from upgrading to GCC 6.2
-    - C:\msys64\usr\bin\bash -lc "pacman -Rs --noconfirm mingw-w64-i686-gcc-ada mingw-w64-i686-gcc-fortran mingw-w64-i686-gcc-libgfortran mingw-w64-i686-gcc-objc"
-    - C:\msys64\usr\bin\bash -lc "pacman -Rs --noconfirm mingw-w64-x86_64-gcc-ada mingw-w64-x86_64-gcc-fortran mingw-w64-x86_64-gcc-libgfortran mingw-w64-x86_64-gcc-objc"
-
-    - C:\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm "
-    - C:\msys64\usr\bin\bash -lc "pacman -Syu --noconfirm "
-
-    # Remove existing file that causes GCC install to fail
-    - C:\msys64\usr\bin\bash -lc "rm /mingw32/etc/gdbinit /mingw64/etc/gdbinit"
-
-    # Update to GCC 6.2 and install dependencies
-    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy mingw-w64-i686-gcc mingw-w64-i686-boost mingw-w64-i686-python3 mingw-w64-i686-libzip mingw-w64-i686-icu"
-    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy mingw-w64-x86_64-gcc mingw-w64-x86_64-boost mingw-w64-x86_64-python3 mingw-w64-x86_64-libzip mingw-w64-x86_64-icu"
+    # Install dependencies
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy mingw-w64-i686-boost mingw-w64-i686-python3 mingw-w64-i686-libzip mingw-w64-i686-icu"
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy mingw-w64-x86_64-boost mingw-w64-x86_64-python3 mingw-w64-x86_64-libzip mingw-w64-x86_64-icu"
 
     # Hack: Qt5Qml CMake script throws errors when loading its plugins. So let's just drop those plugins.
     - C:\msys64\usr\bin\bash -lc "rm -f /mingw32/lib/cmake/Qt5Qml/*Factory.cmake"
@@ -71,7 +63,7 @@ build_script:
     - C:\msys64\usr\bin\bash -lc "cp -r /c/distrib/* /c/pixelpulse_32/pp2trayer"
     - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/pp2trayer.exe?branch=master" -FileName c:\pixelpulse_32\pp2trayer\pp2trayer.exe'
     - c:\msys64\mingw32\bin\windeployqt.exe --dir c:\pixelpulse_32 --no-system-d3d-compiler --no-compiler-runtime --opengl --qmldir c:\projects\pixelpulse2\qml --qmlimport c:\projects\pixelpulse2\qml c:\projects\build_32\pixelpulse2.exe
-    - C:\msys64\usr\bin\bash -lc "cd /mingw32/bin ; cp -r libffi-7*.dll libbrotli*.dll libbz2*.dll libgobject-2.*.dll libfreetype-*.dll libgraphite*.dll libpng16-*.dll libharfbuzz*.dll libicu*.dll libiconv*.dll zlib*.dll libsmu*.dll libwinpthread-*.dll libgcc_*.dll libstdc++-*.dll libboost_{system,filesystem,atomic,program_options,regex,thread}-*.dll libglib-*.dll libintl-*.dll libusb-*.dll libzstd*.dll libgomp*.dll libdouble-conversion*.dll libpcre*.dll Qt5Core.dll Qt5Gui.dll Qt5Svg.dll Qt5Widgets.dll /c/pixelpulse_32/"
+    - C:\msys64\usr\bin\bash -lc "cd /mingw32/bin ; cp -r libffi*.dll libbrotli*.dll libbz2*.dll libgobject-2.*.dll libfreetype-*.dll libgraphite*.dll libpng16-*.dll libharfbuzz*.dll libicu*.dll libiconv*.dll zlib*.dll libsmu*.dll libwinpthread-*.dll libgcc_*.dll libstdc++-*.dll libboost_{system,filesystem,atomic,program_options,regex,thread}-*.dll libglib-*.dll libintl-*.dll libusb-*.dll libzstd*.dll libgomp*.dll libdouble-conversion*.dll libpcre*.dll Qt5Core.dll Qt5Gui.dll Qt5Svg.dll Qt5Widgets.dll /c/pixelpulse_32/"
 
     - 7z a "c:\pixelpulse-32bit.zip" c:\pixelpulse_32
     - appveyor PushArtifact c:\pixelpulse-32bit.zip
@@ -105,7 +97,7 @@ build_script:
     - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/pp2trayer.exe?branch=master" -FileName c:\pixelpulse_64\pp2trayer\pp2trayer.exe'
     - c:\msys64\mingw64\bin\windeployqt.exe --dir c:\pixelpulse_64 --no-system-d3d-compiler --no-compiler-runtime --opengl --qmldir c:\projects\pixelpulse2\qml --qmlimport c:\projects\pixelpulse2\qml c:\projects\build_64\pixelpulse2.exe
 
-    - C:\msys64\usr\bin\bash -lc "cd /mingw64/bin ; cp -r libffi-7*.dll libbrotli*.dll libbz2*.dll libgobject-2.*.dll libfreetype-*.dll libgraphite*.dll libpng16-*.dll libharfbuzz*.dll libicu*.dll libiconv*.dll zlib*.dll libsmu*.dll libwinpthread-*.dll libgcc_*.dll libstdc++-*.dll libboost_{system,filesystem,atomic,program_options,regex,thread}-*.dll libglib-*.dll libintl-*.dll libusb-*.dll libzstd*.dll libgomp*.dll libdouble-conversion*.dll libpcre*.dll /c/pixelpulse_64/"
+    - C:\msys64\usr\bin\bash -lc "cd /mingw64/bin ; cp -r libffi*.dll libbrotli*.dll libbz2*.dll libgobject-2.*.dll libfreetype-*.dll libgraphite*.dll libpng16-*.dll libharfbuzz*.dll libicu*.dll libiconv*.dll zlib*.dll libsmu*.dll libwinpthread-*.dll libgcc_*.dll libstdc++-*.dll libboost_{system,filesystem,atomic,program_options,regex,thread}-*.dll libglib-*.dll libintl-*.dll libusb-*.dll libzstd*.dll libgomp*.dll libdouble-conversion*.dll libpcre*.dll /c/pixelpulse_64/"
     - C:\msys64\usr\bin\bash -lc "cd /mingw64/bin ; cp -r Qt5Core.dll Qt5Gui.dll Qt5Svg.dll Qt5Widgets.dll /c/pixelpulse_64/"
 
     - 7z a "c:\pixelpulse-64bit.zip" c:\pixelpulse_64
