@@ -9,7 +9,7 @@ project(pixelpulse2 CXX C)
 # libsmu versioning
 set(PP_VERSION_MAJOR 1)
 set(PP_VERSION_MINOR 0)
-set(PP_VERSION_PATCH 4)
+set(PP_VERSION_PATCH 5)
 set(PP_VERSION ${PP_VERSION_MAJOR}.${PP_VERSION_MINOR}.${PP_VERSION_PATCH})
 
 # determine a more descriptive project version using git info if available
