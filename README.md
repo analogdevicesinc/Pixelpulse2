@@ -22,7 +22,7 @@ Click and drag the X axis to pan in time.
 
 #### Easy
 
-* OSX - Navigate to the [releases](https://github.com/analogdevicesinc/pixelpulse2/releases) and collect the latest `pixelpulse2-bundled.dmg.zip` package. The latest testing build is available from [Travis-CI](http://pixelpulse2nightly.s3-website-us-east-1.amazonaws.com/pixelpulse2.dmg).
+* OSX - Navigate to the [releases](https://github.com/analogdevicesinc/pixelpulse2/releases) and collect the latest `pixelpulse2-<OS-version>.dmg` package, specific for you OS version.
 * Windows - For a testing build, download the dependency package and the latest binary build from [appveyor](https://ci.appveyor.com/project/analogdevicesinc/pixelpulse2/build/artifacts). For an official release build, navigate to releases and collect the latest pixelpulse2-setup.exe.
 * Linux - Build from source (below) 
 #### Advanced
@@ -30,35 +30,35 @@ Click and drag the X axis to pan in time.
 To build from source on any platform, you need to install a C++ compiler toolchain, collect the build dependencies, setup your build environment, and compile the project.
 
 If you have not built packages from source before, this is ill-advised.
-* Build and install libsmu (https://github.com/analogdevicesinc/libsmu)
-* Install Qt5.4.
+*  **Build and install libsmu (https://github.com/analogdevicesinc/libsmu)**. 
+Libsmu is a library wich contains abstractions for streaming data to and from USB-connected analog interface devices, currently supporting the Analog Devices' ADALM1000. 
+* Install Qt5. We recommend using a version greater than or equal to 5.14.
  * On most Linux Distributions, Qt5 is available in repositories. The complete list of packages required varies, but includes qt's support for declarative (qml) UI programming, qtquick, qtquick-window, qtquick-controls, and qtquick-layouts.
- * Binary installers are available from [the Qt project](http://qtmirror.ics.com/pub/qtproject/development_releases/qt/5.4/5.4.0-rc/) for most platforms.
 
 To build / run on a generic POSIX platform
 
-    git clone https://github.com/signalspec/pixelpulse2
-    cd pixelpulse2
+    git clone https://github.com/analogdevicesinc/Pixelpulse2
+    cd Pixelpulse2
     mkdir build
     cd build
-    qmake pixelpulse2.pro -qt=qt5
+    cmake ..
     make
 
-On Windows the qmake command should look like this
+On Windows the process is similar. Write the following commands in a cmd console
 
-    qmake pixelpulse2.pro "LIBSMU_LIBRARY = path_to_libsmu_dll" "LIBSMU_INCLUDE_PATH = path_to_libsmu_include_folder" -qt=qt5
+	git clone https://github.com/analogdevicesinc/Pixelpulse2
+	cd Pixelpulse2
+	mkdir build
+	cd build
+    cmake -DLIBSMU_LIBRARY="path_to_libsmu_dll" -DLIBSMU_INCLUDE_PATH="path_to_libsmu_include_folder" -DLIBUSB_INCLUDE_DIRS="path_to_libusb_include_folder" ..
+	make
 
 After it is finished building, you have to copy the libsmu shared library into the build folder and Pixelpulse2 should be ready to use with your M1K
 
-To build / install for Debian, from the `pixelpulse2` directory:
-
-    dh_make -p pixelpulse2_0.8 -s -c blank --createorig
-    dpkg-buildpackage
-    sudo dpkg -i ../pixelpulse2_0.1-1_i386.deb
-
-To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com/community/groups/test-and-measurement/blog/2015/02/14/getting-started-with-the-active-learning-module-adalm1000).  
+To build / run on Ubuntu
 
  * Please note that you make encounter issues if you are running a version of Ubuntu lower than 15.04, because the version of QT in the repositories will likely be less than 5.4 (this also applies if you are running a Linux distribution that uses an older version of Ubuntu, for example Linux Mint 17.1, which uses Ubuntu 14.04.)
+ * The build process is tested and supported on Ubuntu 16, 18 and 20.
 
 * Get ready
 
@@ -68,31 +68,10 @@ To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com
 
 * Build and install libsmu (https://github.com/analogdevicesinc/libsmu)
 
-* Download and install Qt5.4
+* Install Qt5 and some Qt modules
 
     ```bash
-    wget http://qtmirror.ics.com/pub/qtproject/development_releases/qt/5.4/5.4.0-rc/qt-opensource-linux-x64-5.4.0-rc.run
-    chmod 755 qt-o*
-    ./qt-opensource-linux-x64-5.4.0-rc.run
-    ```
-    
-* Install a couple extra Qt modules
-    ```bash
-    sudo apt-get install qtdeclarative5-controls-plugin
-    sudo apt-get install qtdeclarative5-quicklayouts-plugin
-    sudo apt-get install qtdeclarative5-dev
-    ```
-
-* Change your default configuration file
-
-    ```bash
-    sudo su
-    cd /usr/lib/x86_64-linux-gnu/qt-default/qtchooser
-    ls -l
-    rm default.conf
-    ln -s ../../../../share/qtchooser/qt5-x86_64-linux-gnu.conf default.conf
-    ls –l
-    exit
+    sudo apt-get install -y qt5-default qtdeclarative5-dev qml-module-qtquick-dialogs qml-module-qt-labs-settings qml-module-qt-labs-folderlistmodel qml-module-qtqml-models2 qml-module-qtquick-controls
     ```
 
 * Make a new folder, clone the pixelpulse library into it from git, and build it!
@@ -100,11 +79,11 @@ To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com
     ```bash
     mkdir development
     cd development
-    git clone https://github.com/signalspec/pixelpulse2
+    git clone https://github.com/analogdevicesinc/Pixelpulse2
     cd pixelpulse2
     mkdir build
     cd build
-    qmake ../pixelpulse2.pro
+    cmake ..
     make
     ```
 
@@ -115,9 +94,8 @@ To build / run on Ubuntu 15.04, via [shabaz on Farnell](http://www.element14.com
     cd ~/development/pixelpulse2/build
     ```
 
- * Run Pixelpulse2 as root
+ * Run Pixelpulse2
 
     ```bash
-    sudo ./pixelpulse2
+    ./pixelpulse2
     ```
-
