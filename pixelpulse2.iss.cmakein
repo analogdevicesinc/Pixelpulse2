@@ -32,18 +32,13 @@ Name: "dutch"; MessagesFile: "compiler:Languages\Dutch.isl"
 Name: "finnish"; MessagesFile: "compiler:Languages\Finnish.isl"
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 Name: "german"; MessagesFile: "compiler:Languages\German.isl"
-Name: "greek"; MessagesFile: "compiler:Languages\Greek.isl"
 Name: "hebrew"; MessagesFile: "compiler:Languages\Hebrew.isl"
-Name: "hungarian"; MessagesFile: "compiler:Languages\Hungarian.isl"
 Name: "italian"; MessagesFile: "compiler:Languages\Italian.isl"
 Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
 Name: "norwegian"; MessagesFile: "compiler:Languages\Norwegian.isl"
 Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
 Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
-Name: "scottishgaelic"; MessagesFile: "compiler:Languages\ScottishGaelic.isl"
-Name: "serbiancyrillic"; MessagesFile: "compiler:Languages\SerbianCyrillic.isl"
-Name: "serbianlatin"; MessagesFile: "compiler:Languages\SerbianLatin.isl"
 Name: "slovenian"; MessagesFile: "compiler:Languages\Slovenian.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
@@ -57,10 +52,8 @@ Name: drivers; Description: Install WinUSB drivers for the M1K;
 Source: "c:\pixelpulse_32\*"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: replacesameversion recursesubdirs createallsubdirs
 Source: "c:\pixelpulse_64\*"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: replacesameversion recursesubdirs createallsubdirs
 Source: "c:\projects\pixelpulse2\distrib\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
-Source: "C:\WinDDK\7600.16385.1\redist\DIFx\dpinst\EngMui\x86\dpinst.exe"; DestDir: "{app}\drivers"; Tasks: drivers; Check: not IsWin64
-Source: "C:\WinDDK\7600.16385.1\redist\DIFx\dpinst\EngMui\amd64\dpinst.exe"; DestDir: "{app}\drivers"; Tasks: drivers; Check: IsWin64
-Source: "c:\projects\pixelpulse2\distrib\driver\m1k-winusb.inf"; DestDir: "{app}\drivers"; Tasks: drivers
-Source: "c:\projects\pixelpulse2\distrib\driver\m1k-winusb.cat"; DestDir: "{app}\drivers"; Tasks: drivers
+Source: "c:\projects\pixelpulse2\distrib\drivers\m1k-winusb.inf"; DestDir: "{app}\drivers"; Tasks: drivers
+Source: "c:\projects\pixelpulse2\distrib\drivers\m1k-winusb.cat"; DestDir: "{app}\drivers"; Tasks: drivers
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExeName}"
@@ -70,7 +63,8 @@ Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: desk
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent unchecked
 Filename: {app}\pp2trayer\pp2trayer.exe; Description: "Launch Pixelpulse2 Trayer"; Flags: nowait postinstall skipifsilent
-Filename: "{app}\drivers\dpinst.exe"; Parameters: "/path ""{app}\drivers"""; Flags: waituntilterminated; Tasks: drivers
+Filename: "{app}\drivers\pnputil.exe"; Parameters: "/add-driver ""{app}\drivers\m1k-winusb.inf"""; Flags: waituntilterminated; Tasks: drivers
+Filename: "{app}\drivers\pnputil.exe"; Parameters: "/add-driver ""{app}\drivers\m1k-winusb.cat"""; Flags: waituntilterminated; Tasks: drivers
 
 [UninstallRun]
 Filename: "{cmd}"; Parameters: "/C""taskkill /im pp2trayer\pp2trayer.exe /f /t"; Flags: runhidden
