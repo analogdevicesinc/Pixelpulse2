@@ -49,9 +49,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: drivers; Description: Install WinUSB drivers for the M1K;
 
 [Files]
-Source: "c:\pixelpulse_32\*"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: replacesameversion recursesubdirs createallsubdirs
-Source: "c:\pixelpulse_64\*"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: replacesameversion recursesubdirs createallsubdirs
-Source: "c:\projects\pixelpulse2\distrib\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
+Source: "c:\pixelpulse_64\*"; DestDir: "{app}"; Check: IsWin64; Flags: replacesameversion recursesubdirs createallsubdirs
+Source: "c:\pixelpulse_32\*"; DestDir: "{app}"; Flags: replacesameversion recursesubdirs createallsubdirs; Check: "not IsWin64"
+Source: "c:\projects\pixelpulse2\distrib\drivers\*"; DestDir: "{app}\drivers"; Flags: recursesubdirs createallsubdirs
+Source: "c:\projects\pixelpulse2\distrib\dpinst_amd64.exe"; DestDir: "{app}\drivers"; DestName: "dpinst.exe"; Flags: ignoreversion; Check: IsWin64
+Source: "c:\projects\pixelpulse2\distrib\dpinst.exe"; DestDir: "{app}\drivers"; Flags: ignoreversion; Check: "not IsWin64"
 Source: "c:\projects\pixelpulse2\distrib\drivers\m1k-winusb.inf"; DestDir: "{app}\drivers"; Tasks: drivers
 Source: "c:\projects\pixelpulse2\distrib\drivers\m1k-winusb.cat"; DestDir: "{app}\drivers"; Tasks: drivers
 
@@ -63,8 +65,7 @@ Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: desk
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent unchecked
 Filename: {app}\pp2trayer\pp2trayer.exe; Description: "Launch Pixelpulse2 Trayer"; Flags: nowait postinstall skipifsilent
-Filename: "{app}\drivers\pnputil.exe"; Parameters: "/add-driver ""{app}\drivers\m1k-winusb.inf"""; Flags: waituntilterminated; Tasks: drivers
-Filename: "{app}\drivers\pnputil.exe"; Parameters: "/add-driver ""{app}\drivers\m1k-winusb.cat"""; Flags: waituntilterminated; Tasks: drivers
+Filename: "{app}\drivers\dpinst.exe"; Parameters: "/PATH ""{app}\drivers"" {param:dpinstflags|/F}"; Flags: waituntilterminated; Tasks: drivers
 
 [UninstallRun]
 Filename: "{cmd}"; Parameters: "/C""taskkill /im pp2trayer\pp2trayer.exe /f /t"; Flags: runhidden
