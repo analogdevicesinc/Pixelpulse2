@@ -23,7 +23,7 @@ install:
     - appveyor DownloadFile http://swdownloads.analog.com/cse/build/windres.exe.gz -FileName C:\windres.exe.gz
     - C:\msys64\usr\bin\bash -lc "cd /c ; gunzip windres.exe.gz"
 
-    - git clone https://github.com/analogdevicesinc/libsmu.git C:\projects\libsmu
+    - git clone https://github.com/analogdevicesinc/libsmu.git -b fix-mutex-msvc C:\projects\libsmu
     - if not exist "c:\projects\pixelpulse2\distrib\drivers" mkdir c:\projects\pixelpulse2\distrib\drivers
     - copy C:\projects\libsmu\dist\m1k-winusb.inf c:\projects\pixelpulse2\distrib\drivers
     - copy C:\projects\libsmu\dist\m1k-winusb.cat c:\projects\pixelpulse2\distrib\drivers
