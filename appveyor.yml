@@ -35,8 +35,13 @@ install:
     - copy C:\projects\libsmu\dist\amd64\* c:\projects\pixelpulse2\distrib\drivers\amd64
     - copy C:\dpinst\dpinst_amd64.exe c:\projects\pixelpulse2\distrib
 
-    - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/distrib.zip?branch=master" -FileName c:\distrib.zip'
-    - 7z x -y "c:\distrib.zip" -o"c:\" > nul
+    # change the link
+    - appveyor DownloadFile http://swdownloads.analog.com/cse/m1k/pp2trayer.zip -FileName C:\pp2trayer.zip
+    - 7z x -y "c:\pp2trayer.zip" -o"c:\" > nul
+    - ls C:\
+    - ls C:\pp2trayer
+    - 7z x -y "c:\pp2trayer\distrib.zip" -o"c:\" > nul
+    - ls c:\
 
 build_script:
     # build 32-bit MinGW
@@ -71,7 +76,7 @@ build_script:
     - copy C:\dpinst\dpinst.exe C:\pixelpulse_32\drivers
 
     - C:\msys64\usr\bin\bash -lc "cp -r /c/distrib/* /c/pixelpulse_32/pp2trayer"
-    - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/pp2trayer.exe?branch=master" -FileName c:\pixelpulse_32\pp2trayer\pp2trayer.exe'
+    - copy C:\pp2trayer\pp2trayer.exe c:\pixelpulse_32\pp2trayer\
     - c:\msys64\mingw32\bin\windeployqt.exe --verbose 2 --dir c:\pixelpulse_32 --no-system-d3d-compiler --no-compiler-runtime --opengl --qmldir c:\projects\pixelpulse2\qml c:\projects\build_32\pixelpulse2.exe
     - C:\msys64\usr\bin\bash -lc "cd /mingw32/bin ; cp -r libmd4c*.dll libffi*.dll libbrotli*.dll libbz2*.dll libgobject-2.*.dll libfreetype-*.dll libgraphite*.dll libpng16-*.dll libharfbuzz*.dll libicu*.dll libiconv*.dll zlib*.dll libsmu*.dll libwinpthread-*.dll libgcc_*.dll libstdc++-*.dll libboost_{system,filesystem,atomic,program_options,regex,thread}-*.dll libglib-*.dll libintl-*.dll libusb-*.dll libzstd*.dll libgomp*.dll libdouble-conversion*.dll libpcre*.dll Qt5Core.dll Qt5Gui.dll Qt5Svg.dll Qt5Widgets.dll /c/pixelpulse_32/"
 
@@ -110,7 +115,7 @@ build_script:
     - copy C:\dpinst\dpinst_amd64.exe C:\pixelpulse_64\drivers
 
     - C:\msys64\usr\bin\bash -lc "cp -r /c/distrib/* /c/pixelpulse_64/pp2trayer"
-    - 'appveyor DownloadFile "https://ci.appveyor.com/api/projects/analogdevicesinc/pixelpulse2-trayer/artifacts/pp2trayer.exe?branch=master" -FileName c:\pixelpulse_64\pp2trayer\pp2trayer.exe'
+    - copy C:\pp2trayer\pp2trayer.exe c:\pixelpulse_64\pp2trayer\
     - c:\msys64\mingw64\bin\windeployqt.exe --verbose 2 --dir c:\pixelpulse_64 --no-system-d3d-compiler --no-compiler-runtime --opengl --core --gui --qml --svg --printsupport --network --qmldir c:\projects\pixelpulse2\qml  c:\projects\build_64\pixelpulse2.exe
 
     - C:\msys64\usr\bin\bash -lc "cd /mingw64/bin ; cp -r libmd4c*.dll libffi*.dll libbrotli*.dll libbz2*.dll libgobject-2.*.dll libfreetype-*.dll libgraphite*.dll libpng16-*.dll libharfbuzz*.dll libicu*.dll libiconv*.dll zlib*.dll libsmu*.dll libwinpthread-*.dll libgcc_*.dll libstdc++-*.dll libboost_{system,filesystem,atomic,program_options,regex,thread}-*.dll libglib-*.dll libintl-*.dll libusb-*.dll libzstd*.dll libgomp*.dll libdouble-conversion*.dll libpcre*.dll /c/pixelpulse_64/"
