@@ -76,7 +76,7 @@ else()
 	find_path(LIBUSB_INCLUDE_DIRS libusb.h)
 endif()
 
-find_library(LIBSMU_LIBRARIES smu)
+find_library(LIBSMU_LIBRARIES libsmu smu)
 find_path(LIBSMU_INCLUDE_DIRS libsmu/libsmu.hpp)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")

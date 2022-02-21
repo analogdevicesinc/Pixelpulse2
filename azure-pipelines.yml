@@ -4,16 +4,67 @@
 # https://aka.ms/yaml
 
 trigger:
+- main
 - master
+- staging/*
+- 20*
+- v*.*.*
+- ci-*
 
-pool:
-  vmImage: ubuntu-latest
-
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+jobs:
+- job: macOSBuilds
+  strategy:
+    matrix:
+      macOS_10_15:
+        imageName: 'macOS-10.15'
+        artifactName: 'macOS-10.15'
+      macOS_11:
+        imageName: 'macOS-11'
+        artifactName: 'macOS-11'
+  pool:
+    vmImage: $(imageName)
+  variables:
+    PACKAGE_TO_INSTALL: 'build/*.pkg'
+  steps:
+  - checkout: self
+    fetchDepth: 1
+    clean: true
+  - script: |
+          brew install cmake libusb qt@5 git boost
+    displayName: 'Dependencies'
+  - script: |
+        git clone https://github.com/analogdevicesinc/libsmu
+        mkdir -p libsmu/build && cd libsmu/build
+        cmake .. -DBUILD_PYTHON=OFF -DINSTALL_UDEV_RULES=ON -DBUILD_CLI=OFF
+        make
+        sudo make install
+        cd ../..
+    displayName: 'Build libsmu'
+  - script: |
+        export PATH="/usr/local/opt/qt@5/bin:/usr/local/lib:$PATH"
+        mkdir build && cd build
+        cmake ..
+        make
+    displayName: 'Build'
+  - script: |
+        /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -always-overwrite -verbose=2 -qmldir=../qml
+        libsmupath="$(otool -L ./pixelpulse2.app/Contents/MacOS/pixelpulse2 | grep libsmu | cut -d " " -f 1)"
+        libsmuid="$(echo ${libsmupath} | rev | cut -d "/" -f 1 | rev)"
+        cp ../libsmu/build/src/${libsmuid} pixelpulse2.app/Contents/Frameworks/
+        otool -L ../libsmu/build/src/${libsmuid}
+        sudo install_name_tool -id @executable_path/../Frameworks/${libsmuid} pixelpulse2.app/Contents/Frameworks/${libsmuid}
+        sudo install_name_tool -change ${libsmupath} @executable_path/../Frameworks/${libsmuid} pixelpulse2.app/Contents/MacOS/Pixelpulse2
+        otool -L pixelpulse2.app/Contents/MacOS/Pixelpulse2
+        /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -dmg -no-plugins
+        ls
+    displayName: 'Fix DMG package'
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: '$(Agent.BuildDirectory)/s/build/'
+      contents: '$(Agent.BuildDirectory)/s/build/?(*.dmg)'
+      targetFolder: '$(Build.ArtifactStagingDirectory)'
+  - task: PublishPipelineArtifact@1
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    inputs:
+      targetPath: '$(Build.ArtifactStagingDirectory)'
+      artifactName: '$(artifactName)'
