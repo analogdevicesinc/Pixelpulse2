@@ -1,0 +1,110 @@
+{
+	"app-id": "org.adi.Pixelpulse2",
+	"runtime": "org.kde.Platform",
+	"runtime-version": "5.15",
+	"sdk": "org.kde.Sdk",
+	"command": "pixelpulse2",
+	"finish-args": [
+		"--socket=x11",
+		"--socket=wayland",
+                "--socket=pulseaudio",
+		"--share=network",
+		"--share=ipc",
+		"--filesystem=host:create",
+		"--filesystem=~/.config/dconf:create",
+		"--filesystem=xdg-config/ADI:create",
+		"--device=all"
+	],
+
+	"build-options" : {
+		"cflags": "-O2 -g",
+		"cxxflags": "-O2 -g",
+		"env": {
+			"V": "1"
+		}	
+		
+	},
+	"cleanup": [
+		"/include",
+		"/lib/python2.7",
+		"/lib/pkgconfig",
+		"/lib/cmake",
+		"/lib/*.la",
+		"/lib/*.a",
+		"/lib/gio",
+		"/lib/xml2Conf.sh"
+	],
+	"modules": [
+		{
+			"name": "libusb",
+			"config-opts": [ "--prefix=/app" ],
+			"sources": [
+				{
+					"type": "archive",
+					"url": "https://downloads.sourceforge.net/project/libusb/libusb-1.0/libusb-1.0.24/libusb-1.0.24.tar.bz2",
+					"sha256": "7efd2685f7b327326dcfb85cee426d9b871fd70e22caa15bb68d595ce2a2b12a"
+				}
+			]
+		},
+		{
+			"name": "boost",
+			"cleanup": [ "/bin", "/share" ],
+			"sources": [
+				{
+					"type": "archive",
+					"url": "https://boostorg.jfrog.io/artifactory/main/release/1.65.0/source/boost_1_65_0.tar.gz",
+					"sha256": "8a142d33ab4b4ed0de3abea3280ae3b2ce91c48c09478518c73e5dd2ba8f20aa"
+				},
+				{
+					"type": "script",
+					"commands": [
+						"#!/bin/sh",
+						"exec ./bootstrap.sh --with-libraries=date_time,filesystem,program_options,regex,system,test,thread,atomic --prefix=/app"
+					],
+					"dest-filename": "configure"
+				},
+				{
+					"type": "script",
+					"commands": [
+						"all:",
+						"\t./b2",
+						"install:",
+						"\t./b2 install"
+					],
+					"dest-filename": "Makefile"
+				}
+			]
+		},
+		{
+			"name": "libsmu",
+			"builddir": true,
+			"buildsystem": "cmake",
+			"config-opts": [
+				"-DCMAKE_INSTALL_PREFIX:PATH=/app",
+				"-DINSTALL_UDEV_RULES=ON",
+				"-DBUILD_CLI=ON",
+				"-DBUILD_PYTHON=OFF"
+			],
+			"sources": [
+				{
+					"type": "git",
+					"url": "https://github.com/analogdevicesinc/libsmu",
+					"branch": "master"
+				}
+			]
+		},
+		{
+			"name": "Pixelpulse2",
+			"builddir": true,
+			"buildsystem": "cmake",
+			"config-opts": [ "-DCMAKE_INSTALL_PREFIX:PATH=/app", "-DCMAKE_PREFIX_PATH=/app/lib/pkgconfig;/app/lib/cmake", "-DCMAKE_BUILD_TYPE=Release"],
+			"sources": [
+				{
+					"type": "git",
+					"url": "https://github.com/analogdevicesinc/Pixelpulse2",
+					"branch": "master"
+				}
+			]
+		}
+	]
+}

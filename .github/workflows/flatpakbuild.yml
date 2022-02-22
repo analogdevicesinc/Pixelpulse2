@@ -1,0 +1,25 @@
+name: linux-flatpak build
+
+on: [push, pull_request]
+
+jobs:
+
+  make-flatpak:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Pull the Docker Image
+      run: docker pull adisuciu/scopy-flatpak-ubuntu20:latest
+    - name: Run Docker Image
+      run: |
+            docker run --privileged \
+                -v `pwd`:$GITHUB_WORKSPACE:rw \
+                -e "REPO_JSON_FLATPAK_LOCATION=$GITHUB_WORKSPACE/CI/flatpak" \
+                -e "GITHUB_WORKSPACE=$GITHUB_WORKSPACE" \
+                adisuciu/scopy-flatpak-ubuntu20:latest /bin/bash -xe $GITHUB_WORKSPACE/.github/scripts/inside_flatpak_docker.sh
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Pixelpulse2.flatpak
+        path: ${{ github.workspace }}/Pixelpulse2.flatpak
+
