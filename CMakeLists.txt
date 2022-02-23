@@ -76,9 +76,6 @@ else()
 	find_path(LIBUSB_INCLUDE_DIRS libusb.h)
 endif()
 
-find_library(LIBSMU_LIBRARIES libsmu smu)
-find_path(LIBSMU_INCLUDE_DIRS libsmu/libsmu.hpp)
-
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -std=c++11")
 endif()
@@ -107,6 +104,9 @@ if(APPLE)
 		set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_LIBDIR}")
 	endif()
 endif()
+
+find_library(LIBSMU_LIBRARIES smu)
+find_path(LIBSMU_INCLUDE_DIRS libsmu/libsmu.hpp)
 
 FILE(GLOB PP_RESOURCES *.qrc)
 qt5_add_resources(pixelpulse_RESOURCES ${PP_RESOURCES})

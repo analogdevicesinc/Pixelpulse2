@@ -37,7 +37,7 @@
 	"modules": [
 		{
 			"name": "libusb",
-			"config-opts": [ "--prefix=/app" ],
+			"config-opts": [ "--disable-udev", "--prefix=/app" ],
 			"sources": [
 				{
 					"type": "archive",
@@ -81,7 +81,7 @@
 			"buildsystem": "cmake",
 			"config-opts": [
 				"-DCMAKE_INSTALL_PREFIX:PATH=/app",
-				"-DINSTALL_UDEV_RULES=ON",
+				"-DINSTALL_UDEV_RULES=OFF",
 				"-DBUILD_CLI=ON",
 				"-DBUILD_PYTHON=OFF"
 			],
@@ -89,7 +89,7 @@
 				{
 					"type": "git",
 					"url": "https://github.com/analogdevicesinc/libsmu",
-					"branch": "master"
+					"branch": "test-flatpak"
 				}
 			]
 		},

@@ -43,11 +43,16 @@ jobs:
   - script: |
         export PATH="/usr/local/opt/qt@5/bin:/usr/local/lib:$PATH"
         mkdir build && cd build
+        ls /usr/local/lib | grep smu
+        cat /usr/local/lib/pkgconfig/libsmu.pc
         cmake ..
         make
     displayName: 'Build'
   - script: |
-        /usr/local/opt/qt5/bin/macdeployqt pixelpulse2.app -always-overwrite -verbose=2 -qmldir=../qml
+        pwd
+        ls
+        cd '$(Agent.BuildDirectory)/s/build/'
+        /usr/local/opt/qt@5/bin/macdeployqt pixelpulse2.app -always-overwrite -verbose=2 -qmldir=../qml
         libsmupath="$(otool -L ./pixelpulse2.app/Contents/MacOS/pixelpulse2 | grep libsmu | cut -d " " -f 1)"
         libsmuid="$(echo ${libsmupath} | rev | cut -d "/" -f 1 | rev)"
         cp ../libsmu/build/src/${libsmuid} pixelpulse2.app/Contents/Frameworks/
