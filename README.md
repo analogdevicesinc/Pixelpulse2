@@ -74,6 +74,12 @@ To build / run on Ubuntu
     sudo apt-get install -y qt5-default qtdeclarative5-dev qml-module-qtquick-dialogs qml-module-qt-labs-settings qml-module-qt-labs-folderlistmodel qml-module-qtqml-models2 qml-module-qtquick-controls
     ```
 
+    In Ubuntu 22.04, `qt5-default` is replaced by `qtbase5-dev`:
+
+    ```bash
+    sudo apt-get install -y qtbase5-dev qt5-qmake
+    ```
+
 * Make a new folder, clone the pixelpulse library into it from git, and build it!
 
     ```bash
@@ -99,3 +105,20 @@ To build / run on Ubuntu
     ```bash
     ./pixelpulse2
     ```
+
+#### Troubleshooting
+
+If you encounter a segmentation fault launching Pixelpulse2 on Linux, make sure Qt5 is picked correctly. You may find GDB useful: run `gdb pixelpulse2` in a terminal to see what is causing the error. For example, the output below shows that conda's libQt5Qml.so is picked instead of Qt5 system package:
+
+```
+Thread 4 "QQmlThread" received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 0x7ffff15fd640 (LWP 65006)]
+0x00007ffff6fa01b8 in QQmlPropertyCache::property(int) const () from /home/.../miniconda3/lib/libQt5Qml.so.5
+```
+
+In this case, remove all Qt-related conda's packages:
+
+```
+$ conda remove pyqt pyqt5-sip qt-main qt-webengine qtwebkit
+```
+
