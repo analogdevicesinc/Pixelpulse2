@@ -54,7 +54,7 @@ Rectangle {
     signal.src.src = type
   }
 
-  Button {
+  MenuButton {
     anchors.top: parent.top
     anchors.left: parent.left
     width: timelinePane.spacing
@@ -69,7 +69,7 @@ Rectangle {
       }
     }
 
-    menu: Menu {
+    popupMenu: Menu {
       MenuItem { text: "Constant"
         onTriggered: signalBlock.switchToConstant()
       }

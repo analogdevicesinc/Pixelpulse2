@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>qml/main.qml</file>
         <file>qml/Toolbar.qml</file>
+        <file>qml/MenuButton.qml</file>
         <file>qml/PlotPane.qml</file>
         <file>qml/ToolbarStyle.qml</file>
         <file>qml/ContentPane.qml</file>

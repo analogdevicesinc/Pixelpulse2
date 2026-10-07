@@ -50,12 +50,12 @@ ToolbarStyle {
     id: sessColorDialog
   }
 
-  Button {
+  MenuButton {
     tooltip: "Menu"
     Layout.fillHeight: true
     style: btnStyle
 
-    menu: Menu {
+    popupMenu: Menu {
 
       MenuItem {
           id: repeatedSweepItem

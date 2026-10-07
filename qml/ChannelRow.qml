@@ -10,7 +10,7 @@ Rectangle {
   property alias signalRepeater:signalRepeater
   color: '#333'
 
-  Button {
+  MenuButton {
     anchors.top: parent.top
     anchors.left: parent.left
     width: timelinePane.spacing
@@ -39,7 +39,7 @@ Rectangle {
       xyPlot.xsignal = (channel.mode == 1) ? xyPlot.vsignal : xyPlot.isignal;
     }
 
-    menu: Menu {
+    popupMenu: Menu {
       MenuItem { text: "Measure Voltage"
         onTriggered: channel.mode = 0
       }
