@@ -186,6 +186,18 @@ add_executable(${PROJECT_NAME} WIN32 ${OSX_BUNDLE}
 		${RESOURCES}
 )
 
+if (ENABLE_APPLICATION_BUNDLE)
+	# Info.plist needs a bundle identifier; without one, recent macOS versions fail to
+	# display native open/save panels (Export Data, Save/Restore Session do nothing).
+	set_target_properties(${PROJECT_NAME} PROPERTIES
+		MACOSX_BUNDLE_GUI_IDENTIFIER "com.analog.pixelpulse2"
+		MACOSX_BUNDLE_BUNDLE_NAME "Pixelpulse2"
+		MACOSX_BUNDLE_BUNDLE_VERSION "${PP_VERSION}"
+		MACOSX_BUNDLE_SHORT_VERSION_STRING "${PP_VERSION}"
+		MACOSX_BUNDLE_LONG_VERSION_STRING "${PP_VERSION_STR}"
+	)
+endif()
+
 if (NOT ENABLE_APPLICATION_BUNDLE)
 	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 	install(FILES ${CMAKE_SOURCE_DIR}/icons/pp2.ico DESTINATION share/icons/hicolor/apps/scalable RENAME pp2.ico)
