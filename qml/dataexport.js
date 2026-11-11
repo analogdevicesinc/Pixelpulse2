@@ -28,7 +28,7 @@ var saveData = function (target) {
     if (session.devices.length) {
         for (var i = 0; i < session.devices.length; i++) {
             for (var j = 0; j < session.devices[i].channels.length; j++) {
-                for (var k = 0; k < session.devices[i].channels[i].signals.length; k++) {
+                for (var k = 0; k < session.devices[i].channels[j].signals.length; k++) {
                     var label = '' + i + session.devices[i].channels[j].label +"_"+ session.devices[i].channels[j].signals[k].label;
                     labels.push(label);
                     columns.push(session.devices[i].channels[j].signals[k].buffer.getData());
